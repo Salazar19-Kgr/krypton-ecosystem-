@@ -1,69 +1,93 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="relative min-h-screen overflow-hidden bg-[#031a2c] text-white">
+      {/* Fondo acuático */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_45%,rgba(255,177,110,.35),transparent_25%),radial-gradient(ellipse_at_85%_15%,rgba(70,205,255,.35),transparent_30%),radial-gradient(ellipse_at_50%_70%,rgba(0,190,255,.3),transparent_45%),linear-gradient(135deg,#071b31,#003b61_48%,#031321)]" />
+
+      <div className="absolute -left-[20%] top-[22%] h-[35%] w-[140%] rotate-[-8deg] rounded-[50%] border-t border-cyan-200/30 bg-cyan-300/10 blur-xl" />
+      <div className="absolute -left-[15%] top-[48%] h-[28%] w-[130%] rotate-[5deg] rounded-[50%] border-t border-white/20 bg-blue-400/10 blur-2xl" />
+      <div className="absolute -left-[10%] bottom-[2%] h-[30%] w-[120%] rotate-[-4deg] rounded-[50%] bg-cyan-300/10 blur-3xl" />
+
+      {/* Reflejos de agua */}
+      <div className="absolute left-[8%] top-[38%] h-40 w-40 rounded-full bg-cyan-200/20 blur-3xl" />
+      <div className="absolute right-[8%] top-[12%] h-52 w-52 rounded-full bg-sky-300/20 blur-3xl" />
+      <div className="absolute bottom-[18%] left-[42%] h-48 w-48 rounded-full bg-blue-300/20 blur-3xl" />
+
+      {/* Encabezado */}
+      <header className="relative z-10 flex items-center justify-between px-6 py-7 sm:px-10">
+        <div className="rounded-full border border-cyan-100/40 bg-white/10 px-5 py-3 shadow-[0_0_30px_rgba(70,220,255,.18)] backdrop-blur-2xl">
+          <span className="mr-2 inline-block h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_15px_#67e8f9]" />
+          <span className="text-sm text-white/90">Krypton Ecosystem</span>
+        </div>
+
+        <button className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/30 bg-white/10 text-2xl shadow-xl backdrop-blur-2xl">
+          ☰
+        </button>
+      </header>
+
+      {/* Contenido */}
+      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-110px)] max-w-6xl flex-col items-center px-5 pb-8 pt-20 text-center">
+
+        <div className="mb-9">
+          <h1 className="text-5xl font-light tracking-[0.22em] text-white drop-shadow-[0_0_25px_rgba(150,230,255,.35)] sm:text-7xl">
+            KRYPTON
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mt-3 text-lg font-light tracking-[0.55em] text-white/90 sm:text-2xl">
+            ECOSYSTEM
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Vidrio líquido principal */}
+        <div className="w-full max-w-4xl rounded-[2rem] border border-white/35 bg-white/[0.10] px-7 py-11 shadow-[0_25px_90px_rgba(0,150,255,.22),inset_0_1px_0_rgba(255,255,255,.35)] backdrop-blur-2xl">
+          <h2 className="text-3xl font-semibold leading-tight sm:text-5xl">
+            Inteligencia diseñada
+            <br />
+            <span className="text-cyan-100">para adaptarse a ti.</span>
+          </h2>
+
+          <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-white/80 sm:text-xl">
+            Ecosistema multifuncional diseñado para adaptarse a tus límites y capacidades.
+          </p>
         </div>
-      </main>
-    </div>
-  );
+
+        {/* Botón cristal */}
+        <button className="mt-8 rounded-full border border-cyan-100/70 bg-cyan-200/20 px-12 py-4 text-lg font-medium shadow-[0_0_40px_rgba(50,210,255,.35),inset_0_1px_0_rgba(255,255,255,.5)] backdrop-blur-2xl transition hover:scale-105 hover:bg-cyan-200/30">
+          Comenzar
+          <span className="ml-4">→</span>
+        </button>
+
+        {/* Funciones */}
+        <div className="mt-16 grid w-full max-w-5xl grid-cols-2 gap-5 sm:grid-cols-4">
+          {[
+            ["✦", "IA Avanzada", "Piensa contigo"],
+            ["◎", "Información", "Sin límites"],
+            ["▣", "Análisis de Imágenes", "Ve y comprende"],
+            ["ϟ", "Mucho más", "En constante evolución"],
+          ].map(([icon, title, description]) => (
+            <div
+              key={title}
+              className="rounded-3xl border border-white/20 bg-white/[0.09] px-4 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,.25),0_15px_40px_rgba(0,100,180,.15)] backdrop-blur-2xl"
+            >
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-100/30 bg-cyan-200/10 text-xl text-cyan-100 shadow-[0_0_20px_rgba(70,220,255,.15)]">
+                {icon}
+              </div>
+
+              <h3 className="text-sm font-medium sm:text-base">
+                {title}
+              </h3>
+
+              <p className="mt-1 text-xs text-white/55">
+                {description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <footer className="mt-16 pb-5 text-xs tracking-wider text-white/45">
+          © 2026 · Krypton Ecosystem
+        </footer>
+      </section>
+    </main>
+  )
 }
