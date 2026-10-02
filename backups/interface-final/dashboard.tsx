@@ -1,12 +1,28 @@
+"use client";
+
 import Link from "next/link";
-import KryptonHeader from "@/components/layout/KryptonHeader";
 
 export default function DashboardPage() {
   return (
     <main className="krypton-ocean krypton-liquid min-h-screen px-4 py-4 text-white sm:px-6">
-      <div className="mx-auto min-h-[calc(100vh-32px)] max-w-6xl">
+      <div className="mx-auto flex min-h-[calc(100vh-32px)] max-w-6xl flex-col">
 
-        <KryptonHeader />
+        <header className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="k-glass rounded-full px-5 py-3 text-sm font-medium tracking-wide"
+          >
+            Krypton Ecosystem
+          </Link>
+
+          <Link
+            href="/chat"
+            className="k-glass-button flex h-11 w-11 items-center justify-center rounded-full"
+            aria-label="Abrir Chat"
+          >
+            ☰
+          </Link>
+        </header>
 
         <section className="pt-14 sm:pt-20">
 
@@ -18,9 +34,9 @@ export default function DashboardPage() {
             Tu espacio inteligente.
           </h1>
 
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/50 sm:text-base">
-            Conversa, analiza, busca información y trabaja con Krypton
-            desde un mismo espacio.
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+            Un ecosistema diseñado para reunir conversación, análisis,
+            información y memoria en un solo lugar.
           </p>
 
         </section>
@@ -33,7 +49,7 @@ export default function DashboardPage() {
               ESPACIO DE TRABAJO
             </p>
 
-            <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-3 flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
 
               <div>
                 <h2 className="text-2xl font-medium">
@@ -41,7 +57,7 @@ export default function DashboardPage() {
                 </h2>
 
                 <p className="mt-2 text-sm text-white/45">
-                  Cuéntale a Krypton lo que necesitas.
+                  Comienza una conversación con Krypton.
                 </p>
               </div>
 
@@ -61,30 +77,29 @@ export default function DashboardPage() {
 
         <section className="mt-10">
 
-          <div className="k-glass-card rounded-[1.8rem] p-6">
+          <p className="krypton-eyebrow">
+            CONVERSACIONES
+          </p>
+
+          <div className="k-glass-panel mt-4 rounded-[1.8rem] p-6">
 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
               <div>
-                <p className="krypton-eyebrow">
-                  MEMORIA
-                </p>
-
-                <h2 className="mt-3 text-xl font-medium">
-                  Continúa donde lo dejaste.
+                <h2 className="text-xl font-medium">
+                  Tu historial
                 </h2>
 
                 <p className="mt-2 text-sm text-white/45">
-                  Tus conversaciones y contexto estarán disponibles para
-                  continuar trabajando.
+                  Tus conversaciones y contexto estarán disponibles aquí.
                 </p>
               </div>
 
               <Link
-                href="/memory"
+                href="/chat"
                 className="text-sm text-cyan-200/80 transition hover:text-cyan-100"
               >
-                Ver conversaciones →
+                Abrir Chat →
               </Link>
 
             </div>
@@ -93,10 +108,10 @@ export default function DashboardPage() {
 
         </section>
 
-        <section className="mt-10 pb-12">
+        <section className="mt-10 pb-10">
 
           <p className="krypton-eyebrow">
-            ESTADO
+            ESTADO DEL ECOSISTEMA
           </p>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -111,7 +126,7 @@ export default function DashboardPage() {
               </p>
 
               <p className="mt-2 text-xs text-white/40">
-                Sistema de sesión pendiente de conexión.
+                Contexto de usuario disponible.
               </p>
             </div>
 
@@ -125,7 +140,7 @@ export default function DashboardPage() {
               </p>
 
               <p className="mt-2 text-xs text-white/40">
-                Sistema de contexto pendiente de conexión.
+                Conversaciones y contexto.
               </p>
             </div>
 
@@ -139,7 +154,7 @@ export default function DashboardPage() {
               </p>
 
               <p className="mt-2 text-xs text-white/40">
-                Orquestador pendiente de conectar los modelos.
+                El núcleo coordinará las capacidades del ecosistema.
               </p>
             </div>
 
