@@ -428,3 +428,211 @@ button {
 .krypton-send-active:hover {
   transform: translateY(-1px) scale(1.04);
 }
+
+/* =========================================================
+   KRYPTON ECOSYSTEM — AQUATIC LIQUID GLASS SYSTEM
+   ========================================================= */
+
+.krypton-ocean {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      ellipse at 18% 15%,
+      rgba(39, 184, 224, 0.28),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 84% 28%,
+      rgba(28, 130, 190, 0.30),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 48% 90%,
+      rgba(0, 90, 150, 0.30),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #03131f 0%,
+      #06324b 36%,
+      #075777 67%,
+      #021521 100%
+    );
+}
+
+.krypton-ocean::before {
+  content: "";
+  position: fixed;
+  inset: -15%;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 15% 25%,
+      rgba(103, 232, 249, 0.20),
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse at 75% 18%,
+      rgba(56, 189, 248, 0.15),
+      transparent 28%
+    ),
+    radial-gradient(
+      ellipse at 60% 72%,
+      rgba(14, 116, 144, 0.22),
+      transparent 32%
+    );
+  filter: blur(35px);
+  animation: krypton-water-drift 14s ease-in-out infinite alternate;
+}
+
+.krypton-ocean::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    repeating-linear-gradient(
+      102deg,
+      transparent 0px,
+      rgba(255,255,255,0.025) 2px,
+      transparent 5px,
+      transparent 38px
+    );
+  mix-blend-mode: screen;
+  animation: krypton-water-flow 18s linear infinite;
+}
+
+.krypton-liquid {
+  position: relative;
+}
+
+.k-glass,
+.k-glass-panel,
+.k-glass-card {
+  border: 1px solid rgba(210, 247, 255, 0.22);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(180, 240, 255, 0.105),
+      rgba(20, 105, 150, 0.08)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -1px 0 rgba(0, 180, 255, 0.12),
+    0 20px 70px rgba(0, 25, 55, 0.22);
+  backdrop-filter:
+    blur(28px)
+    saturate(145%);
+  -webkit-backdrop-filter:
+    blur(28px)
+    saturate(145%);
+}
+
+.k-glass-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.k-glass-panel::before,
+.k-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,0.10),
+      transparent 30%,
+      transparent 70%,
+      rgba(85,220,255,0.06)
+    );
+}
+
+.k-glass-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.k-glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(210, 247, 255, 0.32);
+}
+
+.k-glass-button {
+  border: 1px solid rgba(215, 250, 255, 0.30);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(190, 245, 255, 0.16),
+      rgba(35, 145, 190, 0.12)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    0 8px 35px rgba(0, 120, 180, 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.k-glass-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(225, 252, 255, 0.45);
+}
+
+.krypton-eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.35em;
+  color: rgba(174, 238, 255, 0.58);
+  text-transform: uppercase;
+}
+
+.krypton-title {
+  text-shadow:
+    0 0 20px rgba(103, 232, 249, 0.15),
+    0 0 55px rgba(56, 189, 248, 0.10);
+}
+
+@keyframes krypton-water-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(2%, 1%, 0) scale(1.05);
+  }
+}
+
+@keyframes krypton-water-flow {
+  from {
+    transform: translateX(-3%);
+  }
+
+  to {
+    transform: translateX(3%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .krypton-ocean::before,
+  .krypton-ocean::after {
+    animation: none;
+  }
+
+  .k-glass-card,
+  .k-glass-button {
+    transition: none;
+  }
+}

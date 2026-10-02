@@ -1,157 +1,168 @@
-import AppShell from "@/components/layout/AppShell"
+"use client";
 
-const modules = [
-  {
-    icon: "✦",
-    title: "Chat inteligente",
-    description: "Conversa, razona y trabaja con Krypton.",
-    href: "/chat",
-  },
-  {
-    icon: "▣",
-    title: "Análisis de imágenes",
-    description: "Comprende imágenes y contenido visual.",
-    href: "/vision",
-  },
-  {
-    icon: "◎",
-    title: "Información",
-    description: "Consulta información y fuentes externas.",
-    href: "/info",
-  },
-  {
-    icon: "◌",
-    title: "Memoria",
-    description: "Gestiona el contexto y tus conversaciones.",
-    href: "/settings",
-  },
-]
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
-    <AppShell active="dashboard">
-      <div className="space-y-8">
+    <main className="krypton-ocean krypton-liquid min-h-screen px-4 py-4 text-white sm:px-6">
+      <div className="mx-auto flex min-h-[calc(100vh-32px)] max-w-6xl flex-col">
 
-        {/* Encabezado */}
-        <header>
-          <p className="text-sm tracking-[0.28em] text-cyan-200/65">
+        <header className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="k-glass rounded-full px-5 py-3 text-sm font-medium tracking-wide"
+          >
+            Krypton Ecosystem
+          </Link>
+
+          <Link
+            href="/chat"
+            className="k-glass-button flex h-11 w-11 items-center justify-center rounded-full"
+            aria-label="Abrir Chat"
+          >
+            ☰
+          </Link>
+        </header>
+
+        <section className="pt-14 sm:pt-20">
+
+          <p className="krypton-eyebrow">
             KRYPTON ECOSYSTEM
           </p>
 
-          <h1 className="mt-3 text-4xl font-light tracking-tight sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-light tracking-tight sm:text-6xl">
             Tu espacio inteligente.
           </h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/55 sm:text-base">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
             Un ecosistema diseñado para reunir conversación, análisis,
-            información y herramientas de inteligencia artificial en un solo
-            lugar.
+            información y memoria en un solo lugar.
           </p>
-        </header>
 
-        {/* Acceso rápido */}
-        <section className="k-glass-panel p-6 sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <span className="text-xs uppercase tracking-[0.25em] text-cyan-200/55">
-                Espacio de trabajo
-              </span>
-
-              <h2 className="mt-2 text-2xl font-medium">
-                ¿Qué quieres hacer?
-              </h2>
-
-              <p className="mt-2 text-sm text-white/50">
-                Comienza una conversación o entra directamente a una
-                herramienta.
-              </p>
-            </div>
-
-            <a
-              href="/chat"
-              className="k-glass-button inline-flex items-center justify-center px-7 py-3.5 text-sm"
-            >
-              Nueva conversación
-              <span className="ml-4 text-lg">→</span>
-            </a>
-          </div>
         </section>
 
-        {/* Módulos */}
-        <section>
-          <div className="mb-5 flex items-end justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/35">
-                Ecosistema
-              </p>
+        <section className="mt-10">
 
-              <h2 className="mt-2 text-2xl font-medium">
-                Herramientas
-              </h2>
-            </div>
-          </div>
+          <div className="k-glass-panel rounded-[2rem] p-6 sm:p-8">
 
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            {modules.map((module) => (
-              <a
-                key={module.title}
-                href={module.href}
-                className="k-glass-card group p-6"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-100/20 bg-cyan-100/5 text-xl text-cyan-100 shadow-[0_0_25px_rgba(60,210,255,.08)] transition group-hover:scale-105">
-                  {module.icon}
-                </div>
+            <p className="krypton-eyebrow">
+              ESPACIO DE TRABAJO
+            </p>
 
-                <h3 className="mt-6 text-lg font-medium">
-                  {module.title}
-                </h3>
+            <div className="mt-3 flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
 
-                <p className="mt-2 text-sm leading-6 text-white/45">
-                  {module.description}
+              <div>
+                <h2 className="text-2xl font-medium">
+                  ¿Qué quieres hacer?
+                </h2>
+
+                <p className="mt-2 text-sm text-white/45">
+                  Comienza una conversación con Krypton.
                 </p>
+              </div>
 
-                <div className="mt-6 text-xs text-cyan-200/65">
-                  Abrir módulo →
-                </div>
-              </a>
-            ))}
+              <Link
+                href="/chat"
+                className="k-glass-button inline-flex w-fit rounded-full px-6 py-3.5"
+              >
+                Nueva conversación
+                <span className="ml-2">→</span>
+              </Link>
+
+            </div>
+
           </div>
+
         </section>
 
-        {/* Estado del ecosistema */}
-        <section className="grid gap-5 md:grid-cols-3">
-          <div className="k-glass-card p-5">
-            <p className="text-xs uppercase tracking-widest text-white/35">
-              Sesión
-            </p>
-            <p className="mt-2 text-lg">Preparada</p>
-            <p className="mt-1 text-xs text-white/40">
-              Sistema de sesiones pendiente de conexión.
-            </p>
+        <section className="mt-10">
+
+          <p className="krypton-eyebrow">
+            CONVERSACIONES
+          </p>
+
+          <div className="k-glass-panel mt-4 rounded-[1.8rem] p-6">
+
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+              <div>
+                <h2 className="text-xl font-medium">
+                  Tu historial
+                </h2>
+
+                <p className="mt-2 text-sm text-white/45">
+                  Tus conversaciones y contexto estarán disponibles aquí.
+                </p>
+              </div>
+
+              <Link
+                href="/chat"
+                className="text-sm text-cyan-200/80 transition hover:text-cyan-100"
+              >
+                Abrir Chat →
+              </Link>
+
+            </div>
+
           </div>
 
-          <div className="k-glass-card p-5">
-            <p className="text-xs uppercase tracking-widest text-white/35">
-              Memoria
-            </p>
-            <p className="mt-2 text-lg">Preparada</p>
-            <p className="mt-1 text-xs text-white/40">
-              Sistema de contexto pendiente de conexión.
-            </p>
+        </section>
+
+        <section className="mt-10 pb-10">
+
+          <p className="krypton-eyebrow">
+            ESTADO DEL ECOSISTEMA
+          </p>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+
+            <div className="k-glass-card rounded-2xl p-5">
+              <p className="text-xs text-white/35">
+                SESIÓN
+              </p>
+
+              <p className="mt-3 text-lg font-medium">
+                Preparada
+              </p>
+
+              <p className="mt-2 text-xs text-white/40">
+                Contexto de usuario disponible.
+              </p>
+            </div>
+
+            <div className="k-glass-card rounded-2xl p-5">
+              <p className="text-xs text-white/35">
+                MEMORIA
+              </p>
+
+              <p className="mt-3 text-lg font-medium">
+                Preparada
+              </p>
+
+              <p className="mt-2 text-xs text-white/40">
+                Conversaciones y contexto.
+              </p>
+            </div>
+
+            <div className="k-glass-card rounded-2xl p-5">
+              <p className="text-xs text-white/35">
+                KRYPTON CORE
+              </p>
+
+              <p className="mt-3 text-lg font-medium">
+                En preparación
+              </p>
+
+              <p className="mt-2 text-xs text-white/40">
+                El núcleo coordinará las capacidades del ecosistema.
+              </p>
+            </div>
+
           </div>
 
-          <div className="k-glass-card p-5">
-            <p className="text-xs uppercase tracking-widest text-white/35">
-              IA Core
-            </p>
-            <p className="mt-2 text-lg">En preparación</p>
-            <p className="mt-1 text-xs text-white/40">
-              Orquestador pendiente de conectar los modelos.
-            </p>
-          </div>
         </section>
 
       </div>
-    </AppShell>
-  )
+    </main>
+  );
 }
