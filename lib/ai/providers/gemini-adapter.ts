@@ -1,34 +1,79 @@
+import { GoogleGenAI } from "@google/genai";
 import type { AIProvider } from "../provider-contract";
 import type {
+  GeminiMessage,
   GeminiRequest,
   GeminiResponse,
 } from "../contracts/gemini";
-import { AIProviderError } from "../contracts/errors";
 
-export class GeminiAdapter implements AIProvider {
-  name = "gemini" as const;
+const DEFAULT_MODEL =
+  process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
-  isConfigured(): boolean {
-    return Boolean(process.env.GEMINI_API_KEY);
-  }
+function getClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
 
-  async generate(
-    _request: GeminiRequest,
-  ): Promise<GeminiResponse> {
-    if (!this.isConfigured()) {
-      throw new AIProviderError(
-        "gemini",
-        "AUTHENTICATION_FAILED",
-        "Gemini todavía no está configurado.",
-        false,
-      );
-    }
-
-    throw new AIProviderError(
-      "gemini",
-      "PROVIDER_UNAVAILABLE",
-      "El adaptador de Gemini todavía no está conectado al proveedor.",
-      true,
+  if (!apiKey) {
+    throw new Error(
+      "GEMINI_API_KEY no está configurada en las variables de entorno."
     );
   }
+
+  return new GoogleGenAI({
+    apiKey,
+  });
 }
+
+function buildContents(
+  request: GeminiRequest
+) {
+  const history = request.history ?? [];
+
+  const contents = history.map((message: GeminiMessage) => ({
+    role: message.role,
+    parts: [
+      {
+        text: message.content,
+      },
+    ],
+  }));
+
+  contents.push({
+    role: "user",
+    parts: [
+      {
+        text: request.message,
+      },
+    ],
+  });
+
+  return contents;
+}
+
+export const geminiAdapter: AIProvider = {
+  id: "gemini",
+
+  isConfigured() {
+    return Boolean(process.env.GEMINI_API_KEY);
+  },
+
+  async generate(request): Promise<GeminiResponse> {
+    const client = getClient();
+
+    const response = await client.models.generateContent({
+      model: DEFAULT_MODEL,
+      contents: buildContents(request),
+      config: request.systemInstruction
+        ? {
+            systemInstruction: request.systemInstruction,
+          }
+        : undefined,
+    });
+
+    return {
+      text: response.text ?? "",
+      model: DEFAULT_MODEL,
+      finishReason: undefined,
+      raw: response,
+    };
+  },
+};

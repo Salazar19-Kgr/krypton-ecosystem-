@@ -1,31 +1,16 @@
-"use client";
-
-import { useState } from "react";
-
 export default function AquaticBackground() {
-  const [loaded, setLoaded] = useState(false);
-
   return (
-    <div className="krypton-aquatic-media" aria-hidden="true">
-
-      <video
-        className={`krypton-aquatic-video ${
-          loaded ? "is-loaded" : ""
-        }`}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        onCanPlay={() => setLoaded(true)}
-      >
-        <source src="/media/krypton-water.mp4" type="video/mp4" />
-      </video>
-
-      <div className="krypton-aquatic-overlay" />
-
-      <div className="krypton-aquatic-shimmer" />
-
+    <div
+      className="krypton-aquatic-background"
+      aria-hidden="true"
+    >
+      <div className="krypton-water-light krypton-water-light-one" />
+      <div className="krypton-water-light krypton-water-light-two" />
+      <div className="krypton-water-depth" />
+      <div className="krypton-water-wave krypton-water-wave-one" />
+      <div className="krypton-water-wave krypton-water-wave-two" />
+      <div className="krypton-water-reflection" />
+      <div className="krypton-water-vignette" />
     </div>
   );
 }
