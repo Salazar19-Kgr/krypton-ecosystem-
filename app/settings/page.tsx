@@ -1,72 +1,69 @@
 "use client";
 
 import { useState } from "react";
-import AppShell from "@/components/layout/AppShell";
+import Link from "next/link";
+import KryptonHeader from "@/components/layout/KryptonHeader";
 
 export default function SettingsPage() {
   const [memoryEnabled, setMemoryEnabled] = useState(true);
-  const [appearance, setAppearance] = useState("Liquid Glass");
 
   return (
-    <AppShell active="settings">
-      <div className="flex min-h-[calc(100vh-2rem)] flex-col">
-        <header className="mb-5">
-          <p className="text-xs uppercase tracking-[0.3em] text-cyan-200/60">
-            Krypton Settings
+    <main className="krypton-ocean krypton-liquid min-h-screen px-4 py-4 text-white sm:px-6">
+      <div className="mx-auto min-h-[calc(100vh-32px)] max-w-5xl">
+
+        <KryptonHeader />
+
+        <section className="py-14 sm:py-20">
+
+          <p className="krypton-eyebrow">
+            KRYPTON ECOSYSTEM
           </p>
 
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Configura tu ecosistema.
+          <h1 className="mt-4 text-4xl font-light sm:text-6xl">
+            Configuración.
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-white/55">
-            Personaliza cómo quieres interactuar con Krypton y cómo se
-            gestionará tu experiencia.
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-white/50">
+            Controla tu experiencia, memoria y preferencias dentro de
+            Krypton Ecosystem.
           </p>
-        </header>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          <section className="k-glass-panel p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-              Cuenta
+        </section>
+
+        <section className="space-y-4 pb-12">
+
+          <div className="k-glass-panel rounded-3xl p-6">
+
+            <p className="krypton-eyebrow">
+              CUENTA
             </p>
 
-            <h2 className="mt-2 text-xl font-medium text-white">
-              Tu identidad
+            <h2 className="mt-4 text-xl font-medium">
+              Tu cuenta
             </h2>
 
-            <div className="mt-6 flex items-center gap-4 rounded-3xl border border-white/10 bg-black/15 p-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-200/10 text-xl text-cyan-100/60">
-                ◉
-              </div>
-
-              <div>
-                <p className="text-sm font-medium text-white/80">
-                  Usuario Krypton
-                </p>
-                <p className="mt-1 text-xs text-white/35">
-                  Cuenta preparada para autenticación
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section className="k-glass-panel p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-              Memoria
+            <p className="mt-2 text-sm text-white/45">
+              La autenticación y el perfil se conectarán posteriormente.
             </p>
 
-            <h2 className="mt-2 text-xl font-medium text-white">
-              Contexto personal
-            </h2>
+          </div>
 
-            <div className="mt-6 flex items-center justify-between gap-4 rounded-3xl border border-white/10 bg-black/15 p-4">
+          <div className="k-glass-panel rounded-3xl p-6">
+
+            <div className="flex items-center justify-between gap-5">
+
               <div>
-                <p className="text-sm font-medium text-white/75">
-                  Memoria de Krypton
+                <p className="krypton-eyebrow">
+                  MEMORIA
                 </p>
-                <p className="mt-1 max-w-sm text-xs leading-5 text-white/35">
-                  Permite conservar contexto útil entre conversaciones.
+
+                <h2 className="mt-4 text-xl font-medium">
+                  Mantener contexto
+                </h2>
+
+                <p className="mt-2 text-sm leading-6 text-white/45">
+                  Permite que Krypton conserve el contexto de tus
+                  conversaciones cuando esta función esté conectada.
                 </p>
               </div>
 
@@ -75,91 +72,67 @@ export default function SettingsPage() {
                 onClick={() => setMemoryEnabled(!memoryEnabled)}
                 className={`relative h-7 w-12 shrink-0 rounded-full border transition ${
                   memoryEnabled
-                    ? "border-cyan-200/30 bg-cyan-200/15"
-                    : "border-white/10 bg-white/5"
+                    ? "border-cyan-200/40 bg-cyan-200/20"
+                    : "border-white/15 bg-white/5"
                 }`}
                 aria-label="Activar o desactivar memoria"
               >
                 <span
-                  className={`absolute top-1 h-5 w-5 rounded-full transition ${
+                  className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
                     memoryEnabled
-                      ? "left-6 bg-cyan-100 shadow-[0_0_12px_rgba(100,230,255,0.6)]"
-                      : "left-1 bg-white/30"
+                      ? "left-6"
+                      : "left-1"
                   }`}
                 />
               </button>
-            </div>
-          </section>
 
-          <section className="k-glass-panel p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-              Apariencia
+            </div>
+
+          </div>
+
+          <div className="k-glass-panel rounded-3xl p-6">
+
+            <p className="krypton-eyebrow">
+              EXPERIENCIA
             </p>
 
-            <h2 className="mt-2 text-xl font-medium text-white">
-              Interfaz
+            <h2 className="mt-4 text-xl font-medium">
+              Interfaz Liquid Glass
             </h2>
 
-            <div className="mt-6 space-y-3">
-              {["Liquid Glass", "Profundo", "Minimal"].map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setAppearance(option)}
-                  className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition ${
-                    appearance === option
-                      ? "border-cyan-200/20 bg-cyan-200/[0.06]"
-                      : "border-white/10 bg-black/10 hover:bg-white/[0.04]"
-                  }`}
-                >
-                  <span className="text-sm text-white/70">{option}</span>
-
-                  <span
-                    className={`h-3 w-3 rounded-full border ${
-                      appearance === option
-                        ? "border-cyan-100/60 bg-cyan-100/60 shadow-[0_0_10px_rgba(100,230,255,0.5)]"
-                        : "border-white/20"
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section className="k-glass-panel p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-              Privacidad
+            <p className="mt-2 text-sm leading-6 text-white/45">
+              Krypton utiliza una interfaz transparente inspirada en vidrio
+              líquido, agua, profundidad y luz.
             </p>
 
-            <h2 className="mt-2 text-xl font-medium text-white">
-              Datos y sesiones
+          </div>
+
+          <div className="k-glass-panel rounded-3xl p-6">
+
+            <p className="krypton-eyebrow">
+              SESIÓN
+            </p>
+
+            <h2 className="mt-4 text-xl font-medium">
+              Conversaciones
             </h2>
 
-            <div className="mt-6 space-y-3">
-              {[
-                ["Sesiones activas", "Gestiona tus dispositivos conectados"],
-                ["Historial", "Controla tus conversaciones"],
-                ["Preferencias", "Configura tu experiencia"],
-              ].map(([title, description]) => (
-                <button
-                  key={title}
-                  type="button"
-                  className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-black/10 p-4 text-left transition hover:bg-white/[0.04]"
-                >
-                  <div>
-                    <p className="text-sm text-white/70">{title}</p>
-                    <p className="mt-1 text-xs text-white/30">
-                      {description}
-                    </p>
-                  </div>
+            <p className="mt-2 text-sm text-white/45">
+              Consulta y continúa tus conversaciones anteriores.
+            </p>
 
-                  <span className="text-white/25">›</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        </div>
+            <Link
+              href="/memory"
+              className="mt-5 inline-flex text-sm text-cyan-200/80"
+            >
+              Ver conversaciones →
+            </Link>
+
+          </div>
+
+        </section>
+
       </div>
-    </AppShell>
+    </main>
   );
 }

@@ -1,0 +1,638 @@
+@import "tailwindcss";
+
+:root {
+  --krypton-bg: #020b16;
+  --krypton-blue: #39cfff;
+  --krypton-cyan: #8beaff;
+  --krypton-glass: rgba(255, 255, 255, 0.085);
+  --krypton-border: rgba(190, 245, 255, 0.32);
+  --krypton-text: #f5fbff;
+  --krypton-muted: rgba(235, 249, 255, 0.68);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--krypton-bg);
+  color: var(--krypton-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: rgba(74, 211, 255, 0.3);
+  color: white;
+}
+
+/* ================================
+   KRYPTON LIQUID GLASS SYSTEM
+   ================================ */
+
+.k-glass {
+  position: relative;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.045)
+    );
+  border: 1px solid var(--krypton-border);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    0 24px 80px rgba(0, 80, 140, 0.22);
+  overflow: hidden;
+}
+
+.k-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.18),
+      transparent 28%,
+      transparent 72%,
+      rgba(93, 218, 255, 0.08)
+    );
+  opacity: 0.75;
+}
+
+.k-glass::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.65);
+  filter: blur(0.4px);
+}
+
+/* Panel grande */
+
+.k-glass-panel {
+  border-radius: 32px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15),
+      rgba(75, 193, 255, 0.07) 45%,
+      rgba(255, 255, 255, 0.045)
+    );
+  border: 1px solid rgba(205, 247, 255, 0.42);
+  backdrop-filter: blur(30px) saturate(155%);
+  -webkit-backdrop-filter: blur(30px) saturate(155%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    0 30px 100px rgba(0, 125, 205, 0.24),
+    0 0 45px rgba(61, 211, 255, 0.09);
+}
+
+/* Botón cristal */
+
+.k-glass-button {
+  position: relative;
+  border: 1px solid rgba(210, 249, 255, 0.62);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(143, 232, 255, 0.34),
+      rgba(27, 157, 221, 0.17)
+    );
+  color: white;
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    0 0 32px rgba(52, 210, 255, 0.26),
+    0 15px 45px rgba(0, 100, 180, 0.2);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background 220ms ease;
+}
+
+.k-glass-button:hover {
+  transform: translateY(-2px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(170, 240, 255, 0.42),
+      rgba(35, 174, 232, 0.23)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 0 45px rgba(52, 210, 255, 0.38),
+    0 18px 55px rgba(0, 100, 180, 0.28);
+}
+
+.k-glass-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Tarjetas */
+
+.k-glass-card {
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid rgba(205, 247, 255, 0.25);
+  background: rgba(255, 255, 255, 0.065);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 18px 55px rgba(0, 80, 140, 0.15);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.k-glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(173, 239, 255, 0.48);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Fondo acuático base */
+
+.krypton-ocean {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 15% 65%,
+      rgba(255, 173, 107, 0.32),
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse at 80% 8%,
+      rgba(72, 207, 255, 0.3),
+      transparent 28%
+    ),
+    radial-gradient(
+      ellipse at 50% 75%,
+      rgba(0, 148, 230, 0.26),
+      transparent 46%
+    ),
+    linear-gradient(
+      150deg,
+      #061a2d 0%,
+      #003b61 43%,
+      #021625 100%
+    );
+}
+
+.krypton-ocean::before,
+.krypton-ocean::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  width: 140%;
+  left: -20%;
+  border-radius: 50%;
+}
+
+.krypton-ocean::before {
+  top: 24%;
+  height: 34%;
+  transform: rotate(-7deg);
+  border-top: 1px solid rgba(178, 241, 255, 0.2);
+  background: rgba(52, 199, 255, 0.055);
+  filter: blur(16px);
+}
+
+.krypton-ocean::after {
+  bottom: 2%;
+  height: 28%;
+  transform: rotate(5deg);
+  background: rgba(0, 183, 255, 0.07);
+  filter: blur(25px);
+}
+
+/* Brillos acuáticos */
+
+.krypton-glow {
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(45px);
+}
+
+.krypton-glow-cyan {
+  background: rgba(73, 218, 255, 0.22);
+}
+
+.krypton-glow-warm {
+  background: rgba(255, 177, 110, 0.18);
+}
+
+/* Texto */
+
+.krypton-title {
+  letter-spacing: 0.22em;
+  font-weight: 300;
+  text-shadow: 0 0 30px rgba(142, 232, 255, 0.35);
+}
+
+.krypton-subtitle {
+  letter-spacing: 0.55em;
+  font-weight: 300;
+  text-shadow: 0 0 20px rgba(142, 232, 255, 0.22);
+}
+
+/* Animación ligera */
+
+@keyframes krypton-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+.krypton-float {
+  animation: krypton-float 6s ease-in-out infinite;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 12, 24, 0.7);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(119, 224, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(119, 224, 255, 0.5);
+}
+
+/* Móvil */
+
+@media (max-width: 640px) {
+  .k-glass-panel {
+    border-radius: 26px;
+  }
+
+  .krypton-title {
+    letter-spacing: 0.15em;
+  }
+
+  .krypton-subtitle {
+    letter-spacing: 0.38em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================
+   KRYPTON LIQUID ENVIRONMENT
+   ========================================== */
+
+.krypton-liquid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.krypton-liquid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(0, 210, 255, 0.22),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(0, 120, 255, 0.18),
+      transparent 35%
+    );
+  pointer-events: none;
+}
+
+.krypton-liquid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  backdrop-filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.krypton-liquid-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  pointer-events: none;
+}
+
+.krypton-glass-refraction {
+  background: rgba(120, 220, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 180, 255, 0.18),
+    0 20px 70px rgba(0, 40, 100, 0.28);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+
+/* Krypton Chat Composer */
+.krypton-chat-composer {
+  position: relative;
+}
+
+.krypton-chat-menu {
+  animation: krypton-menu-in 160ms ease-out;
+  transform-origin: bottom left;
+}
+
+@keyframes krypton-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.krypton-send-active {
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.krypton-send-active:hover {
+  transform: translateY(-1px) scale(1.04);
+}
+
+/* =========================================================
+   KRYPTON ECOSYSTEM — AQUATIC LIQUID GLASS SYSTEM
+   ========================================================= */
+
+.krypton-ocean {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      ellipse at 18% 15%,
+      rgba(39, 184, 224, 0.28),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 84% 28%,
+      rgba(28, 130, 190, 0.30),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 48% 90%,
+      rgba(0, 90, 150, 0.30),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #03131f 0%,
+      #06324b 36%,
+      #075777 67%,
+      #021521 100%
+    );
+}
+
+.krypton-ocean::before {
+  content: "";
+  position: fixed;
+  inset: -15%;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 15% 25%,
+      rgba(103, 232, 249, 0.20),
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse at 75% 18%,
+      rgba(56, 189, 248, 0.15),
+      transparent 28%
+    ),
+    radial-gradient(
+      ellipse at 60% 72%,
+      rgba(14, 116, 144, 0.22),
+      transparent 32%
+    );
+  filter: blur(35px);
+  animation: krypton-water-drift 14s ease-in-out infinite alternate;
+}
+
+.krypton-ocean::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    repeating-linear-gradient(
+      102deg,
+      transparent 0px,
+      rgba(255,255,255,0.025) 2px,
+      transparent 5px,
+      transparent 38px
+    );
+  mix-blend-mode: screen;
+  animation: krypton-water-flow 18s linear infinite;
+}
+
+.krypton-liquid {
+  position: relative;
+}
+
+.k-glass,
+.k-glass-panel,
+.k-glass-card {
+  border: 1px solid rgba(210, 247, 255, 0.22);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(180, 240, 255, 0.105),
+      rgba(20, 105, 150, 0.08)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -1px 0 rgba(0, 180, 255, 0.12),
+    0 20px 70px rgba(0, 25, 55, 0.22);
+  backdrop-filter:
+    blur(28px)
+    saturate(145%);
+  -webkit-backdrop-filter:
+    blur(28px)
+    saturate(145%);
+}
+
+.k-glass-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.k-glass-panel::before,
+.k-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,0.10),
+      transparent 30%,
+      transparent 70%,
+      rgba(85,220,255,0.06)
+    );
+}
+
+.k-glass-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.k-glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(210, 247, 255, 0.32);
+}
+
+.k-glass-button {
+  border: 1px solid rgba(215, 250, 255, 0.30);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(190, 245, 255, 0.16),
+      rgba(35, 145, 190, 0.12)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    0 8px 35px rgba(0, 120, 180, 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.k-glass-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(225, 252, 255, 0.45);
+}
+
+.krypton-eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.35em;
+  color: rgba(174, 238, 255, 0.58);
+  text-transform: uppercase;
+}
+
+.krypton-title {
+  text-shadow:
+    0 0 20px rgba(103, 232, 249, 0.15),
+    0 0 55px rgba(56, 189, 248, 0.10);
+}
+
+@keyframes krypton-water-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(2%, 1%, 0) scale(1.05);
+  }
+}
+
+@keyframes krypton-water-flow {
+  from {
+    transform: translateX(-3%);
+  }
+
+  to {
+    transform: translateX(3%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .krypton-ocean::before,
+  .krypton-ocean::after {
+    animation: none;
+  }
+
+  .k-glass-card,
+  .k-glass-button {
+    transition: none;
+  }
+}
