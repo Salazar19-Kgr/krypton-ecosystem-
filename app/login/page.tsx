@@ -11,13 +11,21 @@ export default function LoginPage() {
   async function loginGoogle() {
     setLoading(true);
     setError("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback` },
-    });
-    if (error) {
-      setError("No se pudo iniciar sesión. Intenta de nuevo.");
+    try {
+      if (
+        !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+        !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ) {
+        throw new Error("Faltan las claves de Supabase en este despliegue");
+      }
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${location.origin}/auth/callback` },
+      });
+      if (authError) throw authError;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error desconocido");
       setLoading(false);
     }
   }
@@ -28,10 +36,7 @@ export default function LoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-40px)] max-w-5xl flex-col">
 
         <header className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="krypton-brand-capsule k-glass"
-          >
+          <Link href="/" className="krypton-brand-capsule k-glass">
             <span className="krypton-brand-dot" />
             <span>Krypton Ecosystem</span>
           </Link>
@@ -48,9 +53,7 @@ export default function LoginPage() {
 
           <div className="k-glass-panel w-full max-w-md rounded-[2rem] p-7 text-center sm:p-9">
 
-            <p className="krypton-eyebrow">
-              KRYPTON ECOSYSTEM
-            </p>
+            <p className="krypton-eyebrow">KRYPTON ECOSYSTEM</p>
 
             <h1 className="mt-5 text-3xl font-light">
               Entra a tu ecosistema.
