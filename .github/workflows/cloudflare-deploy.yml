@@ -14,7 +14,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout
+      - name: Checkout Krypton Ecosystem
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -23,31 +23,25 @@ jobs:
           node-version: 24
           cache: npm
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Install Cloudflare/Vinext deployment dependencies
+      - name: Install Vinext Cloudflare tooling
         run: |
           npm install \
-            vite@8.3.0 \
+            vite@8.3.2 \
             @vitejs/plugin-rsc \
-            @cloudflare/vite-plugin@beta \
+            @cloudflare/vite-plugin \
             @vinext/cloudflare@1.0.1 \
-            cf@latest \
             --legacy-peer-deps
 
-      - name: Initialize Vinext for Cloudflare
-        run: |
-          npx vinext init \
-            --platform=cloudflare \
-            --skip-check \
-            --data-cache=memory \
-            --image-optimization=cloudflare-images
+      - name: Initialize Vinext
+        run: npx vinext init
 
       - name: TypeScript check
         run: npx tsc --noEmit
 
-      - name: Deploy to Cloudflare
+      - name: Deploy Krypton Ecosystem
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
