@@ -7,7 +7,7 @@ import type {
 } from "../contracts/gemini";
 
 const DEFAULT_MODEL =
-  process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
 function getClient() {
   const apiKey = process.env.GEMINI_API_KEY;
