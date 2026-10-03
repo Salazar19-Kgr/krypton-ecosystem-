@@ -44,3 +44,6 @@ next-env.d.ts
 
 .env.local
 !.env.example
+/dist/
+.vinext/
+.cloudflare/

@@ -1,0 +1,54 @@
+name: Deploy Krypton Ecosystem
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Cloudflare/Vinext deployment dependencies
+        run: |
+          npm install \
+            vite@8.3.0 \
+            @vitejs/plugin-rsc \
+            @cloudflare/vite-plugin@beta \
+            @vinext/cloudflare@1.0.1 \
+            cf@latest \
+            --legacy-peer-deps
+
+      - name: Initialize Vinext for Cloudflare
+        run: |
+          npx vinext init \
+            --platform=cloudflare \
+            --skip-check \
+            --data-cache=memory \
+            --image-optimization=cloudflare-images
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Deploy to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx @vinext/cloudflare deploy
