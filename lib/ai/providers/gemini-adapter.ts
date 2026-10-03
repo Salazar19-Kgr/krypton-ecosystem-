@@ -50,7 +50,7 @@ function buildContents(
 }
 
 export const geminiAdapter: AIProvider = {
-  id: "gemini",
+  name: "gemini",
 
   isConfigured() {
     return Boolean(process.env.GEMINI_API_KEY);
