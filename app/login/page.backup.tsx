@@ -1,27 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "../../lib/supabase/client";
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function loginGoogle() {
-    setLoading(true);
-    setError("");
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback` },
-    });
-    if (error) {
-      setError("No se pudo iniciar sesión. Intenta de nuevo.");
-      setLoading(false);
-    }
-  }
-
   return (
     <main className="krypton-ocean krypton-liquid min-h-screen px-5 py-5 text-white">
 
@@ -63,17 +44,15 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={loginGoogle}
-              disabled={loading}
-              className="k-glass-button mt-8 flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm disabled:opacity-60"
+              className="k-glass-button mt-8 flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm"
             >
               <span className="text-base">G</span>
-              {loading ? "Conectando..." : "Continuar con Google"}
+              Continuar con Google
             </button>
 
-            {error && (
-              <p className="mt-6 text-xs leading-5 text-red-300">{error}</p>
-            )}
+            <p className="mt-6 text-[10px] leading-5 text-white/30">
+              La autenticación real se conectará posteriormente.
+            </p>
 
           </div>
 
