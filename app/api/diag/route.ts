@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getKryptonRuntimeConfig } from "@/lib/ai/runtime-config";
-import { geminiAdapter } from "@/lib/ai/providers/gemini-adapter";
+import { testProviders } from "@/lib/krypton/llm";
+import { tavilySearch, wikipediaSearch } from "@/lib/krypton/tools";
+
+const KEYS = [
+  "GEMINI_API_KEY",
+  "GROQ_API_KEY",
+  "OPENROUTER_API_KEY",
+  "TAVILY_API_KEY",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+];
+
+const check = (promise: Promise<unknown[]>) =>
+  promise
+    .then((r) => ({ ok: true, results: r.length }))
+    .catch((e) => ({ ok: false, error: String(e).slice(0, 160) }));
 
 export async function GET() {
-  const report: Record<string, unknown> = {};
-
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
@@ -15,7 +28,6 @@ export async function GET() {
         { status: 401 }
       );
     }
-    report.auth = "ok";
   } catch (e) {
     return NextResponse.json(
       { ok: false, stage: "auth", detail: String(e).slice(0, 300) },
@@ -23,21 +35,17 @@ export async function GET() {
     );
   }
 
-  report.config = getKryptonRuntimeConfig();
-  report.geminiModel = process.env.GEMINI_MODEL || "(por defecto)";
+  const [llm, tavily, wikipedia] = await Promise.all([
+    testProviders(),
+    process.env.TAVILY_API_KEY ? check(tavilySearch("agua")) : "sin clave",
+    check(wikipediaSearch("Refrigeración")),
+  ]);
 
-  try {
-    const result = await geminiAdapter.generate({
-      message: "Responde solo: ok",
-    });
-    report.gemini = {
-      ok: true,
-      model: result.model,
-      text: result.text.slice(0, 80),
-    };
-  } catch (e) {
-    report.gemini = { ok: false, detail: String(e).slice(0, 400) };
-  }
-
-  return NextResponse.json(report);
+  return NextResponse.json({
+    claves: Object.fromEntries(KEYS.map((k) => [k, Boolean(process.env[k])])),
+    modeloGemini: process.env.GEMINI_MODEL || "(por defecto)",
+    llm,
+    tavily,
+    wikipedia,
+  });
 }
