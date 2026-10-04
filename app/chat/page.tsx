@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import ChatComposer from "@/components/chat/ChatComposer";
+import MessageContent from "@/components/chat/MessageContent";
 
 type Message = {
   id: string;
@@ -126,7 +127,7 @@ export default function ChatPage() {
                       : "krypton-msg krypton-msg-bot"
                 }
               >
-                {item.content}
+                <MessageContent content={item.content} markdown={item.role === "model" && !item.error} />
               </div>
             </div>
           ))}

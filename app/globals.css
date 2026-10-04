@@ -1596,3 +1596,28 @@ button {
     animation: none;
   }
 }
+
+/* Formato de las respuestas de Krypton */
+.krypton-msg .krypton-md { white-space: normal; }
+.krypton-md > :first-child { margin-top: 0; }
+.krypton-md > :last-child { margin-bottom: 0; }
+.krypton-md p { margin: 0 0 0.75rem; }
+.krypton-md strong { color: #fff; font-weight: 600; }
+.krypton-md h1, .krypton-md h2, .krypton-md h3 { margin: 1.1rem 0 0.5rem; color: #fff; font-weight: 500; line-height: 1.3; }
+.krypton-md h1 { font-size: 1.15rem; }
+.krypton-md h2 { font-size: 1.05rem; }
+.krypton-md h3 { font-size: 0.95rem; }
+.krypton-md ul, .krypton-md ol { margin: 0 0 0.75rem; padding-left: 1.25rem; }
+.krypton-md ul { list-style: disc; }
+.krypton-md ol { list-style: decimal; }
+.krypton-md li { margin: 0.25rem 0; }
+.krypton-md li::marker { color: rgba(150, 235, 255, 0.9); }
+.krypton-md code { padding: 0.1rem 0.35rem; border-radius: 0.4rem; background: rgba(0, 20, 40, 0.35); font-size: 0.85em; }
+.krypton-md pre { overflow-x: auto; margin: 0 0 0.75rem; padding: 0.8rem 1rem; border-radius: 1rem; background: rgba(0, 15, 30, 0.45); }
+.krypton-md pre code { padding: 0; background: none; }
+.krypton-md blockquote { margin: 0 0 0.75rem; padding-left: 0.8rem; border-left: 2px solid rgba(150, 235, 255, 0.6); color: rgba(255, 255, 255, 0.75); }
+.krypton-md table { display: block; width: 100%; margin: 0 0 0.75rem; overflow-x: auto; border-collapse: collapse; font-size: 0.85rem; }
+.krypton-md th, .krypton-md td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); text-align: left; }
+.krypton-md th { color: #fff; font-weight: 500; }
+.krypton-md a { color: #9be9ff; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+.krypton-md hr { margin: 1rem 0; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.18); }
