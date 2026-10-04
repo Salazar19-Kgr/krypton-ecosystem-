@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AquaticBackground from "@/components/layout/AquaticBackground";
+import PerformanceGuard from "@/components/layout/PerformanceGuard";
 
 export const metadata: Metadata = {
   title: "Krypton Ecosystem",
@@ -14,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <AquaticBackground />
+        <PerformanceGuard />
+        {children}
+      </body>
     </html>
   );
 }
