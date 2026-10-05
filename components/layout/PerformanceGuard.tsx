@@ -2,14 +2,25 @@
 
 import { useEffect } from "react";
 
-/** Si el teléfono va lento, activa el modo ligero (menos efectos) solo. */
+/** Pausa las animaciones al hacer scroll y activa un modo ligero si el teléfono va lento. */
 export default function PerformanceGuard() {
   useEffect(() => {
     const root = document.documentElement;
 
+    let scrollTimer: ReturnType<typeof setTimeout> | undefined;
+    const onScroll = () => {
+      root.classList.add("k-scrolling");
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => root.classList.remove("k-scrolling"), 180);
+    };
+    document.addEventListener("scroll", onScroll, {
+      capture: true,
+      passive: true,
+    });
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       root.classList.add("k-lite");
-      return;
+      return () => document.removeEventListener("scroll", onScroll, true);
     }
 
     let frame = 0;
@@ -33,7 +44,9 @@ export default function PerformanceGuard() {
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(scrollTimer);
       cancelAnimationFrame(frame);
+      document.removeEventListener("scroll", onScroll, true);
     };
   }, []);
 

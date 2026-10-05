@@ -148,6 +148,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         error: "Krypton no pudo responder en este momento. Intenta de nuevo.",
+        detail: error instanceof Error ? error.message.slice(0, 300) : undefined,
       },
       { status: 502 }
     );

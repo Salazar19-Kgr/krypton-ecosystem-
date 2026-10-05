@@ -479,3 +479,36 @@ main [class*="text-white/6"] { color: rgba(240, 250, 255, 0.88); }
 .krypton-msg-tag { display: inline-block; margin-bottom: 0.4rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: rgba(255, 255, 255, 0.18); font-size: 0.7rem; }
 .krypton-suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 1.4rem; }
 .krypton-suggestions .k-glass-button { padding: 0.55rem 1rem; font-size: 0.78rem; }
+
+/* =========================================================
+   RESTAURAR vidrio líquido y animaciones (se mantiene la legibilidad)
+   ========================================================= */
+
+.kb-photo { animation: kb-drift 38s ease-in-out infinite alternate; }
+.kb-sheen { animation: kb-sheen 22s ease-in-out infinite alternate; }
+
+.k-glass-panel,
+.k-glass-card {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(120, 225, 255, 0.075) 100%);
+}
+.k-glass-button {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.1) 55%, rgba(140, 230, 255, 0.14));
+  backdrop-filter: url(#k-lens) blur(10px) saturate(155%) brightness(1.1);
+}
+.krypton-brand-capsule { backdrop-filter: url(#k-lens) blur(10px) saturate(155%) brightness(1.1); }
+
+.krypton-msg {
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+}
+.krypton-msg-user { background: linear-gradient(150deg, rgba(190, 245, 255, 0.42), rgba(90, 200, 235, 0.26)); }
+.krypton-msg-bot { background: linear-gradient(150deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06)); }
+
+html.k-scrolling .kb-photo,
+html.k-scrolling .kb-sheen,
+html.k-scrolling .kb-bubble,
+html.k-scrolling .kb-glint,
+html.k-scrolling .k-glass::after,
+html.k-scrolling .k-glass-panel::after,
+html.k-scrolling .k-glass-card::after,
+html.k-scrolling .k-glass-button::after { animation-play-state: paused; }
