@@ -1,18 +1,28 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { runKrypton } from "@/lib/krypton/brain";
+import { analyzeImages, type ImagePart } from "@/lib/krypton/vision";
 import type { ChatMsg } from "@/lib/krypton/llm";
 
 const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 20;
+const MAX_IMAGES = 4;
+const MAX_IMAGE_B64 = 2_500_000;
 
-type ChatRequestBody = {
+type Body = {
   message?: string;
-  history?: {
-    role: "user" | "model";
-    content: string;
-  }[];
+  conversationId?: string | null;
+  history?: { role: "user" | "model"; content: string }[];
+  images?: ImagePart[];
 };
+
+type Row = { role: string; content: string };
+
+const toChat = (rows: Row[]): ChatMsg[] =>
+  rows.map((m) => ({
+    role: m.role === "model" ? "assistant" : "user",
+    content: String(m.content).slice(0, MAX_MESSAGE),
+  }));
 
 export async function POST(request: Request) {
   try {
@@ -28,16 +38,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = (await request.json()) as ChatRequestBody;
-    const message = body.message?.trim();
+    const body = (await request.json()) as Body;
+    const message = (body.message ?? "").trim();
+    const images = (Array.isArray(body.images) ? body.images : [])
+      .filter(
+        (i) =>
+          typeof i?.mimeType === "string" &&
+          i.mimeType.startsWith("image/") &&
+          typeof i?.data === "string" &&
+          i.data.length < MAX_IMAGE_B64
+      )
+      .slice(0, MAX_IMAGES);
 
-    if (!message) {
+    if (!message && images.length === 0) {
       return NextResponse.json(
-        { ok: false, error: "El mensaje es obligatorio." },
+        { ok: false, error: "Escribe un mensaje o adjunta una imagen." },
         { status: 400 }
       );
     }
-
     if (message.length > MAX_MESSAGE) {
       return NextResponse.json(
         { ok: false, error: "El mensaje es demasiado largo." },
@@ -45,24 +63,84 @@ export async function POST(request: Request) {
       );
     }
 
-    const history: ChatMsg[] = (Array.isArray(body.history) ? body.history : [])
-      .filter(
-        (item) =>
-          (item?.role === "user" || item?.role === "model") &&
-          typeof item?.content === "string"
-      )
-      .slice(-MAX_HISTORY)
-      .map((item) => ({
-        role: item.role === "model" ? "assistant" : "user",
-        content: item.content.slice(0, MAX_MESSAGE),
-      }));
+    let conversationId = body.conversationId ?? null;
 
-    const result = await runKrypton(message, history);
+    // Historial: de la base de datos; si no está disponible, el que envía el chat
+    let history: ChatMsg[] = [];
+    if (conversationId) {
+      try {
+        const { data, error } = await supabase
+          .from("messages")
+          .select("role,content")
+          .eq("conversation_id", conversationId)
+          .order("created_at", { ascending: false })
+          .limit(MAX_HISTORY);
+        if (error) throw error;
+        history = toChat(((data ?? []) as Row[]).reverse());
+      } catch {
+        history = [];
+      }
+    }
+    if (!history.length && Array.isArray(body.history)) {
+      history = toChat(
+        body.history
+          .filter((m) => (m?.role === "user" || m?.role === "model") && typeof m?.content === "string")
+          .slice(-MAX_HISTORY)
+      );
+    }
+
+    const result = images.length
+      ? await analyzeImages(message, history, images)
+      : await runKrypton(message, history);
+
+    // Guardar (si falla, el usuario igual recibe su respuesta)
+    let title: string | null = null;
+    try {
+      if (!conversationId) {
+        title = (message || "Análisis de imagen").slice(0, 60);
+        const { data, error } = await supabase
+          .from("conversations")
+          .insert({ user_id: user.id, title })
+          .select("id")
+          .single();
+        if (error) throw error;
+        conversationId = (data as { id: string }).id;
+      }
+
+      const now = Date.now();
+      const { error } = await supabase.from("messages").insert([
+        {
+          conversation_id: conversationId,
+          user_id: user.id,
+          role: "user",
+          content: message || "[Imagen adjunta]",
+          has_image: images.length > 0,
+          created_at: new Date(now).toISOString(),
+        },
+        {
+          conversation_id: conversationId,
+          user_id: user.id,
+          role: "model",
+          content: result.text,
+          created_at: new Date(now + 1).toISOString(),
+        },
+      ]);
+      if (error) throw error;
+
+      await supabase
+        .from("conversations")
+        .update({ updated_at: new Date(now + 2).toISOString() })
+        .eq("id", conversationId);
+    } catch (e) {
+      console.error("No se pudo guardar la conversación:", e);
+    }
 
     return NextResponse.json({
       ok: true,
       text: result.text,
       provider: result.provider,
+      conversationId,
+      title,
     });
   } catch (error) {
     console.error("Krypton Core error:", error);
