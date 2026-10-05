@@ -64,12 +64,12 @@ export default function MemoryPage() {
               key={item.id}
               className="k-glass-card flex items-center justify-between gap-3 rounded-3xl p-4"
             >
-              <Link href={`/chat?c=${item.id}`} className="min-w-0 flex-1">
+              <a href={`/chat?c=${item.id}`} className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{item.title}</p>
                 <p className="mt-1 text-xs text-white/60">
                   {new Date(item.updated_at).toLocaleString("es")}
                 </p>
-              </Link>
+              </a>
               <button
                 type="button"
                 onClick={() => remove(item.id)}

@@ -191,7 +191,7 @@ export default function ChatPage() {
           window.history.replaceState(null, "", `/chat?c=${data.conversationId}`);
         }
       } else {
-        push("model", data.error ?? "No pude responder.", { error: true });
+        push("model", (data.error ?? "No pude responder.") + (data.detail ? "\n\n" + data.detail : ""), { error: true });
       }
     } catch {
       push("model", "No hay conexión con Krypton. Intenta de nuevo.", {
@@ -240,20 +240,6 @@ export default function ChatPage() {
           {messages.length === 0 && !loading && (
             <div className="flex h-full flex-col items-center justify-center px-2 text-center">
               <h2 className="text-2xl font-light">¿En qué trabajamos hoy?</h2>
-              <div className="krypton-suggestions">
-                {SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    className="k-glass-button"
-                    onClick={() =>
-                      setPrefill({ text: suggestion, n: Date.now() })
-                    }
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
             </div>
           )}
 
