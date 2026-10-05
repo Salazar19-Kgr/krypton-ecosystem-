@@ -414,3 +414,68 @@ html.k-lite .krypton-brand-capsule {
   .kb-photo, .kb-sheen, .kb-glint, .kb-bubble, .krypton-chat-orb > div,
   .k-glass::after, .k-glass-panel::after, .k-glass-card::after, .k-glass-button::after { animation: none; }
 }
+
+/* =========================================================
+   AJUSTES: fluidez, legibilidad y chat compacto
+   ========================================================= */
+
+.kb-photo { animation: none; transform: scale(1.04); }
+.kb-sheen { animation: none; }
+.krypton-chat-scroll {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  contain: layout paint;
+}
+.krypton-msg {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: k-msg 0.35s var(--k-ease) both;
+}
+.krypton-msg-user { background: linear-gradient(150deg, rgba(70, 200, 240, 0.66), rgba(20, 120, 190, 0.58)); }
+.krypton-msg-bot { background: linear-gradient(150deg, rgba(8, 36, 66, 0.66), rgba(8, 36, 66, 0.5)); }
+
+main { text-shadow: 0 1px 2px rgba(0, 18, 40, 0.55), 0 0 14px rgba(0, 25, 55, 0.35); }
+.krypton-title { text-shadow: none; }
+.k-glass-panel,
+.k-glass-card {
+  background:
+    linear-gradient(rgba(2, 20, 42, 0.2), rgba(2, 20, 42, 0.3)),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(120, 225, 255, 0.075) 100%);
+}
+.krypton-eyebrow { color: rgba(205, 245, 255, 0.95); }
+main [class*="text-white/2"],
+main [class*="text-white/3"],
+main [class*="text-white/4"] { color: rgba(235, 248, 255, 0.76); }
+main [class*="text-white/5"],
+main [class*="text-white/6"] { color: rgba(240, 250, 255, 0.88); }
+.krypton-md, .krypton-msg { text-shadow: 0 1px 2px rgba(0, 15, 35, 0.5); }
+
+.krypton-composer { border-radius: 28px; padding: 6px; }
+.krypton-composer::after { animation: none; }
+.krypton-composer-row { display: flex; align-items: flex-end; gap: 6px; }
+.krypton-composer textarea {
+  flex: 1;
+  min-height: 40px;
+  max-height: 140px;
+  padding: 10px 6px;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  line-height: 20px;
+}
+.krypton-composer textarea::placeholder { color: rgba(235, 248, 255, 0.62); }
+.krypton-icon-btn { display: grid; place-items: center; flex: none; width: 40px; height: 40px; padding: 0; }
+.krypton-icon-btn svg { width: 18px; height: 18px; }
+.krypton-send:disabled { opacity: 0.45; }
+.krypton-attachments { display: flex; gap: 8px; padding: 6px 6px 2px; overflow-x: auto; }
+.krypton-attachment { position: relative; flex: none; width: 64px; height: 64px; overflow: hidden; border-radius: 14px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35); }
+.krypton-attachment img { width: 100%; height: 100%; object-fit: cover; }
+.krypton-attachment button { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 15, 30, 0.72); color: #fff; font-size: 14px; line-height: 1; }
+.krypton-msg-imgs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem; }
+.krypton-msg-imgs img { max-width: 100%; max-height: 220px; border-radius: 14px; }
+.krypton-msg-tag { display: inline-block; margin-bottom: 0.4rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: rgba(255, 255, 255, 0.18); font-size: 0.7rem; }
+.krypton-suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 1.4rem; }
+.krypton-suggestions .k-glass-button { padding: 0.55rem 1rem; font-size: 0.78rem; }

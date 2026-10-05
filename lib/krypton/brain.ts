@@ -68,7 +68,7 @@ export function recognize(message: string): Plan {
   };
 }
 
-const BASE_SYSTEM = `Eres Krypton, el asistente central de Krypton Ecosystem.
+export const BASE_SYSTEM = `Eres Krypton, el asistente central de Krypton Ecosystem.
 
 Estilo de respuesta:
 - Responde en el idioma del usuario, con un tono profesional, claro y cercano.

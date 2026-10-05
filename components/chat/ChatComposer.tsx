@@ -1,109 +1,147 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-type ChatComposerProps = {
-  value: string;
-  onChange: (value: string) => void;
-  onSend: () => void;
+export type Attachment = {
+  id: string;
+  dataUrl: string;
+  mimeType: string;
+  data: string;
+};
+
+type Props = {
+  attachments: Attachment[];
+  disabled?: boolean;
+  prefill?: { text: string; n: number } | null;
+  onSend: (text: string) => void;
+  onAddFiles: (files: FileList | null) => void;
+  onRemove: (id: string) => void;
 };
 
 export default function ChatComposer({
-  value,
-  onChange,
+  attachments,
+  disabled,
+  prefill,
   onSend,
-}: ChatComposerProps) {
-  const [open, setOpen] = useState(false);
+  onAddFiles,
+  onRemove,
+}: Props) {
+  const [text, setText] = useState("");
+  const area = useRef<HTMLTextAreaElement>(null);
+  const picker = useRef<HTMLInputElement>(null);
 
-  const imageInput = useRef<HTMLInputElement>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (prefill) {
+      setText(prefill.text);
+      area.current?.focus();
+    }
+  }, [prefill]);
+
+  useEffect(() => {
+    const el = area.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
+  }, [text]);
+
+  const canSend =
+    !disabled && (text.trim().length > 0 || attachments.length > 0);
+
+  function submit() {
+    if (!canSend) return;
+    onSend(text.trim());
+    setText("");
+  }
+
+  function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      window.matchMedia("(pointer: fine)").matches
+    ) {
+      event.preventDefault();
+      submit();
+    }
+  }
 
   return (
-    <div className="k-glass-panel rounded-[1.8rem] p-3">
-
-      <input
-        ref={imageInput}
-        type="file"
-        accept="image/*"
-        className="hidden"
-      />
-
-      <input
-        ref={fileInput}
-        type="file"
-        className="hidden"
-      />
-
-      <textarea
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            onSend();
-          }
-        }}
-        rows={2}
-        placeholder="Escribe lo que necesites..."
-        className="w-full resize-none bg-transparent px-3 py-2 text-sm leading-6 text-white outline-none placeholder:text-white/35"
-      />
-
-      <div className="flex items-center justify-between px-1 pt-1">
-
-        <div className="relative">
-
-          <button
-            type="button"
-            onClick={() => setOpen((current) => !current)}
-            className="k-glass-button flex h-10 w-10 items-center justify-center rounded-full text-xl"
-            aria-label="Agregar imagen o archivo"
-            aria-expanded={open}
-          >
-            +
-          </button>
-
-          {open && (
-            <div className="k-glass-panel krypton-chat-menu absolute bottom-12 left-0 z-50 w-52 rounded-2xl p-2">
-
+    <div className="k-glass-panel krypton-composer">
+      {attachments.length > 0 && (
+        <div className="krypton-attachments">
+          {attachments.map((item) => (
+            <div key={item.id} className="krypton-attachment">
+              <img src={item.dataUrl} alt="Imagen adjunta" />
               <button
                 type="button"
-                onClick={() => {
-                  setOpen(false);
-                  imageInput.current?.click();
-                }}
-                className="w-full rounded-xl px-4 py-3 text-left text-sm transition hover:bg-white/10"
+                onClick={() => onRemove(item.id)}
+                aria-label="Quitar imagen"
               >
-                Imagen
+                ×
               </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  fileInput.current?.click();
-                }}
-                className="w-full rounded-xl px-4 py-3 text-left text-sm transition hover:bg-white/10"
-              >
-                Archivo
-              </button>
-
             </div>
-          )}
-
+          ))}
         </div>
+      )}
+
+      <div className="krypton-composer-row">
+        <button
+          type="button"
+          className="k-glass-button krypton-icon-btn"
+          onClick={() => picker.current?.click()}
+          disabled={attachments.length >= 4}
+          aria-label="Adjuntar imagen"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+
+        <input
+          ref={picker}
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          onChange={(event) => {
+            onAddFiles(event.target.files);
+            event.target.value = "";
+          }}
+        />
+
+        <textarea
+          ref={area}
+          value={text}
+          rows={1}
+          placeholder="Escribe un mensaje…"
+          onChange={(event) => setText(event.target.value)}
+          onKeyDown={onKeyDown}
+        />
 
         <button
           type="button"
-          onClick={onSend}
-          disabled={!value.trim()}
-          className="k-glass-button flex h-10 w-10 items-center justify-center rounded-full disabled:opacity-30"
-          aria-label="Enviar mensaje"
+          className="k-glass-button krypton-icon-btn krypton-send"
+          onClick={submit}
+          disabled={!canSend}
+          aria-label="Enviar"
         >
-          ➤
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
         </button>
-
       </div>
-
     </div>
   );
 }
