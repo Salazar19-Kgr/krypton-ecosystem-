@@ -25,6 +25,21 @@ const SUGGESTIONS = [
 const MAX_SIDE = 1280;
 const MAX_FILES = 4;
 
+async function fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
+  let last: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.status !== 502 && res.status !== 503) return res;
+      last = res;
+    } catch (e) {
+      if (attempt === 2) throw e;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500 * (attempt + 1)));
+  }
+  return last as Response;
+}
+
 async function prepareImage(file: File): Promise<Attachment> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
