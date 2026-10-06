@@ -130,6 +130,7 @@ export async function POST(request: Request) {
           user_id: user.id,
           role: "model",
           content: result.text,
+          has_image: false,
           created_at: new Date(now + 1).toISOString(),
         },
       ];
