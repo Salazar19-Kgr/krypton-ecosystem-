@@ -512,3 +512,6 @@ html.k-scrolling .k-glass::after,
 html.k-scrolling .k-glass-panel::after,
 html.k-scrolling .k-glass-card::after,
 html.k-scrolling .k-glass-button::after { animation-play-state: paused; }
+
+/* Imágenes generadas dentro de las respuestas */
+.krypton-md img { display: block; max-width: 100%; height: auto; margin: 0.25rem 0 0.75rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 30, 60, 0.35); }
