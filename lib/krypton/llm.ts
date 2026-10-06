@@ -7,41 +7,126 @@ export type LLMOptions = {
 
 export type LLMResult = { text: string; provider: string };
 
+export type GeminiContent = { role: string; parts: Record<string, unknown>[] };
+
 const TIMEOUT_MS = 20000;
+export const UA = { "User-Agent": "KryptonEcosystem/1.0" };
 
-async function callGemini(opts: LLMOptions): Promise<string> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("sin clave");
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const split = (value: string | undefined, fallback: string[]) => {
+  const items = (value ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return items.length ? items : fallback;
+};
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({
-        ...(opts.system
-          ? { systemInstruction: { parts: [{ text: opts.system }] } }
-          : {}),
-        contents: opts.messages.map((m) => ({
-          role: m.role === "assistant" ? "model" : "user",
-          parts: [{ text: m.content }],
-        })),
-      }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    }
-  );
+/** Modelos de Gemini en orden: calidad primero; si uno se queda sin cuota o está saturado, pasa al siguiente. */
+const geminiModels = () =>
+  split(process.env.GEMINI_MODELS, [
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
+  ]);
 
-  if (!res.ok) {
-    throw new Error(`${res.status} ${(await res.text()).slice(0, 160)}`);
+class HttpError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(`${status} ${message}`);
+    this.status = status;
   }
+}
+
+// Modelos que fallaron hace poco se saltan un rato (evita esperar errores repetidos)
+const cooldown = new Map<string, number>();
+
+function markFailed(model: string, status: number) {
+  const minutes = status === 429 ? 10 : status === 404 ? 60 : 0.5;
+  cooldown.set(model, Date.now() + minutes * 60_000);
+}
+
+async function askModel(
+  key: string,
+  model: string,
+  system: string | undefined,
+  contents: GeminiContent[],
+  timeoutMs: number
+): Promise<string> {
+  const base = {
+    ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+    contents,
+  };
+
+  const send = (extra: object) =>
+    fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": key, ...UA },
+        body: JSON.stringify({ ...base, ...extra }),
+        signal: AbortSignal.timeout(timeoutMs),
+      }
+    );
+
+  // Razonamiento ligero = más rápido; si el modelo no lo acepta, se reintenta sin eso
+  let res = await send({
+    generationConfig: {
+      maxOutputTokens: 8192,
+      thinkingConfig: { thinkingLevel: "low" },
+    },
+  });
+  if (res.status === 400) res = await send({});
+
+  if (!res.ok) throw new HttpError(res.status, (await res.text()).slice(0, 140));
 
   const data = await res.json();
-  const parts: { text?: string }[] =
-    data?.candidates?.[0]?.content?.parts ?? [];
+  const parts: { text?: string }[] = data?.candidates?.[0]?.content?.parts ?? [];
   const text = parts.map((p) => p.text ?? "").join("").trim();
-  if (!text) throw new Error("respuesta vacía");
+  if (!text) {
+    const why = data?.candidates?.[0]?.finishReason ?? data?.promptFeedback?.blockReason ?? "";
+    throw new Error(`respuesta vacía ${why}`.trim());
+  }
   return text;
+}
+
+export async function geminiChain(
+  system: string | undefined,
+  contents: GeminiContent[],
+  timeoutMs = TIMEOUT_MS,
+  budgetMs = 45000
+): Promise<string> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("sin clave");
+
+  const all = geminiModels();
+  const ready = all.filter((m) => (cooldown.get(m) ?? 0) <= Date.now());
+  const order = ready.length ? ready : all;
+  const started = Date.now();
+  const errors: string[] = [];
+
+  for (const model of order) {
+    if (errors.length && Date.now() - started > budgetMs) break;
+    try {
+      return await askModel(key, model, system, contents, timeoutMs);
+    } catch (e) {
+      markFailed(model, e instanceof HttpError ? e.status : 0);
+      errors.push(`${model}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  throw new Error(errors.join(" | "));
+}
+
+async function callGemini(opts: LLMOptions): Promise<string> {
+  return geminiChain(
+    opts.system,
+    opts.messages.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    })),
+    15000,
+    40000
+  );
 }
 
 async function callOpenAICompat(
@@ -56,6 +141,7 @@ async function callOpenAICompat(
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${key}`,
+      ...UA,
       ...extraHeaders,
     },
     body: JSON.stringify({
@@ -69,13 +155,36 @@ async function callOpenAICompat(
   });
 
   if (!res.ok) {
-    throw new Error(`${res.status} ${(await res.text()).slice(0, 160)}`);
+    throw new Error(`${res.status} ${(await res.text()).slice(0, 140)}`);
   }
 
   const data = await res.json();
   const text = String(data?.choices?.[0]?.message?.content ?? "").trim();
   if (!text) throw new Error("respuesta vacía");
   return text;
+}
+
+async function callGroq(opts: LLMOptions): Promise<string> {
+  const key = process.env.GROQ_API_KEY!;
+  const models = split(process.env.GROQ_MODELS, [
+    "openai/gpt-oss-120b",
+    "llama-3.3-70b-versatile",
+  ]);
+  const errors: string[] = [];
+
+  for (const model of models) {
+    try {
+      return await callOpenAICompat(
+        "https://api.groq.com/openai/v1/chat/completions",
+        key,
+        model,
+        opts
+      );
+    } catch (e) {
+      errors.push(`${model}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+  throw new Error(errors.join(" | "));
 }
 
 type Provider = {
@@ -93,13 +202,7 @@ const providers: Provider[] = [
   {
     name: "groq",
     configured: () => Boolean(process.env.GROQ_API_KEY),
-    call: (opts) =>
-      callOpenAICompat(
-        "https://api.groq.com/openai/v1/chat/completions",
-        process.env.GROQ_API_KEY!,
-        process.env.GROQ_MODEL || "openai/gpt-oss-120b",
-        opts
-      ),
+    call: callGroq,
   },
   {
     name: "openrouter",
@@ -108,14 +211,14 @@ const providers: Provider[] = [
       callOpenAICompat(
         "https://openrouter.ai/api/v1/chat/completions",
         process.env.OPENROUTER_API_KEY!,
-        process.env.OPENROUTER_MODEL || "openrouter/auto",
+        process.env.OPENROUTER_MODEL || "openrouter/free",
         opts,
         { "X-OpenRouter-Title": "Krypton Ecosystem" }
       ),
   },
 ];
 
-/** Prueba Gemini primero; si falla, Groq; si falla, OpenRouter. */
+/** Gemini (varios modelos) → Groq → OpenRouter gratuito. */
 export async function generate(opts: LLMOptions): Promise<LLMResult> {
   const errors: string[] = [];
 
@@ -152,7 +255,7 @@ export async function testProviders(): Promise<Record<string, unknown>> {
       } catch (e) {
         out[provider.name] = {
           ok: false,
-          error: (e instanceof Error ? e.message : String(e)).slice(0, 200),
+          error: (e instanceof Error ? e.message : String(e)).slice(0, 300),
         };
       }
     })

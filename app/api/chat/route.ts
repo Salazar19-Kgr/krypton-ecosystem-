@@ -24,6 +24,9 @@ const toChat = (rows: Row[]): ChatMsg[] =>
     content: String(m.content).slice(0, MAX_MESSAGE),
   }));
 
+const reason = (e: unknown) =>
+  (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e)).slice(0, 200);
+
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
@@ -93,8 +96,9 @@ export async function POST(request: Request) {
       ? await analyzeImages(message, history, images)
       : await runKrypton(message, history);
 
-    // Guardar (si falla, el usuario igual recibe su respuesta)
+    // Guardar en el historial (si falla, el usuario igual recibe su respuesta)
     let title: string | null = null;
+    const saveErrors: string[] = [];
     try {
       if (!conversationId) {
         title = (message || "Análisis de imagen").slice(0, 60);
@@ -106,9 +110,13 @@ export async function POST(request: Request) {
         if (error) throw error;
         conversationId = (data as { id: string }).id;
       }
+    } catch (e) {
+      saveErrors.push(`conversación: ${reason(e)}`);
+    }
 
+    if (conversationId) {
       const now = Date.now();
-      const { error } = await supabase.from("messages").insert([
+      const rows = [
         {
           conversation_id: conversationId,
           user_id: user.id,
@@ -124,15 +132,18 @@ export async function POST(request: Request) {
           content: result.text,
           created_at: new Date(now + 1).toISOString(),
         },
-      ]);
-      if (error) throw error;
+      ];
 
-      await supabase
+      for (const row of rows) {
+        const { error } = await supabase.from("messages").insert(row);
+        if (error) saveErrors.push(`mensaje: ${reason(error)}`);
+      }
+
+      const { error } = await supabase
         .from("conversations")
         .update({ updated_at: new Date(now + 2).toISOString() })
         .eq("id", conversationId);
-    } catch (e) {
-      console.error("No se pudo guardar la conversación:", e);
+      if (error) saveErrors.push(`actualizar: ${reason(error)}`);
     }
 
     return NextResponse.json({
@@ -141,14 +152,15 @@ export async function POST(request: Request) {
       provider: result.provider,
       conversationId,
       title,
+      saved: saveErrors.length === 0,
+      saveError: saveErrors[0],
     });
   } catch (error) {
     console.error("Krypton Core error:", error);
     return NextResponse.json(
       {
         ok: false,
-        error: "Krypton no pudo responder en este momento. Intenta de nuevo.",
-        detail: error instanceof Error ? error.message.slice(0, 300) : undefined,
+        error: "Krypton está con mucha demanda en este momento. Intenta de nuevo en unos segundos.",
       },
       { status: 502 }
     );

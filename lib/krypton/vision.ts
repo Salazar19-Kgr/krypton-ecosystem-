@@ -1,5 +1,5 @@
 import { BASE_SYSTEM } from "./brain";
-import type { ChatMsg } from "./llm";
+import { geminiChain, UA, type ChatMsg } from "./llm";
 
 export type ImagePart = { mimeType: string; data: string };
 
@@ -8,67 +8,6 @@ const VISION_NOTE = `El usuario adjuntó una o más imágenes. Analízalas con d
 Si es un equipo de refrigeración, aire acondicionado o un componente eléctrico (compresor, motor, capacitor, placa o etiqueta de datos): transcribe con exactitud los datos legibles de la etiqueta (marca, modelo, voltaje, fases, frecuencia, refrigerante, corrientes como RLA o LRA, potencia, capacidad), explica qué significa cada uno y, solo con esos datos, calcula o estima la potencia y el consumo (por ejemplo, potencia aparente ≈ voltaje × corriente). Si un dato no aparece o no se lee, dilo y señala cualquier estimación como estimación. Después sugiere pasos de diagnóstico o revisión.
 
 Si la imagen contiene un problema de matemáticas o ciencias, resuélvelo paso a paso.`;
-
-const TIMEOUT_MS = 55000;
-
-async function askGemini(
-  key: string,
-  system: string,
-  history: ChatMsg[],
-  images: ImagePart[],
-  prompt: string
-): Promise<string> {
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-  const base = {
-    systemInstruction: { parts: [{ text: system }] },
-    contents: [
-      ...history.map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      })),
-      {
-        role: "user",
-        parts: [
-          ...images.map((i) => ({
-            inlineData: { mimeType: i.mimeType, data: i.data },
-          })),
-          { text: prompt },
-        ],
-      },
-    ],
-  };
-
-  const send = (extra: object) =>
-    fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        body: JSON.stringify({ ...base, ...extra }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      }
-    );
-
-  // Razonamiento ligero = respuestas mucho más rápidas; si el modelo no lo acepta, se reintenta sin eso
-  let res = await send({
-    generationConfig: {
-      maxOutputTokens: 8192,
-      thinkingConfig: { thinkingLevel: "low" },
-    },
-  });
-  if (res.status === 400) res = await send({});
-
-  if (!res.ok) throw new Error(`${res.status} ${(await res.text()).slice(0, 160)}`);
-
-  const data = await res.json();
-  const parts: { text?: string }[] = data?.candidates?.[0]?.content?.parts ?? [];
-  const text = parts.map((p) => p.text ?? "").join("").trim();
-  if (!text) {
-    const why = data?.candidates?.[0]?.finishReason ?? data?.promptFeedback?.blockReason ?? "";
-    throw new Error(`respuesta vacía ${why}`.trim());
-  }
-  return text;
-}
 
 export async function analyzeImages(
   message: string,
@@ -79,13 +18,29 @@ export async function analyzeImages(
   const prompt = message || "Describe y analiza esta imagen.";
   const errors: string[] = [];
 
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (geminiKey) {
+  if (process.env.GEMINI_API_KEY) {
     try {
-      return {
-        text: await askGemini(geminiKey, system, history, images, prompt),
-        provider: "gemini",
-      };
+      const text = await geminiChain(
+        system,
+        [
+          ...history.map((m) => ({
+            role: m.role === "assistant" ? "model" : "user",
+            parts: [{ text: m.content }],
+          })),
+          {
+            role: "user",
+            parts: [
+              ...images.map((i) => ({
+                inlineData: { mimeType: i.mimeType, data: i.data },
+              })),
+              { text: prompt },
+            ],
+          },
+        ],
+        35000,
+        70000
+      );
+      return { text, provider: "gemini" };
     } catch (e) {
       errors.push(`gemini: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -100,9 +55,10 @@ export async function analyzeImages(
           "Content-Type": "application/json",
           Authorization: `Bearer ${routerKey}`,
           "X-OpenRouter-Title": "Krypton Ecosystem",
+          ...UA,
         },
         body: JSON.stringify({
-          model: process.env.OPENROUTER_VISION_MODEL || "openrouter/auto",
+          model: process.env.OPENROUTER_VISION_MODEL || "openrouter/free",
           messages: [
             { role: "system", content: system },
             ...history,
@@ -118,9 +74,9 @@ export async function analyzeImages(
             },
           ],
         }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(40000),
       });
-      if (!res.ok) throw new Error(`${res.status} ${(await res.text()).slice(0, 160)}`);
+      if (!res.ok) throw new Error(`${res.status} ${(await res.text()).slice(0, 140)}`);
       const data = await res.json();
       const text = String(data?.choices?.[0]?.message?.content ?? "").trim();
       if (!text) throw new Error("respuesta vacía");
