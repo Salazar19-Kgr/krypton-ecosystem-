@@ -51,7 +51,7 @@ const Bubble = memo(function Bubble({ item }: { item: Message }) {
       : "krypton-msg krypton-msg-bot";
 
   return (
-    <div className={isUser ? "flex justify-end" : "flex justify-start"}>
+    <div id={`msg-${item.id}`} className={isUser ? "flex justify-end scroll-mt-2" : "flex justify-start scroll-mt-2"}>
       <div className={className}>
         {item.images && item.images.length > 0 && (
           <div className="krypton-msg-imgs">
@@ -95,7 +95,8 @@ export default function ChatPage() {
       .select("id,role,content,has_image")
       .eq("conversation_id", id)
       .order("created_at", { ascending: true })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) setNotice("No pude cargar los mensajes: " + error.message);
         const rows = (data ?? []) as {
           id: string;
           role: "user" | "model";
@@ -114,10 +115,14 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({
-      block: "end",
-      behavior: messages.length > 2 ? "smooth" : "auto",
-    });
+    const last = messages[messages.length - 1];
+    if (last && last.role === "model") {
+      document
+        .getElementById(`msg-${last.id}`)
+        ?.scrollIntoView({ block: "start", behavior: "smooth" });
+    } else {
+      endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+    }
   }, [messages, loading]);
 
   function push(
@@ -163,7 +168,7 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetchWithRetry("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -186,12 +191,13 @@ export default function ChatPage() {
 
       if (data.ok) {
         push("model", data.text || "No recibí respuesta.");
+        if (data.saved === false) setNotice("No se pudo guardar esta conversación: " + (data.saveError ?? ""));
         if (data.conversationId && data.conversationId !== conversationId) {
           setConversationId(data.conversationId);
           window.history.replaceState(null, "", `/chat?c=${data.conversationId}`);
         }
       } else {
-        push("model", (data.error ?? "No pude responder.") + (data.detail ? "\n\n" + data.detail : ""), { error: true });
+        push("model", response.status >= 500 ? "Krypton está con mucha demanda en este momento. Intenta de nuevo en unos segundos." : (data.error ?? "No pude responder."), { error: true });
       }
     } catch {
       push("model", "No hay conexión con Krypton. Intenta de nuevo.", {
