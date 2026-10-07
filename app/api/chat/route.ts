@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { runKrypton } from "@/lib/krypton/brain";
 import { analyzeImages, type ImagePart } from "@/lib/krypton/vision";
-import { wantsImage, createImage } from "@/lib/krypton/imagegen";
+import { wantsImage, createImageLimited } from "@/lib/krypton/imagegen";
 import type { ChatMsg } from "@/lib/krypton/llm";
 
 const MAX_MESSAGE = 4000;
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     const result = images.length
       ? await analyzeImages(message, history, images)
       : wantsImage(message)
-        ? await createImage(message)
+        ? await createImageLimited(supabase, user.id, message)
         : await runKrypton(message, history);
 
     // Guardar en el historial (si falla, el usuario igual recibe su respuesta)
