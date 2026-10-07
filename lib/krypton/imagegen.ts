@@ -192,13 +192,18 @@ export async function createImage(
       image = await openrouterImage(prompt);
       provider = "openrouter";
     } catch {
-      image = null;
+      try {
+        image = await cloudflareImage(prompt);
+        provider = "cloudflare";
+      } catch {
+        image = null;
+      }
     }
   }
 
   if (!image) {
     return {
-      text: `En este momento no pude generar la imagen: los modelos de imagen de Gemini y OpenRouter requieren un plan con créditos o facturación activa. Mientras tanto, este es el prompt optimizado para tu idea, listo para usarlo en cualquier generador:\n\n> ${prompt}`,
+      text: `En este momento no pude generar la imagen: los generadores de imagen no están disponibles ahora (límite diario del plan gratuito o créditos agotados). Mientras tanto, este es el prompt optimizado para tu idea, listo para usarlo en cualquier generador:\n\n> ${prompt}`,
       provider: "sin-imagen",
     };
   }
@@ -219,4 +224,54 @@ export async function createImage(
 \n\n**Prompt usado:** ${prompt}`,
     provider,
   };
+}
+
+/** Generador gratuito de Cloudflare Workers AI (FLUX.1 schnell). */
+async function cloudflareImage(prompt: string): Promise<Img> {
+  const account = process.env.WORKERS_AI_ACCOUNT_ID;
+  const token = process.env.WORKERS_AI_TOKEN;
+  if (!account || !token) throw new Error("sin credenciales de Workers AI");
+  const model = process.env.WORKERS_AI_IMAGE_MODEL || "@cf/black-forest-labs/flux-1-schnell";
+
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${account}/ai/run/${model}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...UA },
+      body: JSON.stringify({ prompt: prompt.slice(0, 2000) }),
+      signal: AbortSignal.timeout(60000),
+    }
+  );
+  if (!res.ok) throw new Error(`Workers AI ${res.status} ${(await res.text()).slice(0, 120)}`);
+
+  const data = await res.json();
+  const image = data?.result?.image;
+  if (typeof image !== "string" || !image) throw new Error("sin imagen en la respuesta");
+  return { mime: "image/jpeg", data: image };
+}
+
+/** Límite diario de imágenes por persona (por defecto 5; se cambia con IMAGE_DAILY_LIMIT). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function createImageLimited(supabase: any, userId: string, message: string) {
+  const limit = Number(process.env.IMAGE_DAILY_LIMIT ?? 5);
+  try {
+    const start = new Date();
+    start.setUTCHours(0, 0, 0, 0);
+    const { count } = await supabase
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("role", "model")
+      .ilike("content", "%Imagen generada%")
+      .gte("created_at", start.toISOString());
+    if ((count ?? 0) >= limit) {
+      return {
+        text: `Llegaste al límite de ${limit} imágenes por día. El contador se reinicia a medianoche (hora UTC). Mientras tanto puedo seguir ayudándote con todo lo demás.`,
+        provider: "limite",
+      };
+    }
+  } catch {
+    // si no se puede contar, se permite generar
+  }
+  return createImage(message);
 }
