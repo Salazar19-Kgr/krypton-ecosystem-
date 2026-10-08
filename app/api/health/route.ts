@@ -5,11 +5,13 @@ import { triage, emergencyMessage } from "@/lib/krypton/health/triage";
 import { HEALTH_SYSTEM_PROMPT, HEALTH_VERIFIER_PROMPT } from "@/lib/krypton/health/prompts";
 
 const MAX_MESSAGE = 3000;
-const MAX_HISTORY = 12;
+const MAX_HISTORY = 14;
 const VERIFY = process.env.HEALTH_VERIFY !== "off";
+const NEEDS_CHECK =
+  /\b(mg|ml|dosis|tableta|pastilla|capsula|comprimido|jarabe|gotas|antibiotico|ibuprofeno|paracetamol|acetaminofen|aspirina|naproxeno|diclofenac|loratadina|medicamento)/;
 
-const FALLBACK =
-  "No puedo darte una respuesta lo bastante segura sobre esto con la información que tengo. Lo más prudente es consultarlo con un profesional de la salud, y si empeoras o aparecen señales de alarma, buscar atención de urgencia. Si quieres, cuéntame más detalles (cuándo empezó, intensidad, otros síntomas, medicamentos) y lo intentamos de nuevo.";
+const norm = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 type Body = { message?: string; history?: { role?: string; content?: string }[] };
 type Verdict = { safe: boolean; problems: string[] };
@@ -28,14 +30,15 @@ function parseVerdict(t: string): Verdict | null {
   }
 }
 
-async function verify(message: string, answer: string): Promise<Verdict | null> {
+async function verify(userContext: string, answer: string): Promise<Verdict | null> {
   try {
     const r = await generate({
       system: HEALTH_VERIFIER_PROMPT,
       messages: [
         {
           role: "user",
-          content: "MENSAJE DEL USUARIO:\n" + message + "\n\nRESPUESTA PROPUESTA:\n" + answer,
+          content:
+            "LO QUE EL USUARIO HA DICHO:\n" + userContext + "\n\nRESPUESTA PROPUESTA:\n" + answer,
         },
       ],
     });
@@ -77,7 +80,7 @@ export async function POST(request: Request) {
       }));
     while (history.length && history[0].role !== "user") history.shift();
 
-    // 1) Triage por reglas: si es posible emergencia, NO se consulta a la IA
+    // 1) Triage por reglas: posible emergencia => mensaje fijo, sin consultar a la IA
     const current = triage(message);
     if (current.level === 4) {
       return NextResponse.json({
@@ -88,57 +91,56 @@ export async function POST(request: Request) {
       });
     }
 
-    // 2) Triage con contexto reciente del usuario
-    const recentUser = history.filter((m) => m.role === "user").slice(-3).map((m) => m.content);
-    const ctx = triage([...recentUser, message].join("\n"));
+    // 2) Triage con el contexto reciente del usuario
+    const recentUser = history.filter((m) => m.role === "user").slice(-4).map((m) => m.content);
+    const userContext = [...recentUser, message].join("\n- ");
+    const ctx = triage(userContext);
     const level = ctx.level;
 
     let system = HEALTH_SYSTEM_PROMPT;
     if (level >= 2) {
       system +=
-        "\n\nTRIAGE (reglas de seguridad, no negociable): nivel " +
+        "\n\nTRIAGE (reglas de seguridad): nivel " +
         level +
         " de 4. Señales detectadas: " +
         ctx.reasons.join("; ") +
         ". " +
         (level >= 3
-          ? "Empieza tu respuesta indicando con claridad que conviene valoración médica pronto y por qué. No sugieras esperar ni automedicarte."
-          : "Menciona que conviene consultar a un profesional.");
+          ? "Indica con claridad al inicio que conviene valoración médica pronto y por qué, sin dramatismo."
+          : "Menciona que conviene consultar a un profesional si no mejora.");
     }
     const messages: ChatMsg[] = [...history, { role: "user", content: message }];
 
     // 3) Borrador
     let answer = (await generate({ system, messages })).text.trim();
 
-    // 4) Verificador de seguridad (un reintento; si sigue inseguro, respuesta prudente)
-    let verified: "ok" | "unavailable" | "off" = "off";
-    if (VERIFY) {
-      let v = await verify(message, answer);
+    // 4) Verificador solo cuando hay medicamentos o riesgo (más rápido y menos falsos bloqueos)
+    let verified: "ok" | "skipped" | "unavailable" = "skipped";
+    if (VERIFY && (level >= 2 || NEEDS_CHECK.test(norm(answer)))) {
+      let v = await verify(userContext, answer);
       if (v && !v.safe) {
         const retry = await generate({
           system:
             system +
-            "\n\nUna revisión de seguridad encontró estos problemas en tu borrador; corrígelos: " +
+            "\n\nUna revisión de seguridad marcó estos puntos en tu borrador; corrígelos manteniendo el mismo tono útil y sin disculparte: " +
             v.problems.join("; ") +
             ".",
           messages,
         });
         answer = retry.text.trim();
-        v = await verify(message, answer);
-        if (v && !v.safe) answer = FALLBACK;
+        v = await verify(userContext, answer);
+        if (v && !v.safe) {
+          answer += "\n\nConfirma estos detalles con un farmacéutico o un médico antes de tomar cualquier medicamento.";
+        }
       }
       verified = v ? "ok" : "unavailable";
     }
 
     let reply = answer;
-    if (level >= 3 && answer !== FALLBACK) {
+    if (level >= 3) {
       reply =
-        "⚠️ Por lo que describes, conviene que te valore un profesional de la salud pronto.\n\n" +
+        "**Importante:** por lo que describes, conviene que te valore un profesional de la salud pronto.\n\n" +
         reply;
-    }
-    if (verified === "unavailable") {
-      reply +=
-        "\n\n(La verificación de seguridad no estuvo disponible en este momento. Ante cualquier duda, consulta a un profesional.)";
     }
 
     return NextResponse.json({
