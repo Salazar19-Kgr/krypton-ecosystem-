@@ -533,3 +533,14 @@ body::before {
   background: url("/krypton-water.webp") center 40% / cover no-repeat;
   transform: translateZ(0);
 }
+
+/* === Krypton Health === */
+@keyframes kh-heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.08); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.05); }
+  70% { transform: scale(1); }
+}
+.kh-heartbeat { animation: kh-heartbeat 1.2s ease-in-out infinite; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) { .kh-heartbeat { animation: none; } }

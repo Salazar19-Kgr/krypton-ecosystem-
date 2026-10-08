@@ -1,6 +1,5 @@
 "use client";
 
-import HealthCard from "@/components/health/HealthCard";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 
@@ -76,7 +75,17 @@ export default function DashboardPage() {
             <p className="mt-5 text-xs text-white/70">Abrir →</p>
           </Link>
 
-          <HealthCard />
+          <div className="k-glass-card rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <p className="krypton-eyebrow">KRYPTON HEALTH</p>
+              <Soon />
+            </div>
+            <h3 className="mt-4 text-lg font-medium">Médico general</h3>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Usará el cerebro de Krypton Ecosystem como herramienta para sus
+              usuarios y pacientes.
+            </p>
+          </div>
 
           <div className="k-glass-card rounded-3xl p-6">
             <div className="flex items-center justify-between">
