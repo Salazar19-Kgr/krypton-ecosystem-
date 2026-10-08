@@ -1,0 +1,517 @@
+@import "tailwindcss";
+
+/* =========================================================
+   KRYPTON ECOSYSTEM — Sistema visual "Liquid Glass acuático"
+   ========================================================= */
+
+:root {
+  --k-text: #f4fbff;
+  --k-muted: rgba(235, 249, 255, 0.66);
+  --k-cyan: #8beaff;
+  --k-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+html, body { min-height: 100%; }
+
+body {
+  margin: 0;
+  background: #031a2b;
+  color: var(--k-text);
+  font-family: "Inter", "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button, a, input, textarea { font: inherit; }
+button { cursor: pointer; }
+::selection { background: rgba(74, 211, 255, 0.35); color: #fff; }
+
+.krypton-ocean { position: relative; isolation: isolate; }
+.krypton-liquid { overflow-x: clip; }
+
+/* ---------- FONDO DE AGUA (una sola vez, en el layout) ---------- */
+
+.kb {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #031a2b;
+}
+
+.kb-photo {
+  position: absolute;
+  inset: -3%;
+  background: url("/krypton-water.webp") center 40% / cover no-repeat;
+  transform: translate3d(0, 0, 0) scale(1.04);
+  animation: kb-drift 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.kb-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 70% at 50% 108%, rgba(1, 12, 28, 0.78), transparent 62%),
+    linear-gradient(180deg, rgba(2, 16, 34, 0.42) 0%, rgba(2, 16, 34, 0.08) 30%, rgba(2, 16, 34, 0.22) 100%);
+}
+
+.kb-sheen {
+  position: absolute;
+  inset: -20% -40%;
+  background:
+    radial-gradient(40% 22% at 30% 24%, rgba(190, 245, 255, 0.20), transparent 70%),
+    radial-gradient(34% 18% at 72% 56%, rgba(255, 226, 170, 0.13), transparent 70%);
+  animation: kb-sheen 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.kb-glint {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 2px, rgba(255, 236, 190, 0.85) 3px, transparent 9px);
+  opacity: 0;
+  animation: kb-twinkle 5.5s ease-in-out infinite;
+}
+
+.kb-bubble {
+  position: absolute;
+  bottom: -40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.14) 36%, rgba(150, 235, 255, 0.07) 62%, transparent 70%);
+  border: 1px solid rgba(225, 250, 255, 0.4);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.28);
+  opacity: 0;
+  animation: kb-rise linear infinite;
+  will-change: transform;
+}
+
+@keyframes kb-drift { to { transform: translate3d(-1.2%, -1.4%, 0) scale(1.09); } }
+@keyframes kb-sheen { to { transform: translate3d(9%, 4%, 0); } }
+@keyframes kb-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  45% { opacity: 1; transform: scale(1.15); }
+  60% { opacity: 0.45; transform: scale(0.85); }
+}
+@keyframes kb-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { transform: translate3d(16px, -55vh, 0); }
+  100% { transform: translate3d(-12px, -112vh, 0); opacity: 0; }
+}
+
+/* ---------- CRISTAL LÍQUIDO ---------- */
+
+.k-glass,
+.k-glass-panel,
+.k-glass-card,
+.k-glass-button {
+  isolation: isolate;
+  border: 0;
+  color: var(--k-text);
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(120, 225, 255, 0.075) 100%);
+  backdrop-filter: blur(18px) saturate(185%) brightness(1.08);
+  -webkit-backdrop-filter: blur(18px) saturate(185%) brightness(1.08);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    inset 0 -14px 28px rgba(0, 70, 120, 0.14),
+    inset 1px 0 0 rgba(255, 255, 255, 0.14),
+    0 22px 60px rgba(0, 30, 60, 0.32);
+  transition: transform 0.5s var(--k-ease), box-shadow 0.5s var(--k-ease);
+}
+
+.k-glass:not(.absolute):not(.fixed):not(.sticky),
+.k-glass-panel:not(.absolute):not(.fixed):not(.sticky),
+.k-glass-card:not(.absolute):not(.fixed):not(.sticky),
+.k-glass-button:not(.absolute):not(.fixed):not(.sticky) { position: relative; }
+
+/* borde de luz: más brillante arriba-izquierda y abajo-derecha */
+.k-glass::before,
+.k-glass-panel::before,
+.k-glass-card::before,
+.k-glass-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.12) 24%, rgba(140, 235, 255, 0.10) 62%, rgba(255, 255, 255, 0.55));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* brillo que recorre el vidrio */
+.k-glass::after,
+.k-glass-panel::after,
+.k-glass-card::after,
+.k-glass-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.24) 50%, transparent 60%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  animation: k-sweep 9s var(--k-ease) infinite;
+}
+.k-glass-card::after { animation-delay: 2.5s; }
+.k-glass-button::after { animation-duration: 6s; animation-delay: 1s; }
+
+@keyframes k-sweep {
+  0%, 62% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+.k-glass-panel { border-radius: 32px; }
+.k-glass-card { border-radius: 24px; }
+a.k-glass-card:hover, .k-glass-card:active { transform: translateY(-3px) scale(1.012); }
+
+.k-glass-panel > :not(.absolute):not(.fixed):not(input), .k-glass-card > :not(.absolute):not(.fixed) { position: relative; z-index: 3; }
+
+/* ---------- BOTONES, MARCA Y MENÚ ---------- */
+
+.k-glass-button {
+  border-radius: 999px;
+  cursor: pointer;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.34), rgba(120, 225, 255, 0.12) 55%, rgba(30, 150, 210, 0.22));
+  backdrop-filter: url(#k-lens) blur(10px) saturate(190%) brightness(1.1);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -8px 16px rgba(0, 90, 150, 0.22),
+    0 10px 28px rgba(0, 40, 80, 0.34);
+  transition: transform 0.35s var(--k-ease), box-shadow 0.35s var(--k-ease), filter 0.35s;
+}
+.k-glass-button:hover { filter: brightness(1.12); }
+.k-glass-button:active { transform: scale(0.95); }
+.k-glass-button:disabled { cursor: not-allowed; }
+
+.krypton-brand-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  backdrop-filter: url(#k-lens) blur(10px) saturate(190%) brightness(1.1);
+}
+
+.krypton-brand-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--k-cyan);
+  box-shadow: 0 0 0 3px rgba(139, 234, 255, 0.2), 0 0 14px rgba(139, 234, 255, 0.95);
+  animation: k-pulse 3s ease-in-out infinite;
+}
+@keyframes k-pulse { 50% { box-shadow: 0 0 0 6px rgba(139, 234, 255, 0.05), 0 0 22px rgba(139, 234, 255, 1); } }
+
+.krypton-menu-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  width: 2.9rem;
+  height: 2.9rem;
+}
+.krypton-menu-button span {
+  width: 1.05rem;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.krypton-navigation-menu {
+  position: absolute;
+  top: 3.6rem;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  min-width: 13rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem;
+  border-radius: 1.5rem;
+  animation: k-pop 0.45s var(--k-ease);
+  transform-origin: top right;
+}
+.krypton-navigation-menu a {
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.25s;
+}
+.krypton-navigation-menu a:hover { background: rgba(255, 255, 255, 0.14); }
+@keyframes k-pop { from { opacity: 0; transform: scale(0.88) translateY(-8px); } }
+
+.krypton-chat-menu { animation: k-pop 0.4s var(--k-ease); transform-origin: bottom left; }
+
+/* ---------- TEXTOS ---------- */
+
+.krypton-eyebrow {
+  margin: 0;
+  color: rgba(190, 240, 255, 0.78);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.krypton-title {
+  background: linear-gradient(180deg, #ffffff 20%, #bdf1ff 70%, #7fdcff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 6px 24px rgba(0, 60, 110, 0.45));
+}
+
+.krypton-empty { text-align: left; }
+
+/* ---------- CHAT ---------- */
+
+.krypton-chat-orb {
+  position: relative;
+  width: 7rem;
+  height: 7rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.krypton-chat-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  animation: k-ring 4s ease-out infinite;
+}
+.krypton-chat-orb > div {
+  width: 4.6rem;
+  height: 4.6rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95) 0 6%, rgba(255, 255, 255, 0.22) 22%, transparent 40%),
+    radial-gradient(circle at 60% 70%, rgba(130, 235, 255, 0.5), rgba(30, 140, 210, 0.25) 60%, rgba(10, 70, 130, 0.35));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), inset 0 -10px 22px rgba(0, 80, 140, 0.35), 0 16px 40px rgba(0, 40, 90, 0.45);
+  backdrop-filter: blur(6px);
+  animation: k-float 5s ease-in-out infinite;
+}
+@keyframes k-float { 50% { transform: translateY(-7px); } }
+@keyframes k-ring { 0% { transform: scale(0.65); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 0; } }
+
+.krypton-chat-scroll { scrollbar-width: none; }
+.krypton-chat-scroll::-webkit-scrollbar { display: none; }
+
+.krypton-msg {
+  position: relative;
+  max-width: 88%;
+  padding: 0.8rem 1.05rem;
+  border-radius: 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  animation: k-msg 0.5s var(--k-ease);
+}
+.krypton-msg-user {
+  color: #fff;
+  border-bottom-right-radius: 0.45rem;
+  background: linear-gradient(150deg, rgba(150, 240, 255, 0.5), rgba(40, 170, 220, 0.34));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 12px 30px rgba(0, 60, 110, 0.35);
+}
+.krypton-msg-bot {
+  color: rgba(247, 253, 255, 0.96);
+  border-bottom-left-radius: 0.45rem;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 12px 30px rgba(0, 30, 60, 0.3);
+}
+.krypton-msg-error {
+  color: #ffd6d6;
+  background: rgba(150, 30, 40, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 170, 170, 0.4);
+}
+@keyframes k-msg { from { opacity: 0; transform: translateY(10px) scale(0.97); } }
+
+.krypton-typing { display: flex; gap: 0.35rem; padding: 1rem 1.15rem; }
+.krypton-typing span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: rgba(225, 250, 255, 0.9);
+  animation: k-dot 1.2s ease-in-out infinite;
+}
+.krypton-typing span:nth-child(2) { animation-delay: 0.15s; }
+.krypton-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes k-dot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.45; } 40% { transform: translateY(-5px); opacity: 1; } }
+
+/* Respuestas en Markdown */
+.krypton-msg .krypton-md { white-space: normal; }
+.krypton-md > :first-child { margin-top: 0; }
+.krypton-md > :last-child { margin-bottom: 0; }
+.krypton-md p { margin: 0 0 0.75rem; }
+.krypton-md strong { color: #fff; font-weight: 600; }
+.krypton-md h1, .krypton-md h2, .krypton-md h3 { margin: 1.1rem 0 0.5rem; color: #fff; font-weight: 600; line-height: 1.3; }
+.krypton-md h1 { font-size: 1.15rem; }
+.krypton-md h2 { font-size: 1.05rem; }
+.krypton-md h3 { font-size: 0.97rem; }
+.krypton-md ul, .krypton-md ol { margin: 0 0 0.75rem; padding-left: 1.25rem; }
+.krypton-md ul { list-style: disc; }
+.krypton-md ol { list-style: decimal; }
+.krypton-md li { margin: 0.25rem 0; }
+.krypton-md li::marker { color: rgba(150, 235, 255, 0.95); }
+.krypton-md code { padding: 0.1rem 0.35rem; border-radius: 0.4rem; background: rgba(0, 20, 40, 0.38); font-size: 0.85em; }
+.krypton-md pre { overflow-x: auto; margin: 0 0 0.75rem; padding: 0.8rem 1rem; border-radius: 1rem; background: rgba(0, 15, 30, 0.5); }
+.krypton-md pre code { padding: 0; background: none; }
+.krypton-md blockquote { margin: 0 0 0.75rem; padding-left: 0.8rem; border-left: 2px solid rgba(150, 235, 255, 0.65); color: rgba(255, 255, 255, 0.78); }
+.krypton-md table { display: block; width: 100%; margin: 0 0 0.75rem; overflow-x: auto; border-collapse: collapse; font-size: 0.85rem; }
+.krypton-md th, .krypton-md td { padding: 0.45rem 0.6rem; border-bottom: 1px solid rgba(255, 255, 255, 0.18); text-align: left; }
+.krypton-md th { color: #fff; font-weight: 600; }
+.krypton-md a { color: #a6edff; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+.krypton-md hr { margin: 1rem 0; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+
+/* ---------- MODO LIGERO (se activa solo si el teléfono va lento) ---------- */
+
+html.k-lite .kb-photo,
+html.k-lite .kb-sheen,
+html.k-lite .kb-glint,
+html.k-lite .kb-bubble,
+html.k-lite .k-glass::after,
+html.k-lite .k-glass-panel::after,
+html.k-lite .k-glass-card::after,
+html.k-lite .k-glass-button::after { animation: none; }
+html.k-lite .kb-bubble, html.k-lite .kb-glint { display: none; }
+html.k-lite .k-glass,
+html.k-lite .k-glass-panel,
+html.k-lite .k-glass-card,
+html.k-lite .k-glass-button,
+html.k-lite .krypton-brand-capsule {
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-photo, .kb-sheen, .kb-glint, .kb-bubble, .krypton-chat-orb > div,
+  .k-glass::after, .k-glass-panel::after, .k-glass-card::after, .k-glass-button::after { animation: none; }
+}
+
+/* =========================================================
+   AJUSTES: fluidez, legibilidad y chat compacto
+   ========================================================= */
+
+.kb-photo { animation: none; transform: scale(1.04); }
+.kb-sheen { animation: none; }
+.krypton-chat-scroll {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  contain: layout paint;
+}
+.krypton-msg {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: k-msg 0.35s var(--k-ease) both;
+}
+.krypton-msg-user { background: linear-gradient(150deg, rgba(70, 200, 240, 0.66), rgba(20, 120, 190, 0.58)); }
+.krypton-msg-bot { background: linear-gradient(150deg, rgba(8, 36, 66, 0.66), rgba(8, 36, 66, 0.5)); }
+
+main { text-shadow: 0 1px 2px rgba(0, 18, 40, 0.55), 0 0 14px rgba(0, 25, 55, 0.35); }
+.krypton-title { text-shadow: none; }
+.k-glass-panel,
+.k-glass-card {
+  background:
+    linear-gradient(rgba(2, 20, 42, 0.2), rgba(2, 20, 42, 0.3)),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(120, 225, 255, 0.075) 100%);
+}
+.krypton-eyebrow { color: rgba(205, 245, 255, 0.95); }
+main [class*="text-white/2"],
+main [class*="text-white/3"],
+main [class*="text-white/4"] { color: rgba(235, 248, 255, 0.76); }
+main [class*="text-white/5"],
+main [class*="text-white/6"] { color: rgba(240, 250, 255, 0.88); }
+.krypton-md, .krypton-msg { text-shadow: 0 1px 2px rgba(0, 15, 35, 0.5); }
+
+.krypton-composer { border-radius: 28px; padding: 6px; }
+.krypton-composer::after { animation: none; }
+.krypton-composer-row { display: flex; align-items: flex-end; gap: 6px; }
+.krypton-composer textarea {
+  flex: 1;
+  min-height: 40px;
+  max-height: 140px;
+  padding: 10px 6px;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  line-height: 20px;
+}
+.krypton-composer textarea::placeholder { color: rgba(235, 248, 255, 0.62); }
+.krypton-icon-btn { display: grid; place-items: center; flex: none; width: 40px; height: 40px; padding: 0; }
+.krypton-icon-btn svg { width: 18px; height: 18px; }
+.krypton-send:disabled { opacity: 0.45; }
+.krypton-attachments { display: flex; gap: 8px; padding: 6px 6px 2px; overflow-x: auto; }
+.krypton-attachment { position: relative; flex: none; width: 64px; height: 64px; overflow: hidden; border-radius: 14px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35); }
+.krypton-attachment img { width: 100%; height: 100%; object-fit: cover; }
+.krypton-attachment button { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 15, 30, 0.72); color: #fff; font-size: 14px; line-height: 1; }
+.krypton-msg-imgs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.5rem; }
+.krypton-msg-imgs img { max-width: 100%; max-height: 220px; border-radius: 14px; }
+.krypton-msg-tag { display: inline-block; margin-bottom: 0.4rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: rgba(255, 255, 255, 0.18); font-size: 0.7rem; }
+.krypton-suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 1.4rem; }
+.krypton-suggestions .k-glass-button { padding: 0.55rem 1rem; font-size: 0.78rem; }
+
+/* =========================================================
+   RESTAURAR vidrio líquido y animaciones (se mantiene la legibilidad)
+   ========================================================= */
+
+.kb-photo { animation: kb-drift 38s ease-in-out infinite alternate; }
+.kb-sheen { animation: kb-sheen 22s ease-in-out infinite alternate; }
+
+.k-glass-panel,
+.k-glass-card {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(120, 225, 255, 0.075) 100%);
+}
+.k-glass-button {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.1) 55%, rgba(140, 230, 255, 0.14));
+  backdrop-filter: url(#k-lens) blur(10px) saturate(155%) brightness(1.1);
+}
+.krypton-brand-capsule { backdrop-filter: url(#k-lens) blur(10px) saturate(155%) brightness(1.1); }
+
+.krypton-msg {
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+}
+.krypton-msg-user { background: linear-gradient(150deg, rgba(190, 245, 255, 0.42), rgba(90, 200, 235, 0.26)); }
+.krypton-msg-bot { background: linear-gradient(150deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06)); }
+
+html.k-scrolling .kb-photo,
+html.k-scrolling .kb-sheen,
+html.k-scrolling .kb-bubble,
+html.k-scrolling .kb-glint,
+html.k-scrolling .k-glass::after,
+html.k-scrolling .k-glass-panel::after,
+html.k-scrolling .k-glass-card::after,
+html.k-scrolling .k-glass-button::after { animation-play-state: paused; }
+
+/* Imágenes generadas dentro de las respuestas */
+.krypton-md img { display: block; max-width: 100%; height: auto; margin: 0.25rem 0 0.75rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 30, 60, 0.35); }
