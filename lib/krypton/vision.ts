@@ -1,3 +1,4 @@
+import { openaiConfigured, openaiVision } from "./openai";
 import { BASE_SYSTEM } from "./brain";
 import { geminiChain, UA, type ChatMsg } from "./llm";
 
@@ -43,6 +44,14 @@ export async function analyzeImages(
       return { text, provider: "gemini" };
     } catch (e) {
       errors.push(`gemini: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  if (openaiConfigured()) {
+    try {
+      return { text: await openaiVision(system, history, images, prompt), provider: "openai" };
+    } catch (e) {
+      errors.push("openai: " + (e instanceof Error ? e.message : String(e)));
     }
   }
 
