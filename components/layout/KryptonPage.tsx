@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import AquaticBackground from "./AquaticBackground";
 
 type KryptonPageProps = {
   children: ReactNode;
@@ -12,7 +11,6 @@ export default function KryptonPage({
 }: KryptonPageProps) {
   return (
     <main className={`krypton-ocean krypton-liquid ${className}`}>
-      <AquaticBackground />
       {children}
     </main>
   );
