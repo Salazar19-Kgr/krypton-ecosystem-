@@ -515,21 +515,3 @@ html.k-scrolling .k-glass-button::after { animation-play-state: paused; }
 
 /* Imágenes generadas dentro de las respuestas */
 .krypton-md img { display: block; max-width: 100%; height: auto; margin: 0.25rem 0 0.75rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 30, 60, 0.35); }
-
-/* === Fondo fijo: no se mueve con el scroll === */
-html, body { background-attachment: scroll; }
-body {
-  background: #03101c !important;
-}
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100lvh;
-  z-index: -1;
-  pointer-events: none;
-  background: url("/krypton-water.webp") center 40% / cover no-repeat;
-  transform: translateZ(0);
-}
