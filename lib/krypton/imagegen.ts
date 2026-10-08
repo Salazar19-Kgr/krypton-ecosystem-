@@ -1,10 +1,11 @@
+import { openaiImage } from "./openai";
 import { generate, UA } from "./llm";
 
 const NOT_REQUEST = /^\s*¿?\s*(c[oó]mo|qu[eé]|por qu[eé]|cu[aá]l(es)?|d[oó]nde|expl[ií]ca\w*|ens[eé]ñ\w*|dime|ay[uú]da\w*|pasos|tutorial|recomi[eé]nda\w*)\b/i;
 const NOUN =
-  "(?:im[aá]genes|imagen|fotograf[ií]as?|fotos?|ilustraci[oó]n(?:es)?|dibujos?|logotipos?|logos?|p[oó]ster|poster|wallpaper|fondo de pantalla|retratos?|arte|render|banner|miniatura|avatar|[ií]cono|icono)";
+  "(?:im[aá]gen(?:es)?|fotograf[ií]as?|fotos?|ilustraci[oó]n(?:es)?|dibujos?|logotipos?|logos?|p[oó]ster|poster|wallpaper|fondo de pantalla|retratos?|arte|render|banner|miniatura|avatar|[ií]cono|icono)";
 const MAKE = new RegExp(
-  `\\b(?:gener\\w*|cre[aeo]\\w*|dibuj\\w*|dise[ñn]\\w*|pint\\w*|ilustr\\w*|haz|hazme|hac(?:er|erme)|produc\\w*|render\\w*|elabor\\w*)\\b[^.?!\\n]{0,40}\\b${NOUN}\\b`,
+  `\\b(?:gen[eé]r\\w*|cre[aeo]\\w*|dibuj\\w*|dise[ñn]\\w*|pint\\w*|ilustr\\w*|haz|hazme|hac(?:er|erme)|produc\\w*|render\\w*|elabor\\w*)\\b[^.?!\\n]{0,40}\\b${NOUN}\\b`,
   "i"
 );
 const WANT = new RegExp(
@@ -13,7 +14,7 @@ const WANT = new RegExp(
 );
 const DRAW = /\b(?:dibuj|ilustr|pint)\w*\s+(?:me\s+)?(?:un|una|el|la|unos|unas)\b/i;
 const ENGLISH =
-  /\b(?:generate|create|draw|make|design)\b[^.?!\n]{0,30}\b(?:image|picture|photo|illustration|logo|poster|wallpaper)\b/i;
+  /\b(?:gen[eé]rate|create|draw|make|design)\b[^.?!\n]{0,30}\b(?:image|picture|photo|illustration|logo|poster|wallpaper)\b/i;
 
 export const wantsImage = (message: string) =>
   !NOT_REQUEST.test(message) &&
@@ -185,8 +186,8 @@ export async function createImage(
   let provider = "";
 
   try {
-    image = await geminiImage(prompt);
-    provider = "gemini";
+    image = await openaiImage(prompt, message).catch(() => geminiImage(prompt));
+    provider = "premium";
   } catch {
     try {
       image = await openrouterImage(prompt);

@@ -1,3 +1,4 @@
+import { callOpenAI, openaiConfigured } from "./openai";
 export type ChatMsg = { role: "user" | "assistant"; content: string };
 
 export type LLMOptions = {
@@ -203,6 +204,11 @@ const providers: Provider[] = [
     name: "groq",
     configured: () => Boolean(process.env.GROQ_API_KEY),
     call: callGroq,
+  },
+  {
+    name: "openai",
+    configured: () => openaiConfigured(),
+    call: callOpenAI,
   },
   {
     name: "openrouter",

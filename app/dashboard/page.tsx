@@ -19,6 +19,14 @@ const TOOLS = [
   "Convertir documentos",
 ];
 
+function Soon() {
+  return (
+    <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] tracking-wide">
+      Próximamente
+    </span>
+  );
+}
+
 export default function DashboardPage() {
   return (
     <KryptonShell>
@@ -32,7 +40,7 @@ export default function DashboardPage() {
           único espacio.
         </p>
 
-        <div className="k-glass-panel mt-10 rounded-[2rem] p-6 sm:p-8">
+        <div className="k-glass-panel mt-8 rounded-[2rem] p-6 sm:p-8">
           <p className="krypton-eyebrow">ESPACIO DE TRABAJO</p>
           <h2 className="mt-4 text-xl font-semibold">¿Qué quieres hacer?</h2>
           <p className="mt-2 text-sm text-white/75">
@@ -46,11 +54,64 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        <div className="mt-12 flex items-end justify-between">
-          <div>
-            <p className="krypton-eyebrow">TU ECOSISTEMA</p>
-            <h2 className="mt-3 text-2xl font-semibold">Continuar</h2>
+        <div className="mt-10">
+          <p className="krypton-eyebrow">TU ECOSISTEMA</p>
+          <h2 className="mt-3 text-2xl font-semibold">Módulos</h2>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-4">
+          <Link href="/chat" className="k-glass-card block rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <p className="krypton-eyebrow">KRYPTON CORE</p>
+              <span className="rounded-full bg-cyan-200/25 px-3 py-1 text-[10px] tracking-wide">
+                Activo
+              </span>
+            </div>
+            <h3 className="mt-4 text-lg font-medium">El cerebro de Krypton</h3>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Conversa, analiza imágenes, genera imágenes, busca información,
+              refrigeración y matemáticas.
+            </p>
+            <p className="mt-5 text-xs text-white/70">Abrir →</p>
+          </Link>
+
+          <div className="k-glass-card rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <p className="krypton-eyebrow">KRYPTON HEALTH</p>
+              <Soon />
+            </div>
+            <h3 className="mt-4 text-lg font-medium">Médico general</h3>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Usará el cerebro de Krypton Ecosystem como herramienta para sus
+              usuarios y pacientes.
+            </p>
           </div>
+
+          <div className="k-glass-card rounded-3xl p-6">
+            <div className="flex items-center justify-between">
+              <p className="krypton-eyebrow">KRYPTON TOOLS</p>
+              <Soon />
+            </div>
+            <h3 className="mt-4 text-lg font-medium">Herramientas</h3>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Usará el cerebro de Krypton Ecosystem para ofrecer herramientas
+              al usuario.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {TOOLS.map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-full bg-white/10 px-3 py-1 text-[11px]"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 flex items-end justify-between">
+          <h2 className="text-2xl font-semibold">Continuar</h2>
           <Link href="/memory" className="text-sm text-white/75">
             Ver conversaciones →
           </Link>
@@ -74,12 +135,12 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-5 grid grid-cols-2 gap-4">
           <div className="k-glass-card rounded-3xl p-5">
             <p className="krypton-eyebrow">SESIÓN</p>
             <p className="mt-3 font-medium">Activa</p>
             <p className="mt-1 text-xs leading-5 text-white/70">
-              Tu cuenta de Google ya está conectada.
+              Tu cuenta de Google está conectada.
             </p>
           </div>
 
@@ -89,54 +150,6 @@ export default function DashboardPage() {
             <p className="mt-1 text-xs leading-5 text-white/70">
               Tus conversaciones se guardan en tu historial.
             </p>
-          </div>
-
-          <div className="k-glass-card rounded-3xl p-5">
-            <p className="krypton-eyebrow">KRYPTON CORE</p>
-            <p className="mt-3 font-medium">Activo</p>
-            <p className="mt-1 text-xs leading-5 text-white/70">
-              Texto, imágenes, búsqueda, refrigeración y matemáticas.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="k-glass-card rounded-3xl p-6">
-            <div className="flex items-center justify-between">
-              <p className="krypton-eyebrow">KRYPTON HEALTH</p>
-              <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] tracking-wide">
-                Próximamente
-              </span>
-            </div>
-            <h3 className="mt-4 text-lg font-medium">Médico general</h3>
-            <p className="mt-2 text-sm leading-6 text-white/75">
-              Usará el cerebro de Krypton Ecosystem como herramienta para sus
-              usuarios y pacientes.
-            </p>
-          </div>
-
-          <div className="k-glass-card rounded-3xl p-6">
-            <div className="flex items-center justify-between">
-              <p className="krypton-eyebrow">KRYPTON TOOLS</p>
-              <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] tracking-wide">
-                Próximamente
-              </span>
-            </div>
-            <h3 className="mt-4 text-lg font-medium">Herramientas</h3>
-            <p className="mt-2 text-sm leading-6 text-white/75">
-              Usará el cerebro de Krypton Ecosystem para ofrecer herramientas
-              al usuario.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {TOOLS.map((tool) => (
-                <span
-                  key={tool}
-                  className="rounded-full bg-white/10 px-3 py-1 text-[11px]"
-                >
-                  {tool}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </section>
