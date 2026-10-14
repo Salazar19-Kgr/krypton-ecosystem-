@@ -544,3 +544,50 @@ body::before {
 }
 .kh-heartbeat { animation: kh-heartbeat 1.2s ease-in-out infinite; transform-origin: center; }
 @media (prefers-reduced-motion: reduce) { .kh-heartbeat { animation: none; } }
+
+/* =========================================================
+   KRYPTON ECOSYSTEM: fondo un poco más oscuro y letras con
+   más profundidad. Solo páginas del ecosistema; Krypton Health
+   y otros módulos independientes no se tocan. El vidrio líquido
+   no se modifica.
+   ========================================================= */
+
+html[data-scope="ecosystem"] body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html[data-scope="ecosystem"] .kb { height: 100lvh; }
+
+html[data-scope="ecosystem"] .kb-tint {
+  background:
+    linear-gradient(rgba(2, 14, 30, 0.16), rgba(2, 14, 30, 0.16)),
+    radial-gradient(120% 70% at 50% 108%, rgba(1, 12, 28, 0.78), transparent 62%),
+    linear-gradient(180deg, rgba(2, 16, 34, 0.42) 0%, rgba(2, 16, 34, 0.08) 30%, rgba(2, 16, 34, 0.22) 100%);
+}
+
+html[data-scope="ecosystem"] main {
+  text-shadow:
+    0 1px 1px rgba(0, 10, 28, 0.9),
+    0 2px 6px rgba(0, 14, 36, 0.7),
+    0 0 20px rgba(0, 18, 46, 0.55);
+}
+html[data-scope="ecosystem"] .krypton-title { text-shadow: none; }
+
+html[data-scope="ecosystem"] main [class*="text-white/"] { font-weight: 500; }
+html[data-scope="ecosystem"] main [class*="text-white/2"],
+html[data-scope="ecosystem"] main [class*="text-white/3"],
+html[data-scope="ecosystem"] main [class*="text-white/4"] { color: rgba(240, 250, 255, 0.88); }
+html[data-scope="ecosystem"] main [class*="text-white/5"],
+html[data-scope="ecosystem"] main [class*="text-white/6"],
+html[data-scope="ecosystem"] main [class*="text-white/7"],
+html[data-scope="ecosystem"] main [class*="text-white/8"] { color: #ffffff; }
+html[data-scope="ecosystem"] main .font-light { font-weight: 400; }
+html[data-scope="ecosystem"] .krypton-eyebrow { color: #f1fdff; font-weight: 600; }
+
+html[data-scope="ecosystem"] .krypton-msg,
+html[data-scope="ecosystem"] .krypton-md {
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0, 10, 28, 0.9), 0 0 12px rgba(0, 16, 40, 0.55);
+}
+html[data-scope="ecosystem"] .krypton-composer textarea { color: #ffffff; font-weight: 500; }
+html[data-scope="ecosystem"] .krypton-composer textarea::placeholder { color: rgba(240, 250, 255, 0.85); }
