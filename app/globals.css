@@ -591,3 +591,136 @@ html[data-scope="ecosystem"] .krypton-md {
 }
 html[data-scope="ecosystem"] .krypton-composer textarea { color: #ffffff; font-weight: 500; }
 html[data-scope="ecosystem"] .krypton-composer textarea::placeholder { color: rgba(240, 250, 255, 0.85); }
+
+/* =========================================================
+   CHAT: cielo con nebulosa y constelaciones animadas, y vidrio
+   líquido reforzado. Solo se activa dentro del chat (html.k-sky);
+   el resto del ecosistema y Krypton Health no cambian.
+   ========================================================= */
+
+html.k-sky .kb { display: none; }
+
+.sky {
+  position: fixed;
+  inset: 0;
+  height: 100lvh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #09030d;
+}
+.sky-base {
+  position: absolute;
+  inset: -10%;
+  background: url("/krypton-nebula.webp") center / cover no-repeat;
+  filter: blur(28px) saturate(1.2) brightness(0.7);
+}
+.sky-nebula {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, 112vh);
+  height: calc(max(100vw, 112vh) / 1.4015);
+  transform: translate(-50%, -50%);
+  background: url("/krypton-nebula.webp") center / 100% 100% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 52%, transparent 100%);
+  animation: sky-pan 90s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes sky-pan {
+  from { transform: translate(-55%, -50%) scale(1.02); }
+  to { transform: translate(-45%, -50%) scale(1.07); }
+}
+.sky-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sky-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 75% at 50% 42%, transparent 42%, rgba(5, 0, 10, 0.55) 100%),
+    linear-gradient(180deg, rgba(8, 2, 14, 0.5) 0%, rgba(8, 2, 14, 0.08) 30%, rgba(8, 2, 14, 0.12) 65%, rgba(8, 2, 14, 0.68) 100%);
+}
+html.k-lite .sky-nebula { animation: none; }
+
+.krypton-sphere { display: block; flex: none; filter: drop-shadow(0 0 10px rgba(255, 200, 235, 0.45)); }
+
+html.k-sky .k-glass-button,
+html.k-sky .krypton-brand-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background:
+    radial-gradient(circle at 13% 8%, rgba(255, 255, 255, 0.95) 0 1.5px, rgba(255, 255, 255, 0.35) 3px, transparent 9px),
+    radial-gradient(circle at 90% 92%, rgba(255, 214, 235, 0.9) 0 1.5px, rgba(255, 200, 230, 0.3) 3px, transparent 9px),
+    radial-gradient(120% 90% at 50% -25%, rgba(255, 255, 255, 0.36), transparent 55%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 190, 225, 0.07) 55%, rgba(150, 120, 255, 0.12));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -10px 18px rgba(255, 120, 190, 0.13),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 18px rgba(255, 150, 210, 0.2),
+    0 12px 30px rgba(0, 0, 0, 0.42);
+}
+html.k-sky .krypton-brand-dot {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.4' stroke-linecap='round'><circle cx='12' cy='12' r='1.6' fill='white'/><ellipse cx='12' cy='12' rx='10' ry='4.2'/><ellipse cx='12' cy='12' rx='10' ry='4.2' transform='rotate(60 12 12)'/><ellipse cx='12' cy='12' rx='10' ry='4.2' transform='rotate(120 12 12)'/></svg>") center / contain no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 0 6px rgba(255, 200, 235, 0.8));
+  animation: k-spin 16s linear infinite;
+}
+@keyframes k-spin { to { transform: rotate(360deg); } }
+
+html.k-sky .k-glass-panel {
+  background:
+    radial-gradient(circle at 5% 0%, rgba(255, 255, 255, 0.5) 0 1.5px, transparent 14px),
+    radial-gradient(120% 90% at 50% -30%, rgba(255, 255, 255, 0.22), transparent 55%),
+    linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 190, 225, 0.05) 45%, rgba(150, 120, 255, 0.08));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -12px 24px rgba(255, 120, 190, 0.1),
+    0 0 22px rgba(255, 150, 210, 0.14),
+    0 20px 50px rgba(0, 0, 0, 0.45);
+}
+html.k-sky .krypton-msg-user { background: linear-gradient(150deg, rgba(255, 150, 215, 0.46), rgba(150, 110, 255, 0.3)); }
+html.k-sky .krypton-msg-bot { background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 170, 220, 0.06)); }
+html.k-sky .krypton-hello { position: relative; padding-bottom: 0.9rem; font-size: 1.75rem; }
+html.k-sky .krypton-hello::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+  box-shadow: 0 0 12px rgba(255, 200, 235, 0.9);
+  animation: k-glowline 4s ease-in-out infinite;
+}
+@keyframes k-glowline { 50% { opacity: 0.45; transform: scaleX(0.7); } }
+
+/* =========================================================
+   ANIMACIONES DE INTERACCIÓN (ecosistema)
+   ========================================================= */
+@keyframes k-enter { from { opacity: 0; transform: translateY(14px) scale(0.985); } }
+@keyframes k-ready {
+  50% { box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 0 22px rgba(255, 255, 255, 0.45), 0 10px 28px rgba(0, 40, 80, 0.34); }
+}
+
+html[data-scope="ecosystem"] .k-glass-card,
+html[data-scope="ecosystem"] .k-glass-panel:not(.krypton-composer):not(.krypton-navigation-menu) {
+  animation: k-enter 0.7s var(--k-ease) backwards;
+}
+html[data-scope="ecosystem"] .k-glass-card:nth-child(2) { animation-delay: 0.08s; }
+html[data-scope="ecosystem"] .k-glass-card:nth-child(3) { animation-delay: 0.16s; }
+html[data-scope="ecosystem"] .k-glass-card:nth-child(4) { animation-delay: 0.24s; }
+
+html[data-scope="ecosystem"] .k-glass-button:hover { transform: translateY(-2px); filter: brightness(1.15); }
+html[data-scope="ecosystem"] .k-glass-button:active { transform: scale(0.93); filter: brightness(1.25); }
+html[data-scope="ecosystem"] a.k-glass-card:hover { transform: translateY(-4px) scale(1.012); }
+html[data-scope="ecosystem"] .krypton-send:not(:disabled) { animation: k-ready 2.6s ease-in-out infinite; }
+html[data-scope="ecosystem"] :is(a, button, textarea):focus-visible { outline: 2px solid rgba(255, 255, 255, 0.8); outline-offset: 3px; }
+
+html.k-lite .k-glass-card,
+html.k-lite .k-glass-panel,
+html.k-lite .krypton-send { animation: none; }

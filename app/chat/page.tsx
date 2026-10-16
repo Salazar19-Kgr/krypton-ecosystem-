@@ -5,6 +5,9 @@ import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import ChatComposer, { type Attachment } from "@/components/chat/ChatComposer";
 import MessageContent from "@/components/chat/MessageContent";
+import ChatSky from "@/components/chat/ChatSky";
+import NetworkSphere from "@/components/chat/NetworkSphere";
+import { SparkIcon, ClockIcon } from "@/components/chat/ChatIcons";
 import { createClient } from "@/lib/supabase/client";
 
 type Message = {
@@ -232,12 +235,17 @@ export default function ChatPage() {
   }
 
   return (
-    <KryptonShell>
+    <>
+      <ChatSky />
+      <KryptonShell>
       <section className="mx-auto flex h-[calc(100dvh-104px)] max-w-3xl flex-col pb-2 pt-4">
         <div className="mb-2 flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-3">
+            <div>
             <p className="krypton-eyebrow">KRYPTON CORE</p>
             <h1 className="mt-1 text-xl font-light">Conversación</h1>
+            </div>
+            <NetworkSphere />
           </div>
 
           <div className="flex gap-2">
@@ -246,12 +254,14 @@ export default function ChatPage() {
               onClick={newChat}
               className="k-glass-button rounded-full px-4 py-2 text-xs"
             >
+              <SparkIcon />
               Nueva
             </button>
             <Link
               href="/memory"
               className="k-glass-button rounded-full px-4 py-2 text-xs"
             >
+              <ClockIcon />
               Historial
             </Link>
           </div>
@@ -260,7 +270,7 @@ export default function ChatPage() {
         <div className="krypton-chat-scroll flex-1 space-y-3 overflow-y-auto py-2">
           {messages.length === 0 && !loading && (
             <div className="flex h-full flex-col items-center justify-center px-2 text-center">
-              <h2 className="text-2xl font-light">¿En qué trabajamos hoy?</h2>
+              <h2 className="krypton-hello text-2xl font-light">¿En qué trabajamos hoy?</h2>
             </div>
           )}
 
@@ -300,6 +310,7 @@ export default function ChatPage() {
           </p>
         </div>
       </section>
-    </KryptonShell>
+      </KryptonShell>
+    </>
   );
 }
