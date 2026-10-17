@@ -61,7 +61,7 @@ export function startSky(canvas: HTMLCanvasElement): () => void {
   if (!ctx) return () => {};
 
   const root = document.documentElement;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = !root.classList.contains("k-motion") && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const glow = makeGlow();
 
   const stars = Array.from({ length: 150 }, () => ({
@@ -70,7 +70,7 @@ export function startSky(canvas: HTMLCanvasElement): () => void {
     r: 0.4 + Math.random() * 1.1,
     speed: 0.6 + Math.random() * 1.8,
     phase: Math.random() * 6.28,
-    drift: 0.00002 + Math.random() * 0.00005,
+    drift: 0.00004 + Math.random() * 0.00008,
   }));
 
   let width = 0;
@@ -104,8 +104,8 @@ export function startSky(canvas: HTMLCanvasElement): () => void {
 
     // constelaciones
     for (const k of CONSTELLATIONS) {
-      const dx = still ? 0 : Math.sin(now / 9000 + k.seed) * 9;
-      const dy = still ? 0 : Math.cos(now / 11000 + k.seed) * 7;
+      const dx = still ? 0 : Math.sin(now / 7000 + k.seed) * 16;
+      const dy = still ? 0 : Math.cos(now / 8500 + k.seed) * 12;
       const u = still ? 0.6 : ((now / 1000 + k.seed * 2.3) % 14) / 14;
       const progress = u < 0.35 ? u / 0.35 : 1;
       const fade = u < 0.8 ? 1 : 1 - (u - 0.8) / 0.2;

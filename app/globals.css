@@ -724,3 +724,52 @@ html[data-scope="ecosystem"] :is(a, button, textarea):focus-visible { outline: 2
 html.k-lite .k-glass-card,
 html.k-lite .k-glass-panel,
 html.k-lite .krypton-send { animation: none; }
+
+/* =========================================================
+   AJUSTES: animaciones forzadas, sin cuadro de foco, nebulosa
+   más viva y página de Configuración
+   ========================================================= */
+
+/* Configuración -> Animaciones: Activadas (ignora el ahorro del sistema) */
+html.k-motion .kb-photo { animation: kb-drift 38s ease-in-out infinite alternate; }
+html.k-motion .kb-sheen { animation: kb-sheen 22s ease-in-out infinite alternate; }
+html.k-motion .kb-glint { animation: kb-twinkle 5.5s ease-in-out infinite; }
+html.k-motion .kb-bubble { animation-name: kb-rise; animation-timing-function: linear; animation-iteration-count: infinite; }
+html.k-motion .k-glass::after,
+html.k-motion .k-glass-panel::after,
+html.k-motion .k-glass-card::after,
+html.k-motion .k-glass-button::after { animation: k-sweep 9s var(--k-ease) infinite; }
+html.k-motion .k-glass-button::after { animation-duration: 6s; animation-delay: 1s; }
+html.k-motion .krypton-composer::after { animation: none; }
+html.k-motion .krypton-chat-orb > div { animation: k-float 5s ease-in-out infinite; }
+
+/* Sin cuadro al tocar la caja de escritura: brilla el vidrio */
+html[data-scope="ecosystem"] .krypton-composer textarea:focus-visible { outline: none; box-shadow: none; }
+.krypton-composer:focus-within {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 0 0 1.5px rgba(255, 255, 255, 0.55),
+    0 0 26px rgba(255, 200, 235, 0.35),
+    0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+/* Nebulosa más viva */
+.sky-nebula { filter: saturate(1.55) contrast(1.12) brightness(1.08); }
+.sky-base { filter: blur(28px) saturate(1.8) brightness(0.8); }
+
+/* Configuración */
+.krypton-seg { display: grid; gap: 0.6rem; }
+.krypton-seg button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 1.2rem;
+  text-align: left;
+}
+.krypton-seg small { display: block; margin-top: 0.15rem; font-size: 0.7rem; opacity: 0.85; }
+.krypton-seg button[aria-pressed="true"] {
+  filter: brightness(1.3);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 0 22px rgba(255, 255, 255, 0.25);
+}
