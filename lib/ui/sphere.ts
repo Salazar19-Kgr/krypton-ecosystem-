@@ -13,7 +13,7 @@ export function startSphere(canvas: HTMLCanvasElement, size: number): () => void
   if (!ctx) return () => {};
 
   const root = document.documentElement;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = !root.classList.contains("k-motion") && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(size * dpr);
   canvas.height = Math.round(size * dpr);

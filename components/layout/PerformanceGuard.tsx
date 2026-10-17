@@ -1,11 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { readMotion } from "@/lib/ui/motion";
 
-/** Pausa las animaciones al hacer scroll y activa un modo ligero si el teléfono va lento. */
+/**
+ * Aplica la preferencia de animaciones de Configuración.
+ * Activadas: siempre en movimiento. Desactivadas: modo ligero. Automático: se reduce solo si hace falta.
+ * También pausa las animaciones mientras haces scroll.
+ */
 export default function PerformanceGuard() {
   useEffect(() => {
     const root = document.documentElement;
+    const mode = readMotion();
+    root.classList.toggle("k-motion", mode === "on");
+    root.classList.toggle("k-lite", mode === "off");
 
     let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
@@ -13,34 +21,31 @@ export default function PerformanceGuard() {
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => root.classList.remove("k-scrolling"), 180);
     };
-    document.addEventListener("scroll", onScroll, {
-      capture: true,
-      passive: true,
-    });
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      root.classList.add("k-lite");
-      return () => document.removeEventListener("scroll", onScroll, true);
-    }
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
 
     let frame = 0;
-    let frames = 0;
-    let start = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
-    const tick = (now: number) => {
-      if (!start) start = now;
-      frames++;
-      if (now - start < 2000) {
-        frame = requestAnimationFrame(tick);
-        return;
+    if (mode === "auto") {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        root.classList.add("k-lite");
+      } else {
+        let frames = 0;
+        let start = 0;
+        const tick = (now: number) => {
+          if (!start) start = now;
+          frames++;
+          if (now - start < 2000) {
+            frame = requestAnimationFrame(tick);
+            return;
+          }
+          if ((frames * 1000) / (now - start) < 40) root.classList.add("k-lite");
+        };
+        timer = setTimeout(() => {
+          frame = requestAnimationFrame(tick);
+        }, 2500);
       }
-      const fps = (frames * 1000) / (now - start);
-      if (fps < 40) root.classList.add("k-lite");
-    };
-
-    const timer = setTimeout(() => {
-      frame = requestAnimationFrame(tick);
-    }, 2500);
+    }
 
     return () => {
       clearTimeout(timer);
