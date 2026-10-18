@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 // Páginas del ecosistema Krypton (Health y otros módulos independientes no se tocan)
-const ECOSYSTEM = ["/login", "/chat", "/dashboard", "/memory", "/settings", "/vision", "/tools"];
+const ECOSYSTEM = ["/login", "/chat", "/dashboard", "/memory", "/settings", "/vision", "/tools", "/terms", "/privacy"];
 
 export default function ThemeScope() {
   const pathname = usePathname();

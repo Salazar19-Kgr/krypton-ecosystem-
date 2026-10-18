@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import { createClient } from "@/lib/supabase/client";
 import { applyMotion, readMotion, type MotionMode } from "@/lib/ui/motion";
@@ -143,7 +144,7 @@ export default function SettingsPage() {
                 Contacto
               </a>
             </div>
-            <p className="mt-4 text-xs text-white/70">Términos y condiciones: próximamente.</p>
+            <p className="mt-4 flex flex-wrap gap-4 text-xs text-white/80"><Link href="/terms" className="underline underline-offset-4">Términos y condiciones</Link><Link href="/privacy" className="underline underline-offset-4">Política de privacidad</Link></p>
           </div>
 
           <p className="pb-4 text-center text-xs text-white/70">Krypton Ecosystem · versión beta</p>

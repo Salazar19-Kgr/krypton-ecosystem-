@@ -238,7 +238,7 @@ export default function ChatPage() {
     <>
       <ChatSky />
       <KryptonShell>
-      <section className="mx-auto flex h-[calc(100dvh-104px)] max-w-3xl flex-col pb-2 pt-4">
+      <section className="mx-auto flex krypton-chat-page max-w-3xl flex-col pb-2 pt-4">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
