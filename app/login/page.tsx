@@ -73,6 +73,10 @@ export default function LoginPage() {
               <span className="text-base">G</span>
               {loading ? "Conectando..." : "Continuar con Google"}
             </button>
+      <p className="mt-5 text-[11px] leading-5 text-white/70">
+        Al continuar aceptas los <a href="/terms" className="underline underline-offset-2">Términos</a> y la{" "}
+        <a href="/privacy" className="underline underline-offset-2">Política de privacidad</a>.
+      </p>
 
             {error && (
               <p className="mt-6 text-xs leading-5 text-red-300">{error}</p>

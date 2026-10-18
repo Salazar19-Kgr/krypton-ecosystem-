@@ -1,3 +1,4 @@
+import { generateSmart, looksMath } from "./math";
 import { generate, type ChatMsg } from "./llm";
 import { tavilySearch, wikipediaSearch, calculate, type Source } from "./tools";
 
@@ -40,7 +41,7 @@ function extractCalculations(message: string): string[] {
 export function recognize(message: string): Plan {
   const intent: Plan["intent"] = REFRIGERATION.test(message)
     ? "refrigeration"
-    : MATH.test(message)
+    : (MATH.test(message) || looksMath(message))
       ? "mathematics"
       : SCIENCE.test(message)
         ? "science"
@@ -120,7 +121,7 @@ export async function runKrypton(
       .join("\n\n")}`;
   }
 
-  const answer = await generate({
+  const answer = await generateSmart(plan.intent, {
     system,
     messages: [...history, { role: "user", content: message }],
   });

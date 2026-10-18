@@ -773,3 +773,58 @@ html[data-scope="ecosystem"] .krypton-composer textarea:focus-visible { outline:
   filter: brightness(1.3);
   box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.85), 0 0 22px rgba(255, 255, 255, 0.25);
 }
+
+/* =========================================================
+   Teclado: el chat se ajusta a la pantalla visible
+   ========================================================= */
+html.k-sky,
+html.k-sky body { overflow: hidden; overscroll-behavior: none; }
+.krypton-chat-page { height: calc(var(--vvh, 100dvh) - 104px); }
+
+/* =========================================================
+   VIDRIO LÍQUIDO DEL CHAT: transparente y brillante, sin tinte
+   rosado. Solo dentro del chat (html.k-sky).
+   ========================================================= */
+html.k-sky .k-glass-button,
+html.k-sky .krypton-brand-capsule {
+  background:
+    radial-gradient(circle at 13% 8%, #ffffff 0 1.5px, rgba(255, 255, 255, 0.55) 3px, transparent 10px),
+    radial-gradient(circle at 90% 92%, rgba(255, 255, 255, 0.95) 0 1.5px, rgba(255, 255, 255, 0.4) 3px, transparent 10px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(255, 255, 255, 0.02) 62%, rgba(255, 255, 255, 0.16) 100%);
+  -webkit-backdrop-filter: blur(8px) saturate(170%) brightness(1.12);
+  backdrop-filter: blur(8px) saturate(170%) brightness(1.12);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 0 0 18px rgba(255, 255, 255, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.28);
+}
+html.k-sky .k-glass-panel {
+  background:
+    radial-gradient(circle at 5% 0%, rgba(255, 255, 255, 0.9) 0 1.5px, rgba(255, 255, 255, 0.3) 4px, transparent 14px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0.02) 70%, rgba(255, 255, 255, 0.12) 100%);
+  -webkit-backdrop-filter: blur(10px) saturate(165%) brightness(1.1);
+  backdrop-filter: blur(10px) saturate(165%) brightness(1.1);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+    0 14px 40px rgba(0, 0, 0, 0.32);
+}
+html.k-sky .krypton-msg-user {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08));
+}
+html.k-sky .krypton-msg-bot {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04)), rgba(8, 8, 18, 0.26);
+}
+html.k-sky .krypton-brand-dot { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85)); }
+.krypton-sphere { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.45)); }
+.krypton-composer:focus-within {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 0 0 1.5px rgba(255, 255, 255, 0.6),
+    0 0 26px rgba(255, 255, 255, 0.3),
+    0 14px 40px rgba(0, 0, 0, 0.32);
+}
+html.k-sky .krypton-hello::after { box-shadow: 0 0 12px rgba(255, 255, 255, 0.9); }

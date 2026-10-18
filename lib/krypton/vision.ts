@@ -1,3 +1,4 @@
+import { looksMath, solveMathImages } from "./math";
 import { openaiConfigured, openaiVision } from "./openai";
 import { BASE_SYSTEM } from "./brain";
 import { geminiChain, UA, type ChatMsg } from "./llm";
@@ -18,6 +19,13 @@ export async function analyzeImages(
   const system = `${BASE_SYSTEM}\n\nFecha actual: ${new Date().toISOString().slice(0, 10)}.\n\n${VISION_NOTE}`;
   const prompt = message || "Describe y analiza esta imagen.";
   const errors: string[] = [];
+  if (looksMath(message)) {
+    try {
+      return await solveMathImages(system, history, images, prompt);
+    } catch (e) {
+      errors.push("math: " + (e instanceof Error ? e.message : String(e)));
+    }
+  }
 
   if (process.env.GEMINI_API_KEY) {
     try {
