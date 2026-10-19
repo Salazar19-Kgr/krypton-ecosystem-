@@ -24,21 +24,12 @@ export default function DownloadPage() {
         </Link>
 
         <p className="krypton-eyebrow mt-10">DESCARGAR</p>
-        <h1 className="mt-4 text-4xl font-light sm:text-5xl">Lleva Krypton en tu teléfono</h1>
+        <h1 className="mt-4 text-4xl font-light sm:text-5xl">Krypton para Android</h1>
         <p className="mt-4 text-sm leading-7 text-white/80">
           La app se actualiza sola: cada mejora que publicamos llega a tu teléfono sin que tengas que descargar nada otra vez.
         </p>
 
         <div className="mt-8 space-y-4">
-          <div className="k-glass-card rounded-3xl p-6">
-            <p className="krypton-eyebrow">RECOMENDADO</p>
-            <h2 className="mt-3 text-lg font-medium">Instalar desde el navegador</h2>
-            <p className="mt-2 text-sm leading-6 text-white/75">
-              Funciona en Android y iPhone, no pesa casi nada y siempre abre la versión más nueva.
-            </p>
-            <InstallButton />
-          </div>
-
           <div className="k-glass-card rounded-3xl p-6">
             <p className="krypton-eyebrow">ANDROID</p>
             <h2 className="mt-3 text-lg font-medium">Descargar el APK</h2>
@@ -61,6 +52,15 @@ export default function DownloadPage() {
               <li>Si Android lo pide, permite «Instalar apps desconocidas» para tu navegador.</li>
               <li>Abre Krypton e inicia sesión con Google.</li>
             </ol>
+          </div>
+
+          <div className="k-glass-card rounded-3xl p-6">
+            <p className="krypton-eyebrow">IPHONE Y OTROS</p>
+            <h2 className="mt-3 text-lg font-medium">Instalar desde el navegador</h2>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Si no puedes usar el APK, instala Krypton desde tu navegador. Siempre abre la versión más nueva.
+            </p>
+            <InstallButton />
           </div>
         </div>
 
