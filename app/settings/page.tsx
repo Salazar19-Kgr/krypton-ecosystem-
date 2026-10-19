@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
+import LookCard from "@/components/settings/LookCard";
 import { createClient } from "@/lib/supabase/client";
 import { applyMotion, readMotion, type MotionMode } from "@/lib/ui/motion";
 
@@ -105,6 +106,8 @@ export default function SettingsPage() {
               ))}
             </div>
           </div>
+
+          <LookCard />
 
           <div className="k-glass-card rounded-3xl p-6">
             <p className="krypton-eyebrow">CONVERSACIONES</p>

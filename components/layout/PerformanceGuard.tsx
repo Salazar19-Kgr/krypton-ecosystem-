@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { readMotion } from "@/lib/ui/motion";
+import { readMotion, readLook, applyLook } from "@/lib/ui/motion";
 
 /**
  * Aplica la preferencia de animaciones de Configuración.
@@ -14,6 +14,8 @@ export default function PerformanceGuard() {
     const mode = readMotion();
     root.classList.toggle("k-motion", mode === "on");
     root.classList.toggle("k-lite", mode === "off");
+    const look = readLook();
+    applyLook(look.bg, look.ui);
 
     let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
