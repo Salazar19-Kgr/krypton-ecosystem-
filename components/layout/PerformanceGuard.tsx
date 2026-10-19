@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { readMotion, readLook, applyLook } from "@/lib/ui/motion";
+import { applyLook, readLook, readMotion } from "@/lib/ui/motion";
 
 /**
- * Aplica la preferencia de animaciones de Configuración.
- * Activadas: siempre en movimiento. Desactivadas: modo ligero. Automático: se reduce solo si hace falta.
- * También pausa las animaciones mientras haces scroll.
+ * Aplica las preferencias de Configuración (animaciones y brillo).
+ * Activadas: siempre en movimiento, también al hacer scroll. Desactivadas: modo ligero.
+ * Automático: se reduce solo si el teléfono va lento y pausa mientras haces scroll.
  */
 export default function PerformanceGuard() {
   useEffect(() => {
@@ -14,16 +14,21 @@ export default function PerformanceGuard() {
     const mode = readMotion();
     root.classList.toggle("k-motion", mode === "on");
     root.classList.toggle("k-lite", mode === "off");
+
     const look = readLook();
     applyLook(look.bg, look.ui);
 
     let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
+      // con "Activadas" nunca se pausa nada
+      if (root.classList.contains("k-motion")) return;
       root.classList.add("k-scrolling");
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => root.classList.remove("k-scrolling"), 180);
     };
-    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    if (mode !== "on") {
+      document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    }
 
     let frame = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -54,6 +59,7 @@ export default function PerformanceGuard() {
       clearTimeout(scrollTimer);
       cancelAnimationFrame(frame);
       document.removeEventListener("scroll", onScroll, true);
+      root.classList.remove("k-scrolling");
     };
   }, []);
 
