@@ -24,19 +24,31 @@ export default function ChatSky() {
 
     const vv = window.visualViewport;
     const base = Math.max(window.innerHeight, vv?.height ?? 0);
-    const fit = () => {
-      const h = vv?.height ?? window.innerHeight;
-      root.style.setProperty("--vvh", `${Math.round(h)}px`);
-      root.classList.toggle("k-kb", base - h > 120);
+    let lastHeight = -1;
+    let pending = 0;
+
+    // se aplica una sola vez por cuadro y solo si la altura cambió (escribir no debe provocar recálculos)
+    const apply = () => {
+      pending = 0;
+      const h = Math.round(vv?.height ?? window.innerHeight);
+      if (h !== lastHeight) {
+        lastHeight = h;
+        root.style.setProperty("--vvh", `${h}px`);
+        root.classList.toggle("k-kb", base - h > 120);
+      }
       if (window.scrollY !== 0) window.scrollTo(0, 0);
     };
-    fit();
+    const fit = () => {
+      if (!pending) pending = requestAnimationFrame(apply);
+    };
+    apply();
     vv?.addEventListener("resize", fit);
     vv?.addEventListener("scroll", fit);
     window.addEventListener("resize", fit);
 
     return () => {
       stop();
+      cancelAnimationFrame(pending);
       vv?.removeEventListener("resize", fit);
       vv?.removeEventListener("scroll", fit);
       window.removeEventListener("resize", fit);
