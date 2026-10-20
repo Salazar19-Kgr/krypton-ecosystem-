@@ -1068,3 +1068,44 @@ html[data-scope="ecosystem"] .krypton-attach-menu.k-glass-panel.krypton-attach-m
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
   font-size: 0.75rem;
 }
+
+/* =========================================================
+   Descargas: botones bajo cada respuesta y archivos que crea Krypton
+   ========================================================= */
+.krypton-plain { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.krypton-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.krypton-actions button {
+  padding: 0.3rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.krypton-actions button:active { background: rgba(255, 255, 255, 0.26); }
+.krypton-flash { font-size: 0.75rem; opacity: 0.9; }
+.krypton-file-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin: 0.7rem 0;
+  padding: 0.8rem 1rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+.krypton-file-info { display: grid; min-width: 0; }
+.krypton-file-info strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; }
+.krypton-file-info small { opacity: 0.75; font-size: 0.72rem; }
+.krypton-file-card .k-glass-button { flex: none; padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.8rem; }

@@ -1,3 +1,4 @@
+import { DOC_RULES } from "./docs-rules";
 import { generateSmart, looksMath } from "./math";
 import { generate, type ChatMsg } from "./llm";
 import { tavilySearch, wikipediaSearch, calculate, type Source } from "./tools";
@@ -108,7 +109,7 @@ export async function runKrypton(
 
   const sources = [...web, ...wiki];
 
-  let system = `${BASE_SYSTEM}\n\nFecha actual: ${new Date().toISOString().slice(0, 10)}.`;
+  let system = `${BASE_SYSTEM}\n\n${DOC_RULES}\n\nFecha actual: ${new Date().toISOString().slice(0, 10)}.`;
   if (DOMAIN_NOTES[plan.intent]) system += `\n\n${DOMAIN_NOTES[plan.intent]}`;
   if (calcs.length) {
     system += `\n\nRESULTADOS CALCULADOS Y VERIFICADOS (úsalos tal cual si corresponden a la pregunta, no los recalcules):\n${calcs

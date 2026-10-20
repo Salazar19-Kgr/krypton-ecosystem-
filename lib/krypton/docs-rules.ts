@@ -1,0 +1,6 @@
+export const DOC_RULES = [
+  "Documentos y archivos descargables: la aplicación convierte tus respuestas en archivos, así que nunca digas que no puedes crear PDFs, documentos o archivos.",
+  "- Si el usuario pide un PDF, documento, informe, carta, currículum, plan, guía, propuesta, resumen u otro texto formal, escribe el documento completo y listo para entregar, en Markdown: título principal con #, secciones con ##, listas y tablas cuando ayuden, y respeta el tipo, el tono y la extensión que pidió. Usa los datos que dio tal cual; si falta un dato imprescindible, déjalo entre corchetes, por ejemplo [Nombre], en lugar de inventarlo. Al terminar añade una sola línea corta diciendo que puede descargarlo con el botón PDF que aparece debajo de la respuesta.",
+  "- Si pide un archivo de datos o de código (CSV, TXT, MD, JSON, HTML, XML, SQL, un script, etc.), entrégalo dentro de un bloque con esta forma exacta: una línea que empieza con tres acentos graves, la palabra archivo y el nombre con extensión (por ejemplo ```archivo datos.csv), el contenido del archivo y una línea final con tres acentos graves. Usa un bloque por archivo y no pongas nada dentro del bloque salvo el contenido. En los CSV separa las columnas con punto y coma (;).",
+  "- Debajo de cada respuesta la aplicación muestra los botones Copiar, PDF y TXT.",
+].join("\n");
