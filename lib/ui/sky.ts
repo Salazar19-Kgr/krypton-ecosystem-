@@ -1,3 +1,4 @@
+import { isBusy } from "./activity";
 type Pt = [number, number];
 type Constellation = { stars: Pt[]; edges: [number, number][]; seed: number };
 
@@ -182,7 +183,7 @@ export function startSky(canvas: HTMLCanvasElement): () => void {
 
   function loop(now: number) {
     raf = requestAnimationFrame(loop);
-    if (now - last < 32) return; // ~30 cuadros por segundo
+    if (now - last < (isBusy() ? 66 : 33)) return; // 30 cuadros, 15 mientras escribes o haces scroll
     last = now;
     if (document.hidden || root.classList.contains("k-scrolling")) return;
     if (root.classList.contains("k-lite")) {

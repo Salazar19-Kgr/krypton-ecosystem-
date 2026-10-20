@@ -16,6 +16,7 @@ type Message = {
   content: string;
   error?: boolean;
   images?: string[];
+  files?: string[];
   hadImage?: boolean;
 };
 
@@ -60,6 +61,31 @@ async function prepareImage(file: File): Promise<Attachment> {
   };
 }
 
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
+const TEXT_FILE = /\.(txt|md|csv|json|xml|html?|css|js|ts|tsx|jsx|py|java|c|cpp|h|sql|log|ya?ml|ini|sh)$/i;
+
+async function prepareFile(file: File): Promise<Attachment> {
+  if (file.size > MAX_FILE_BYTES) throw new Error(`"${file.name}" pesa más de 8 MB.`);
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  const isText = file.type.startsWith("text/") || TEXT_FILE.test(file.name);
+  if (!isPdf && !isText) {
+    throw new Error(`"${file.name}": por ahora solo puedo leer imágenes, PDF y archivos de texto.`);
+  }
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return {
+    id: crypto.randomUUID(),
+    dataUrl: "",
+    mimeType: isPdf ? "application/pdf" : "text/plain",
+    data: btoa(binary),
+    name: file.name,
+    kind: "file",
+  };
+}
+
 const Bubble = memo(function Bubble({ item }: { item: Message }) {
   const isUser = item.role === "user";
   const className = isUser
@@ -78,7 +104,16 @@ const Bubble = memo(function Bubble({ item }: { item: Message }) {
             ))}
           </div>
         )}
-        {!item.images?.length && item.hadImage && (
+        {item.files && item.files.length > 0 && (
+          <div className="krypton-msg-files">
+            {item.files.map((name, index) => (
+              <span key={index} className="krypton-file-chip">
+                {name}
+              </span>
+            ))}
+          </div>
+        )}
+        {!item.images?.length && !item.files?.length && item.hadImage && (
           <span className="krypton-msg-tag">Imagen adjunta</span>
         )}
         {item.content && item.content !== "[Imagen adjunta]" && (
@@ -157,16 +192,14 @@ export default function ChatPage() {
   async function addFiles(files: FileList | null) {
     if (!files) return;
     const room = Math.max(MAX_FILES - attachments.length, 0);
-    const picked = Array.from(files)
-      .filter((file) => file.type.startsWith("image/"))
-      .slice(0, room);
+    const picked = Array.from(files).slice(0, room);
 
     const ready: Attachment[] = [];
     for (const file of picked) {
       try {
-        ready.push(await prepareImage(file));
-      } catch {
-        setNotice("No pude leer una de las imágenes.");
+        ready.push(file.type.startsWith("image/") ? await prepareImage(file) : await prepareFile(file));
+      } catch (error) {
+        setNotice(error instanceof Error ? error.message : "No pude leer uno de los archivos.");
       }
     }
     if (ready.length) setAttachments((current) => [...current, ...ready]);
@@ -180,7 +213,10 @@ export default function ChatPage() {
       .filter((item) => !item.error)
       .map((item) => ({ role: item.role, content: item.content }));
 
-    push("user", text, { images: sent.map((item) => item.dataUrl) });
+    push("user", text, {
+      images: sent.filter((item) => item.kind !== "file").map((item) => item.dataUrl),
+      files: sent.filter((item) => item.kind === "file").map((item) => item.name ?? "Archivo"),
+    });
     setAttachments([]);
     setNotice("");
     setLoading(true);

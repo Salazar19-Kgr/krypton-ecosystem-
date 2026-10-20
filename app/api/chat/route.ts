@@ -8,7 +8,7 @@ import type { ChatMsg } from "@/lib/krypton/llm";
 const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 20;
 const MAX_IMAGES = 4;
-const MAX_IMAGE_B64 = 2_500_000;
+const MAX_IMAGE_B64 = 14_000_000;
 
 type Body = {
   message?: string;
@@ -48,7 +48,9 @@ export async function POST(request: Request) {
       .filter(
         (i) =>
           typeof i?.mimeType === "string" &&
-          i.mimeType.startsWith("image/") &&
+          (i.mimeType.startsWith("image/") ||
+            i.mimeType === "application/pdf" ||
+            i.mimeType === "text/plain") &&
           typeof i?.data === "string" &&
           i.data.length < MAX_IMAGE_B64
       )
