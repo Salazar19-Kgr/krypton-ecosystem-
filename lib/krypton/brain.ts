@@ -1,3 +1,4 @@
+import { webSearch } from "./perplexity";
 import { DOC_RULES } from "./docs-rules";
 import { generateSmart, looksMath } from "./math";
 import { generate, type ChatMsg } from "./llm";
@@ -97,7 +98,7 @@ export async function runKrypton(
   trace.push(`reconocimiento: ${plan.intent}`);
 
   const [web, wiki] = await Promise.all([
-    plan.needsSearch ? safe(tavilySearch(plan.searchQuery)) : Promise.resolve([] as Source[]),
+    plan.needsSearch ? safe(webSearch(plan.searchQuery)) : Promise.resolve([] as Source[]),
     plan.needsWikipedia ? safe(wikipediaSearch(plan.wikiQuery)) : Promise.resolve([] as Source[]),
   ]);
 

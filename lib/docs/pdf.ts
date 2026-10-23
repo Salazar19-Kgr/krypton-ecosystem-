@@ -289,10 +289,8 @@ const COLOR = {
 export type PdfOptions = { title?: string; date?: string; brand?: string };
 
 export function markdownToPdf(markdown: string, options: PdfOptions = {}): Uint8Array {
-  const brand = options.brand ?? "Krypton Ecosystem";
-  const date =
-    options.date ??
-    new Date().toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" });
+  const brand = options.brand ?? "";
+  const date = options.date ?? "";
 
   const blocks = parseBlocks(markdown);
   let title = options.title ?? "";
@@ -320,11 +318,15 @@ export function markdownToPdf(markdown: string, options: PdfOptions = {}): Uint8
     ops = [];
     const first = pages.length === 0;
     if (first) {
-      rect(0, PAGE_H - 7, PAGE_W, 7, COLOR.accent);
-      text(toWin(brand.toUpperCase()), ML, PAGE_H - 36, "F2", 8, COLOR.accent, 1.4);
-      const dw = textWidth(toWin(date), "F1", 8.5);
-      text(toWin(date), PAGE_W - MR - dw, PAGE_H - 36, "F1", 8.5, COLOR.muted);
-    } else {
+      if (brand || date) {
+        rect(0, PAGE_H - 7, PAGE_W, 7, COLOR.accent);
+        if (brand) text(toWin(brand.toUpperCase()), ML, PAGE_H - 36, "F2", 8, COLOR.accent, 1.4);
+        if (date) {
+          const dw = textWidth(toWin(date), "F1", 8.5);
+          text(toWin(date), PAGE_W - MR - dw, PAGE_H - 36, "F1", 8.5, COLOR.muted);
+        }
+      }
+    } else if (brand) {
       text(toWin(brand), ML, PAGE_H - 34, "F2", 8, COLOR.muted);
       let t = toWin(docTitle);
       while (t.length > 3 && textWidth(t, "F1", 8) > CW * 0.6) t = t.slice(0, -2);
@@ -332,7 +334,7 @@ export function markdownToPdf(markdown: string, options: PdfOptions = {}): Uint8
       text(t, PAGE_W - MR - textWidth(t, "F1", 8), PAGE_H - 34, "F1", 8, COLOR.muted);
       line(ML, PAGE_H - 42, PAGE_W - MR, PAGE_H - 42, COLOR.line);
     }
-    y = PAGE_H - MT;
+    y = brand || date ? PAGE_H - MT : PAGE_H - 58;
   }
   const ensure = (h: number) => {
     if (y - h < MB) newPage();
@@ -533,7 +535,7 @@ export function markdownToPdf(markdown: string, options: PdfOptions = {}): Uint8
   pages.forEach((page, index) => {
     ops = page;
     line(ML, 46, PAGE_W - MR, 46, COLOR.line);
-    text(toWin(`${brand}`), ML, 32, "F1", 8, COLOR.muted);
+    if (brand) text(toWin(brand), ML, 32, "F1", 8, COLOR.muted);
     const label = `Página ${index + 1} de ${total}`;
     text(label, PAGE_W - MR - textWidth(label, "F1", 8), 32, "F1", 8, COLOR.muted);
   });
@@ -557,7 +559,7 @@ function assemble(pages: string[][], title: string): Uint8Array {
   const now = new Date();
   const p2 = (n: number) => String(n).padStart(2, "0");
   const stamp = `D:${now.getFullYear()}${p2(now.getMonth() + 1)}${p2(now.getDate())}${p2(now.getHours())}${p2(now.getMinutes())}${p2(now.getSeconds())}`;
-  objects.push(`<< /Title (${escapePdf(title)}) /Producer (Krypton Ecosystem) /Creator (Krypton Ecosystem) /CreationDate (${stamp}) >>`);
+  objects.push(`<< /Title (${escapePdf(title)}) /Producer (PDF) /CreationDate (${stamp}) >>`);
 
   const infoId = objects.length;
   const fontRes = fonts.map((_, i) => `/F${i + 1} ${3 + i} 0 R`).join(" ");

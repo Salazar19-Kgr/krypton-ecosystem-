@@ -1,4 +1,4 @@
-import { isBusy } from "./activity";
+import { isBusy, isTyping } from "./activity";
 type Pt = [number, number];
 type Constellation = { stars: Pt[]; edges: [number, number][]; seed: number };
 
@@ -185,6 +185,7 @@ export function startSky(canvas: HTMLCanvasElement): () => void {
     raf = requestAnimationFrame(loop);
     if (now - last < (isBusy() ? 66 : 33)) return; // 30 cuadros, 15 mientras escribes o haces scroll
     last = now;
+    if (isTyping()) return; // mientras escribes, el cielo se queda quieto un instante
     if (document.hidden || root.classList.contains("k-scrolling")) return;
     if (root.classList.contains("k-lite")) {
       draw(now, true);

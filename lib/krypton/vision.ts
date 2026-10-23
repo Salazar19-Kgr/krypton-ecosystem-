@@ -1,3 +1,5 @@
+import { deepseekConfigured, deepseekVision } from "./deepseek";
+import { geminiKey } from "./keys";
 import { looksMath, solveMathImages } from "./math";
 import { openaiConfigured, openaiVision } from "./openai";
 import { BASE_SYSTEM } from "./brain";
@@ -27,7 +29,7 @@ export async function analyzeImages(
     }
   }
 
-  if (process.env.GEMINI_API_KEY) {
+  if (geminiKey()) {
     try {
       const text = await geminiChain(
         system,
@@ -63,6 +65,13 @@ export async function analyzeImages(
     }
   }
 
+  if (deepseekConfigured()) {
+    try {
+      return { text: await deepseekVision(system, history, images, prompt), provider: "deepseek" };
+    } catch (e) {
+      errors.push("deepseek: " + (e instanceof Error ? e.message : String(e)));
+    }
+  }
   const routerKey = process.env.OPENROUTER_API_KEY;
   if (routerKey) {
     try {

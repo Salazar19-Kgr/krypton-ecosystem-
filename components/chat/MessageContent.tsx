@@ -64,6 +64,11 @@ export default function MessageContent({ content, markdown }: Props) {
     say("TXT listo");
   }
 
+  function mdFile() {
+    downloadFile(md, `${slugify(titleOf(md))}.md`, "text/markdown;charset=utf-8");
+    say("Markdown listo");
+  }
+
   function csv() {
     const data = tablesToCsv(md);
     if (data) {
@@ -98,13 +103,17 @@ export default function MessageContent({ content, markdown }: Props) {
 
       {md && (
         <div className="krypton-actions">
-          <button type="button" onClick={copy}>Copiar</button>
-          <button type="button" onClick={pdf}>PDF</button>
-          <button type="button" onClick={txt}>TXT</button>
-          {hasTable(md) && (
-            <button type="button" onClick={csv}>CSV</button>
-          )}
-          {flash && <span className="krypton-flash">{flash}</span>}
+          <span className="krypton-actions-label">Descargar como</span>
+          <div className="krypton-actions-row">
+            <button type="button" onClick={pdf}>PDF</button>
+            <button type="button" onClick={txt}>TXT</button>
+            <button type="button" onClick={mdFile}>Markdown</button>
+            {hasTable(md) && <button type="button" onClick={csv}>CSV</button>}
+          </div>
+          <div className="krypton-actions-row">
+            <button type="button" onClick={copy}>Copiar texto</button>
+            {flash && <span className="krypton-flash">{flash}</span>}
+          </div>
         </div>
       )}
     </div>

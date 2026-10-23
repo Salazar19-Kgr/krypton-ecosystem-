@@ -1,3 +1,4 @@
+import { geminiKey } from "./keys";
 import { openaiImage } from "./openai";
 import { generate, UA } from "./llm";
 
@@ -33,7 +34,7 @@ const split = (value: string | undefined, fallback: string[]) => {
 };
 
 async function geminiImage(prompt: string): Promise<Img> {
-  const key = process.env.GEMINI_API_KEY;
+  const key = geminiKey();
   if (!key) throw new Error("sin clave de Gemini");
   const models = split(process.env.GEMINI_IMAGE_MODELS, [
     "gemini-3.1-flash-lite-image",
