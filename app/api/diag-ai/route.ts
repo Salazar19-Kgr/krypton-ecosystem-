@@ -28,7 +28,7 @@ export async function GET() {
   const { data } = await supabase.auth.getUser();
   if (!data.user) return NextResponse.json({ error: "Inicia sesión." }, { status: 401 });
 
-  const ask = [{ role: "user", content: "Responde solo con la palabra OK." }];
+  const ask = [{ role: "user" as const, content: "Responde solo con la palabra OK." }];
   const pruebas = await Promise.all([
     probe("deepseek", deepseekConfigured(), async () => (await callDeepSeek({ messages: ask })).slice(0, 30)),
     probe("deepseek-razonamiento", deepseekConfigured(), async () =>
