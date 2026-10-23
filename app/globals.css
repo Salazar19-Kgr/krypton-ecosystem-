@@ -1167,3 +1167,61 @@ html.k-sky .krypton-composer textarea { -webkit-user-select: text; user-select: 
 .krypton-actions { display: grid; gap: 0.55rem; }
 .krypton-actions-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
 .krypton-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+
+/* =========================================================
+   FLUIDEZ PERMANENTE del chat
+   ========================================================= */
+
+/* Cielo con imágenes ya preparadas: sin filtros, máscaras ni desenfoques en cada cuadro */
+.sky-base {
+  inset: -4%;
+  width: auto;
+  height: auto;
+  transform: none;
+  filter: none;
+  background: url("/krypton-nebula-base.webp") center / cover no-repeat;
+}
+.sky-nebula {
+  -webkit-mask-image: none;
+  mask-image: none;
+  filter: none;
+  background: url("/krypton-nebula-fx.webp") center / 100% 100% no-repeat;
+}
+
+/* Letras sin sombras en los mensajes (cada sombra obligaba a dibujar de nuevo todo el texto) */
+html.k-sky main,
+html.k-sky .krypton-md,
+html.k-sky .krypton-md *,
+html.k-sky .krypton-msg,
+html.k-sky .krypton-composer,
+html.k-sky .krypton-composer * { text-shadow: none; }
+html.k-sky h1,
+html.k-sky .krypton-hello { text-shadow: 0 1px 2px rgba(0, 8, 24, 0.7); }
+
+/* Burbujas un poco más firmes para que se lean sin sombra */
+html.k-sky .krypton-msg-bot {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)), rgba(12, 8, 22, 0.58);
+}
+html.k-sky .krypton-msg-user {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1)), rgba(24, 18, 40, 0.42);
+}
+
+/* Las respuestas largas solo se dibujan cuando se acercan a la pantalla */
+html.k-sky .krypton-md > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 70px;
+}
+
+/* El texto del menú y de los botones no se selecciona al copiar */
+html.k-sky .krypton-brand-capsule,
+html.k-sky .krypton-eyebrow,
+html.k-sky h1,
+html.k-sky .k-glass-button,
+html.k-sky .krypton-actions,
+html.k-sky .krypton-composer { -webkit-user-select: none; user-select: none; }
+html.k-sky .krypton-composer textarea { -webkit-user-select: text; user-select: text; }
+
+/* Botones de descarga con el título "Descargar como" */
+.krypton-actions { display: grid; gap: 0.55rem; }
+.krypton-actions-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
+.krypton-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
