@@ -1,3 +1,5 @@
+import { deepseekConfigured, deepseekReason } from "./deepseek";
+import { geminiKey } from "./keys";
 import { generate, type ChatMsg } from "./llm";
 import { callOpenAI, openaiConfigured } from "./openai";
 
@@ -15,7 +17,7 @@ Formato: Markdown en texto plano; fórmulas con Unicode (x², √, ×, ÷), nunc
 const VERIFY_SYSTEM = `Eres un verificador matemático riguroso. Recibirás la petición de un usuario y una solución. Recalcula cada operación, revisa signos, unidades, el planteamiento y que la respuesta final sea justo lo que el usuario pidió (formato y notación incluidos). Responde SOLO con la palabra OK si la solución es correcta y completa. Si encuentras un error, responde con la solución completa corregida, con el mismo formato (Markdown en texto plano, una ecuación por línea, sin LaTeX) y sin mencionar que hubo una corrección.`;
 
 const MATH_HINT =
-  /ecuaci[oó]n|f[oó]rmula|ejercicio|problema de|resuelve|resolver|calcul|derivad|integral|l[ií]mite|matriz|vector|geometr[ií]a|trigonom|circunferencia|par[aá]bola|elipse|funci[oó]n|despej|simplific|factoriz|demuestr|demostr|(?:[aá]rea|volumen|per[ií]metro) (?:de|del) (?:un|una|el|la)? ?(?:c[ií]rculo|tri[aá]ngulo|cuadrado|rect[aá]ngulo|cilindro|esfera|cono|cubo|pir[aá]mide|pol[ií]gono|trapecio|rombo|prisma)|porcentaje|fracci[oó]n|\d\s*[+*/^=×÷]\s*\d|\d\s+-\s+\d|[xy]\s*[²^]/i;
+  /ecuaci[oó]n|f[oó]rmula|ejercicio|problema de|resuelve|resolver|calcul|derivad|integral|l[ií]mite|matriz|vector|geometr[ií]a|trigonom|circunferencia|par[aá]bola|elipse|funci[oó]n|despej|simplific|factoriz|demuestr|demostr|(?:[aá]rea|volumen|per[ií]metro) (?:de|del) (?:un|una|el|la)? ?(?:c[ií]rculo|tri[aá]ngulo|cuadrado|rect[aá]ngulo|cilindro|esfera|cono|cubo|pir[aá]mide|pol[ií]gono|trapecio|rombo|prisma)|porcentaje|fracci[oó]n|acertijo|adivinanza|enigma|puzzle|paradoja|probabilidad|combinatoria|sucesi[oó]n|progresi[oó]n|\d\s*[+*/^=×÷]\s*\d|\d\s+-\s+\d|[xy]\s*[²^]/i;
 
 export const looksMath = (text: string) => MATH_HINT.test(text);
 
@@ -34,7 +36,7 @@ async function ask(
   thinking: string,
   timeoutMs: number
 ): Promise<string> {
-  const key = process.env.GEMINI_API_KEY;
+  const key = geminiKey();
   if (!key) throw new Error("sin clave");
   const base = { systemInstruction: { parts: [{ text: system }] }, contents };
   const send = (extra: object) =>
@@ -76,16 +78,21 @@ async function verify(request: string, solution: string): Promise<string> {
   const prompt = `PETICIÓN DEL USUARIO:\n${request}\n\nSOLUCIÓN A VERIFICAR:\n${solution}`;
   const contents: Content[] = [{ role: "user", parts: [{ text: prompt }] }];
 
-  let verdict: string;
-  if (openaiConfigured()) {
+  let verdict = "";
+  const user = [{ role: "user", content: prompt }];
+  const attempts: (() => Promise<string>)[] = [];
+  if (deepseekConfigured()) attempts.push(() => deepseekReason({ system: VERIFY_SYSTEM, messages: user }));
+  if (openaiConfigured()) attempts.push(() => callOpenAI({ system: VERIFY_SYSTEM, messages: user }));
+  attempts.push(() => chain(VERIFY_SYSTEM, contents, "medium", 45000));
+  for (const attempt of attempts) {
     try {
-      verdict = await callOpenAI({ system: VERIFY_SYSTEM, messages: [{ role: "user", content: prompt }] });
+      verdict = await attempt();
+      break;
     } catch {
-      verdict = await chain(VERIFY_SYSTEM, contents, "medium", 45000);
+      // prueba con el siguiente cerebro
     }
-  } else {
-    verdict = await chain(VERIFY_SYSTEM, contents, "medium", 45000);
   }
+  if (!verdict) return solution;
 
   const v = verdict.trim();
   if (/^ok\b/i.test(v) && v.length < 120) return solution;

@@ -1,3 +1,5 @@
+import { callDeepSeek, deepseekConfigured } from "./deepseek";
+import { geminiKey } from "./keys";
 import { callOpenAI, openaiConfigured } from "./openai";
 export type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -96,7 +98,7 @@ export async function geminiChain(
   timeoutMs = TIMEOUT_MS,
   budgetMs = 45000
 ): Promise<string> {
-  const key = process.env.GEMINI_API_KEY;
+  const key = geminiKey();
   if (!key) throw new Error("sin clave");
 
   const all = geminiModels();
@@ -197,13 +199,18 @@ type Provider = {
 const providers: Provider[] = [
   {
     name: "gemini",
-    configured: () => Boolean(process.env.GEMINI_API_KEY),
+    configured: () => Boolean(geminiKey()),
     call: callGemini,
   },
   {
     name: "groq",
     configured: () => Boolean(process.env.GROQ_API_KEY),
     call: callGroq,
+  },
+  {
+    name: "deepseek",
+    configured: () => deepseekConfigured(),
+    call: callDeepSeek,
   },
   {
     name: "openai",
