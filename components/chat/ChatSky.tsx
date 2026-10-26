@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { startSky } from "@/lib/ui/sky";
+import { useEffect } from "react";
 
-/** Fondo del chat (nebulosa y constelaciones) y ajuste al teclado. Reemplaza el agua solo en el chat. */
+/** Fondo del chat (foto fija, sin animaciones) y ajuste al teclado. Reemplaza el agua solo en el chat. */
 export default function ChatSky() {
-  const canvas = useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("k-sky");
-    const stop = canvas.current ? startSky(canvas.current) : () => {};
 
     // Teclado: el chat se ajusta a la parte visible de la pantalla
     const meta = document.querySelector('meta[name="viewport"]');
@@ -27,7 +23,7 @@ export default function ChatSky() {
     let lastHeight = -1;
     let pending = 0;
 
-    // se aplica una sola vez por cuadro y solo si la altura cambió (escribir no debe provocar recálculos)
+    // se aplica una sola vez por cuadro y solo si la altura cambió
     const apply = () => {
       pending = 0;
       const h = Math.round(vv?.height ?? window.innerHeight);
@@ -47,7 +43,6 @@ export default function ChatSky() {
     window.addEventListener("resize", fit);
 
     return () => {
-      stop();
       cancelAnimationFrame(pending);
       vv?.removeEventListener("resize", fit);
       vv?.removeEventListener("scroll", fit);
@@ -60,9 +55,7 @@ export default function ChatSky() {
 
   return (
     <div className="sky" aria-hidden="true">
-      <div className="sky-base" />
-      <div className="sky-nebula" />
-      <canvas ref={canvas} className="sky-canvas" />
+      <div className="sky-photo" />
       <div className="sky-veil" />
     </div>
   );

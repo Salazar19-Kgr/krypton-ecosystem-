@@ -131,7 +131,7 @@ export async function runKrypton(
 
   let text = answer.text.trim() || "No fue posible generar una respuesta válida.";
 
-  const cited = sources.filter((s) => s.url).slice(0, 4);
+  const cited = sources.filter((s) => s.url).slice(0, 8);
   if (cited.length) {
     text += `\n\n**Fuentes**\n${cited
       .map((s) => `- [${s.title.replace(/[\[\]]/g, "")}](${s.url})`)

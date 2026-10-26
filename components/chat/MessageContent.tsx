@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
   downloadFile,
+  extractSources,
   hasTable,
   markdownToText,
   mimeFor,
@@ -21,12 +23,40 @@ const formatSize = (text: string) => {
   return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
 };
 
+const hostOf = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+};
+
+function SourceIcon({ url }: { url: string }) {
+  const host = hostOf(url);
+  return (
+    <span className="krypton-fav" aria-hidden="true">
+      {host.charAt(0).toUpperCase()}
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${host}&sz=64`}
+        alt=""
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        onError={(event) => {
+          event.currentTarget.style.display = "none";
+        }}
+      />
+    </span>
+  );
+}
+
 export default function MessageContent({ content, markdown }: Props) {
   const [flash, setFlash] = useState("");
+  const [open, setOpen] = useState(false);
 
   if (!markdown) return <p className="krypton-plain">{content}</p>;
 
-  const segments = splitSegments(content);
+  const { body, sources } = extractSources(content);
+  const segments = splitSegments(body);
   const md = segments
     .filter((s): s is { type: "md"; text: string } => s.type === "md")
     .map((s) => s.text)
@@ -100,6 +130,52 @@ export default function MessageContent({ content, markdown }: Props) {
           </div>
         )
       )}
+
+      {sources.length > 0 && (
+        <button type="button" className="krypton-sources-chip" onClick={() => setOpen(true)}>
+          <span className="krypton-sources-icons">
+            {sources.slice(0, 4).map((source) => (
+              <SourceIcon key={source.url} url={source.url} />
+            ))}
+          </span>
+          {sources.length} {sources.length === 1 ? "página web" : "páginas web"}
+        </button>
+      )}
+
+      {open &&
+        createPortal(
+          <div className="krypton-sheet-backdrop" onClick={() => setOpen(false)}>
+            <div
+              className="krypton-sheet"
+              role="dialog"
+              aria-label="Páginas web consultadas"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="krypton-sheet-head">
+                <strong>
+                  {sources.length} {sources.length === 1 ? "página web" : "páginas web"}
+                </strong>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar">
+                  ×
+                </button>
+              </div>
+              <ul>
+                {sources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      <SourceIcon url={source.url} />
+                      <span>
+                        <b>{source.title}</b>
+                        <small>{hostOf(source.url)}</small>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>,
+          document.body
+        )}
 
       {md && (
         <div className="krypton-actions">

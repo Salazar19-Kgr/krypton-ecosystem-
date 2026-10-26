@@ -1,4 +1,3 @@
-import { isBusy, isTyping } from "./activity";
 type V3 = [number, number, number];
 
 function rng(seed: number) {
@@ -97,9 +96,8 @@ export function startSphere(canvas: HTMLCanvasElement, size: number): () => void
 
   function loop(now: number) {
     raf = requestAnimationFrame(loop);
-    if (now - last < (isBusy() ? 66 : 33)) return;
+    if (now - last < 33) return;
     last = now;
-    if (isTyping()) return; // mientras escribes, el cielo se queda quieto un instante
     if (document.hidden || root.classList.contains("k-scrolling")) return;
     if (root.classList.contains("k-lite")) {
       draw(now);

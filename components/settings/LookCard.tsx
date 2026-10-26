@@ -2,82 +2,63 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
-import { applyLook, readLook } from "@/lib/ui/motion";
+import { applyColor, readColor } from "@/lib/ui/motion";
 
 type Info = { version: string; apk: string; apkSizeMB: number };
 
-/** Tarjetas de Configuración: brillo del fondo y de la interfaz, y descarga de la app. */
+/** Tarjetas de Configuración: volumen de color de los fondos y descarga de la app. */
 export default function LookCard() {
-  const [bg, setBg] = useState(100);
-  const [ui, setUi] = useState(100);
+  const [color, setColor] = useState(90);
   const [info, setInfo] = useState<Info | null>(null);
 
   useEffect(() => {
-    const look = readLook();
-    setBg(look.bg);
-    setUi(look.ui);
+    setColor(readColor());
     fetch(`/version.json?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then(setInfo)
       .catch(() => {});
   }, []);
 
-  function change(nextBg: number, nextUi: number) {
-    setBg(nextBg);
-    setUi(nextUi);
-    applyLook(nextBg, nextUi);
+  function change(next: number) {
+    setColor(next);
+    applyColor(next);
   }
 
-  const fillBg = { "--fill": `${((bg - 50) / 50) * 100}%` } as CSSProperties;
-  const fillUi = { "--fill": `${((ui - 100) / 40) * 100}%` } as CSSProperties;
+  const fill = { "--fill": `${((color - 40) / 80) * 100}%` } as CSSProperties;
 
   return (
     <>
       <div className="k-glass-card rounded-3xl p-6">
-        <p className="krypton-eyebrow">BRILLO</p>
+        <p className="krypton-eyebrow">COLOR</p>
         <p className="mt-3 text-sm leading-6 text-white/75">
-          Baja el brillo del fondo y sube el de la interfaz para leer mejor.
+          Ajusta qué tan intenso se ve el color de los fondos. Un valor medio se ve sereno y profesional.
         </p>
 
         <div className="mt-5">
           <div className="flex items-center justify-between text-sm">
-            <span>Brillo del fondo</span>
-            <span className="text-white/80">{bg}%</span>
+            <span>Volumen de color</span>
+            <span className="text-white/80">{color}%</span>
           </div>
           <input
             type="range"
-            min={50}
-            max={100}
+            min={40}
+            max={120}
             step={1}
-            value={bg}
-            onChange={(e) => change(Number(e.target.value), ui)}
+            value={color}
+            onChange={(e) => change(Number(e.target.value))}
             className="krypton-range mt-3"
-            style={fillBg}
-            aria-label="Brillo del fondo"
+            style={fill}
+            aria-label="Volumen de color"
           />
-        </div>
-
-        <div className="mt-6">
-          <div className="flex items-center justify-between text-sm">
-            <span>Brillo de la interfaz</span>
-            <span className="text-white/80">{ui === 100 ? "Normal" : `+${ui - 100}%`}</span>
+          <div className="mt-2 flex justify-between text-xs text-white/65">
+            <span>Suave</span>
+            <span>Vivo</span>
           </div>
-          <input
-            type="range"
-            min={100}
-            max={140}
-            step={1}
-            value={ui}
-            onChange={(e) => change(bg, Number(e.target.value))}
-            className="krypton-range mt-3"
-            style={fillUi}
-            aria-label="Brillo de la interfaz"
-          />
         </div>
 
         <button
           type="button"
-          onClick={() => change(100, 100)}
+          onClick={() => change(90)}
           className="k-glass-button mt-6 rounded-full px-5 py-2.5 text-sm"
         >
           Restablecer

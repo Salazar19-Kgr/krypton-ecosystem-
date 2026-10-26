@@ -51,3 +51,25 @@ export function applyLook(bg: number, ui: number) {
     // sin almacenamiento: se aplica solo en esta visita
   }
 }
+
+const COLOR_KEY = "krypton.color";
+
+/** Volumen de color del fondo (40 a 120 %). Por defecto 90 %: un color sereno, ni opaco ni brillante. */
+export function readColor() {
+  try {
+    const value = Number(localStorage.getItem(COLOR_KEY));
+    return value >= 40 && value <= 120 ? value : 90;
+  } catch {
+    return 90;
+  }
+}
+
+/** Aplica el volumen de color a los fondos y lo guarda. */
+export function applyColor(percent: number) {
+  document.documentElement.style.setProperty("--k-color", String(percent / 100));
+  try {
+    localStorage.setItem(COLOR_KEY, String(percent));
+  } catch {
+    // sin almacenamiento: se aplica solo en esta visita
+  }
+}

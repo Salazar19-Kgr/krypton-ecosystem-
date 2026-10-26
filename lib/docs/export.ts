@@ -109,3 +109,19 @@ export const mimeFor = (name: string) => {
   };
   return map[ext] ?? "text/plain;charset=utf-8";
 };
+
+export type SourceLink = { title: string; url: string };
+
+/** Separa la sección «Fuentes» del final de la respuesta para mostrarla como un botón aparte. */
+export function extractSources(content: string): { body: string; sources: SourceLink[] } {
+  const match = content.match(
+    /\n+(?:#{1,6}[ \t]+)?\**[ \t]*Fuentes[ \t]*\**:?[ \t]*\n((?:[ \t]*[-*][ \t]+\[[^\]]*\]\([^)\s]+\)[ \t]*\n?)+)\s*$/
+  );
+  if (!match || match.index === undefined) return { body: content, sources: [] };
+  const sources: SourceLink[] = [];
+  for (const line of match[1].split("\n")) {
+    const link = line.match(/\[([^\]]*)\]\(([^)\s]+)\)/);
+    if (link) sources.push({ title: link[1].trim() || link[2], url: link[2] });
+  }
+  return { body: content.slice(0, match.index).trimEnd(), sources };
+}

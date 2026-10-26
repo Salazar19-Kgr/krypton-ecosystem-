@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { applyLook, readLook, readMotion } from "@/lib/ui/motion";
+import { applyColor, readColor, readMotion } from "@/lib/ui/motion";
 
 /**
  * Aplica las preferencias de Configuración (animaciones y brillo).
@@ -15,8 +15,7 @@ export default function PerformanceGuard() {
     root.classList.toggle("k-motion", mode === "on");
     root.classList.toggle("k-lite", mode === "off");
 
-    const look = readLook();
-    applyLook(look.bg, look.ui);
+    applyColor(readColor());
 
     let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
