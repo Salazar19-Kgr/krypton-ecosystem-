@@ -1225,3 +1225,93 @@ html.k-sky .krypton-composer textarea { -webkit-user-select: text; user-select: 
 .krypton-actions { display: grid; gap: 0.55rem; }
 .krypton-actions-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; }
 .krypton-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+
+/* =========================================================
+   CHAT: fondo fijo (nebulosa verde) y sin animaciones
+   ========================================================= */
+.sky { background: #020b0c; }
+.sky-photo {
+  position: absolute;
+  inset: 0;
+  background: url("/krypton-chat-bg.webp") center 40% / cover no-repeat;
+  filter: saturate(var(--k-color, 0.9));
+}
+.sky-veil {
+  background:
+    radial-gradient(120% 75% at 50% 42%, transparent 45%, rgba(1, 8, 10, 0.5) 100%),
+    linear-gradient(180deg, rgba(1, 8, 10, 0.5) 0%, rgba(1, 8, 10, 0.06) 28%, rgba(1, 8, 10, 0.1) 65%, rgba(1, 8, 10, 0.62) 100%);
+}
+
+/* Sin animaciones en el chat (solo queda la esfera, que es un dibujo aparte) */
+html.k-sky *,
+html.k-sky *::before,
+html.k-sky *::after { animation: none !important; }
+
+/* Las respuestas se dibujan completas al instante, sin esperar a que lleguen a la pantalla */
+.krypton-msg { contain: none; }
+html.k-sky .krypton-md > * { content-visibility: visible; contain-intrinsic-size: none; }
+
+/* Burbujas en los tonos del nuevo fondo */
+html.k-sky .krypton-msg-bot {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)), rgba(3, 16, 18, 0.62);
+}
+html.k-sky .krypton-msg-user {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)), rgba(6, 44, 40, 0.5);
+}
+
+/* Volumen de color de los fondos (Configuración) */
+.kb-photo { filter: saturate(var(--k-color, 0.9)); }
+
+/* Páginas web consultadas: botón con íconos y hoja con los enlaces */
+.krypton-sources-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.krypton-sources-icons { display: inline-flex; }
+.krypton-sources-icons .krypton-fav { margin-left: -8px; }
+.krypton-sources-icons .krypton-fav:first-child { margin-left: 0; }
+.krypton-fav {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1f3b38;
+  box-shadow: 0 0 0 1.5px rgba(10, 20, 22, 0.9);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  overflow: hidden;
+}
+.krypton-fav img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #ffffff; }
+.krypton-sheet-backdrop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: flex-end; background: rgba(0, 0, 0, 0.5); }
+.krypton-sheet {
+  width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  padding: 1rem 1rem 1.4rem;
+  border-radius: 1.6rem 1.6rem 0 0;
+  background: rgba(8, 18, 20, 0.95);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+.krypton-sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; font-size: 1rem; }
+.krypton-sheet-head button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #ffffff; font-size: 1.2rem; }
+.krypton-sheet ul { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.krypton-sheet a { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0.6rem; border-radius: 1rem; color: #ffffff; text-decoration: none; }
+.krypton-sheet a:active { background: rgba(255, 255, 255, 0.12); }
+.krypton-sheet a span:last-child { display: grid; min-width: 0; }
+.krypton-sheet b { overflow: hidden; font-size: 0.9rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.krypton-sheet small { opacity: 0.7; font-size: 0.75rem; }
