@@ -1315,3 +1315,10 @@ html.k-sky .krypton-msg-user {
 .krypton-sheet a span:last-child { display: grid; min-width: 0; }
 .krypton-sheet b { overflow: hidden; font-size: 0.9rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .krypton-sheet small { opacity: 0.7; font-size: 0.75rem; }
+
+/* Si la foto del chat no estuviera, se ve un degradado verde y no un fondo negro */
+.sky-photo {
+  background:
+    url("/krypton-chat-bg.webp") center 40% / cover no-repeat,
+    radial-gradient(120% 80% at 70% 72%, #0b6b4a 0%, #07323a 45%, #020b0c 100%);
+}
