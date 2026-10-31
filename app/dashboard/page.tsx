@@ -4,21 +4,7 @@ import HealthCard from "@/components/health/HealthCard";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 
-const TOOLS = [
-  "Contador de palabras",
-  "Conversor de formatos",
-  "Limpieza de texto",
-  "Comparador de textos",
-  "Extractor de texto",
-  "OCR",
-  "Archivos",
-  "PDF a imágenes",
-  "Imágenes a PDF",
-  "Unir PDFs",
-  "Dividir PDFs",
-  "Comprimir archivos",
-  "Convertir documentos",
-];
+const TOOLS = ["Contador de palabras","Limpieza de texto","Comparador de textos","Resumir","Corregir","Traducir","Reescribir","Extraer datos","Texto a tabla","Redactar","Explicar fácil"];
 
 function Soon() {
   return (
@@ -78,15 +64,13 @@ export default function DashboardPage() {
 
           <HealthCard />
 
-          <div className="k-glass-card rounded-3xl p-6">
+          <Link href="/tools" className="k-glass-card block rounded-3xl p-6">
             <div className="flex items-center justify-between">
-              <p className="krypton-eyebrow">KRYPTON TOOLS</p>
-              <Soon />
+              <p className="krypton-eyebrow">KRYPTON TOOLS</p><span className="rounded-full bg-cyan-200/25 px-3 py-1 text-[10px] tracking-wide">Activo</span>
             </div>
             <h3 className="mt-4 text-lg font-medium">Herramientas</h3>
             <p className="mt-2 text-sm leading-6 text-white/75">
-              Usará el cerebro de Krypton Ecosystem para ofrecer herramientas
-              al usuario.
+              Resume, corrige, traduce, redacta y más, con el cerebro de Krypton.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {TOOLS.map((tool) => (
@@ -98,7 +82,19 @@ export default function DashboardPage() {
                 </span>
               ))}
             </div>
-          </div>
+        <p className="mt-5 text-xs text-white/70">Abrir →</p>
+      </Link>
+
+      <div className="k-glass-card rounded-3xl p-6">
+        <div className="flex items-center justify-between">
+          <p className="krypton-eyebrow">KRYPTON CODE</p>
+          <Soon />
+        </div>
+        <h3 className="mt-4 text-lg font-medium">Programación</h3>
+        <p className="mt-2 text-sm leading-6 text-white/75">
+          Escribe, revisa y depura código con IA.
+        </p>
+      </div>
         </div>
 
         <div className="mt-12 flex items-end justify-between">

@@ -42,6 +42,24 @@ export async function POST(request: Request) {
       );
     }
 
+    {
+      const perMin = Number(process.env.CHAT_LIMIT_PER_MIN ?? 15);
+      const perDay = Number(process.env.CHAT_LIMIT_PER_DAY ?? 400);
+      const since = (ms: number) => new Date(Date.now() - ms).toISOString();
+      try {
+        const [m, d] = await Promise.all([
+          supabase.from("messages").select("role", { count: "exact", head: true }).eq("user_id", user.id).eq("role", "user").gte("created_at", since(60000)),
+          supabase.from("messages").select("role", { count: "exact", head: true }).eq("user_id", user.id).eq("role", "user").gte("created_at", since(86400000)),
+        ]);
+        if ((m.count ?? 0) >= perMin) {
+          return NextResponse.json({ ok: false, error: "Vas muy rápido. Espera un minuto y vuelve a escribir." }, { status: 429 });
+        }
+        if ((d.count ?? 0) >= perDay) {
+          return NextResponse.json({ ok: false, error: "Llegaste al límite diario de mensajes. Mañana se reinicia." }, { status: 429 });
+        }
+      } catch {}
+    }
+
     const body = (await request.json()) as Body;
     const message = (body.message ?? "").trim();
     const images = (Array.isArray(body.images) ? body.images : [])
