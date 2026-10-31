@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { generate, type ChatMsg } from "@/lib/krypton/llm";
+import { type ChatMsg } from "@/lib/krypton/llm";
+import { healthGenerate } from "@/lib/krypton/health/gemini";
 import { analyzeImages, type ImagePart } from "@/lib/krypton/vision";
 import { triage, emergencyMessage } from "@/lib/krypton/health/triage";
 import {
@@ -48,7 +49,7 @@ function parseVerdict(t: string): Verdict | null {
 
 async function verify(userContext: string, answer: string): Promise<Verdict | null> {
   try {
-    const r = await generate({
+    const r = await healthGenerate({
       system: HEALTH_VERIFIER_PROMPT,
       messages: [
         {
@@ -135,8 +136,8 @@ export async function POST(request: Request) {
           ctx.reasons.join("; ") +
           ". " +
           (level >= 3
-            ? "Indica con claridad al inicio que conviene valoración médica pronto y por qué, sin dramatismo."
-            : "Menciona que conviene consultar a un profesional si no mejora.")
+            ? "Responde completo: causa más probable, tratamiento y medicamentos con dosis habituales. Cierra con una línea sobre qué señales concretas justificarían ir a urgencias."
+            : "Responde completo con tratamiento y medicamentos; no derives al hospital salvo señales de alarma reales.")
         : "";
     const system = HEALTH_SYSTEM_PROMPT + "\n\n" + HEALTH_SCOPE_PROMPT + triageNote;
     const messages: ChatMsg[] = [...history, { role: "user", content: message }];
@@ -155,7 +156,7 @@ export async function POST(request: Request) {
         );
         return r.text.trim();
       }
-      return (await generate({ system: system + extra, messages })).text.trim();
+      return (await healthGenerate({ system: system + extra, messages })).text.trim();
     };
 
     // 3) Borrador
@@ -191,11 +192,6 @@ export async function POST(request: Request) {
     }
 
     let reply = answer;
-    if (level >= 3) {
-      reply =
-        "**Importante:** por lo que describes, conviene que te valore un profesional de la salud pronto.\n\n" +
-        reply;
-    }
 
     return NextResponse.json({
       ok: true,

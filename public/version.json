@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
-  "build": 2,
-  "notes": "Chat negro, respuestas a pantalla completa",
+  "version": "1.0.2",
+  "build": 3,
+  "notes": "Health con Gemini propio y prompt de médico; cristal transparente",
   "apk": "",
   "apkSizeMB": 0
 }
