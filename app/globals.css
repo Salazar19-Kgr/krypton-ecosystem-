@@ -1335,20 +1335,20 @@ html.k-sky main,html.k-sky .krypton-chat-page{padding-bottom:0 !important;}
 html.k-sky .krypton-chat-page{padding-bottom:max(0px, env(safe-area-inset-bottom)) !important;}
 
 
-/* krypton-glass-v3 */
+/* krypton-glass-v4 */
 html:root body :is([class*="k-glass"], .krypton-brand-capsule, .krypton-composer, .krypton-msg-user) {
-  background: rgba(0,0,0,.5) !important;
+  background: linear-gradient(155deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.12) 38%, rgba(255,255,255,.07) 62%, rgba(255,255,255,.20) 100%) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  border: 1px solid rgba(255,255,255,.62) !important;
+  border: 1px solid rgba(255,255,255,.55) !important;
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.12),
-    inset 0 0 16px -4px rgba(255,255,255,.55),
-    inset 3px 3px 7px -3px rgba(255,255,255,.95),
-    inset -3px -3px 7px -4px rgba(255,255,255,.5),
-    inset 6px 6px 16px -9px rgba(110,220,255,.55),
-    inset -6px -6px 16px -9px rgba(255,120,200,.40),
-    0 0 14px rgba(255,255,255,.12) !important;
+    inset 0 1px 1px rgba(255,255,255,.85),
+    inset 0 -1px 1px rgba(255,255,255,.35),
+    inset 0 0 22px rgba(255,255,255,.12),
+    inset 5px 5px 14px -8px rgba(110,220,255,.45),
+    inset -5px -5px 14px -8px rgba(255,120,200,.35),
+    0 10px 26px -12px rgba(0,0,0,.9),
+    0 0 18px rgba(255,255,255,.06) !important;
   transition: transform .25s cubic-bezier(.2,.9,.25,1.2) !important;
 }
 html:root body .k-glass-button:active, html:root body .krypton-brand-capsule:active { transform: scale(.96) !important; }
