@@ -4,7 +4,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import ChatComposer, { type Attachment } from "@/components/chat/ChatComposer";
-import MessageContent from "@/components/chat/MessageContent";
+import TypedContent, { liveStamp } from "@/components/chat/TypedContent";
 import ChatSky from "@/components/chat/ChatSky";
 import NetworkSphere from "@/components/chat/NetworkSphere";
 import { SparkIcon, ClockIcon } from "@/components/chat/ChatIcons";
@@ -117,10 +117,7 @@ const Bubble = memo(function Bubble({ item }: { item: Message }) {
           <span className="krypton-msg-tag">Imagen adjunta</span>
         )}
         {item.content && item.content !== "[Imagen adjunta]" && (
-          <MessageContent
-            content={item.content}
-            markdown={!isUser && !item.error}
-          />
+          <TypedContent content={item.content} bot={!isUser && !item.error} />
         )}
       </div>
     </div>
@@ -222,7 +219,8 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      const response = await fetchWithRetry("/api/chat", {
+      liveStamp.t = Date.now();
+    const response = await fetchWithRetry("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
