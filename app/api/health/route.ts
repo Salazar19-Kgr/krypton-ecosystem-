@@ -16,7 +16,7 @@ const MAX_HISTORY = 14;
 const MAX_IMAGES = 4;
 const MAX_B64 = 2_500_000;
 const ALLOWED = /^(image\/(jpeg|png|webp)|application\/pdf)$/;
-const VERIFY = process.env.HEALTH_VERIFY !== "off";
+const VERIFY = process.env.HEALTH_VERIFY === "on";
 const OFF_TOPIC_MARK = "[[FUERA_DE_TEMA]]";
 const OFF_TOPIC_REPLY =
   "Krypton Health es un asistente médico y no puede ayudarte con esa consulta. Si tienes dudas sobre tu salud, síntomas, medicamentos o resultados de exámenes, con gusto te ayudo.";
@@ -199,9 +199,9 @@ export async function POST(request: Request) {
       triage: { level, reasons: ctx.reasons },
       verified,
     });
-  } catch {
+  } catch (e) {
     return NextResponse.json(
-      { ok: false, error: "No pude analizar eso ahora. Intenta de nuevo en un momento." },
+      { ok: false, error: "No pude analizar eso ahora. (" + String((e as Error)?.message ?? e).slice(0, 140) + ")" },
       { status: 500 }
     );
   }

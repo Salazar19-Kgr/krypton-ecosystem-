@@ -1,7 +1,7 @@
 {
-  "version": "1.0.2",
-  "build": 3,
-  "notes": "Health con Gemini propio y prompt de médico; cristal transparente",
+  "version": "1.0.3",
+  "build": 4,
+  "notes": "Cristal liquido nuevo; Health mas rapido",
   "apk": "",
   "apkSizeMB": 0
 }

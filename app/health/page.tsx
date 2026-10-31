@@ -390,7 +390,7 @@ export default function HealthPage() {
                 e.target.style.height = Math.min(e.target.scrollHeight, 140) + "px";
               }}
               onKeyDown={onKey}
-              placeholder="¿Qué sientes o qué quieres consultar?"
+              placeholder="¿Qué sientes hoy?"
               className="max-h-[140px] min-w-0 flex-1 resize-none rounded-3xl border border-white/30 bg-white/15 px-5 py-3 text-white placeholder-white/60 outline-none backdrop-blur-xl"
             />
             <button

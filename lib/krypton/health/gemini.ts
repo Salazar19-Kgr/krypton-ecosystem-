@@ -17,7 +17,8 @@ export async function healthGenerate(args: {
   const models = (process.env.HEALTH_GEMINI_MODELS || DEFAULT_MODELS)
     .split(",")
     .map((s) => s.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .slice(0, 2);
   const contents = args.messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
@@ -37,10 +38,11 @@ export async function healthGenerate(args: {
           {
             method: "POST",
             headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+            signal: AbortSignal.timeout(25000),
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: args.system }] },
               contents,
-              generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
+              generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
               safetySettings: cats.map((category) => ({ category, threshold: "BLOCK_ONLY_HIGH" })),
             }),
           }
