@@ -16,6 +16,10 @@ export default function KbPage() {
   const [content, setContent] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [bulkTitle, setBulkTitle] = useState("");
+  const [bulkKind, setBulkKind] = useState("conocimiento");
+  const [bulkText, setBulkText] = useState("");
+  const [bulkMsg, setBulkMsg] = useState("");
 
   async function load() {
     try {
@@ -65,6 +69,69 @@ export default function KbPage() {
     }
   }
 
+  function chunk(text: string, max = 1400): string[] {
+    const paras = text.replace(/\r/g, "").split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
+    const out: string[] = [];
+    let cur = "";
+    for (const p of paras) {
+      if (cur && (cur + "\n\n" + p).length > max) {
+        out.push(cur);
+        cur = "";
+      }
+      if (p.length > max) {
+        for (let i = 0; i < p.length; i += max) out.push(p.slice(i, i + max));
+      } else {
+        cur = cur ? cur + "\n\n" + p : p;
+      }
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+
+  async function bulkImport() {
+    const t = bulkText.trim();
+    if (!bulkTitle.trim() || t.length < 40) {
+      setBulkMsg("Escribe un título y pega el texto (mínimo 40 caracteres).");
+      return;
+    }
+    const parts = chunk(t).slice(0, 40);
+    setBusy(true);
+    setBulkMsg("Importando…");
+    let ok = 0;
+    for (let i = 0; i < parts.length; i++) {
+      try {
+        const r = await fetch("/api/admin/kb", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "save",
+            id: null,
+            kind: bulkKind,
+            title: bulkTitle + (parts.length > 1 ? " (parte " + (i + 1) + " de " + parts.length + ")" : ""),
+            tags: bulkTitle,
+            content: parts[i],
+          }),
+        });
+        const d = await r.json();
+        if (d.ok) ok++;
+      } catch {}
+    }
+    setBusy(false);
+    setBulkMsg("Guardadas " + ok + " de " + parts.length + " partes.");
+    if (ok) {
+      setBulkText("");
+      setBulkTitle("");
+    }
+    await load();
+  }
+
+  async function readFile(f: File | undefined) {
+    if (!f) return;
+    const t = await f.text();
+    setBulkText(t.slice(0, 56000));
+    if (!bulkTitle) setBulkTitle(f.name.replace(/\.[^.]+$/, ""));
+  }
+
   return (
     <KryptonShell>
       <section className="mx-auto max-w-3xl px-1 pb-12 pt-4">
@@ -89,6 +156,21 @@ export default function KbPage() {
               <button type="button" onClick={() => { setId(""); setTitle(""); setTags(""); setContent(""); }} className="k-glass-button rounded-full px-4 py-2 text-xs">Cancelar</button>
             )}
           </div>
+        </div>
+
+        <div className="k-glass-card mt-4 rounded-3xl p-4">
+          <p className="text-sm font-medium">Importar texto largo (apuntes, guías, temarios)</p>
+          <p className="mt-1 text-xs text-white/60">Se divide solo en partes para que Krypton encuentre lo relevante. Máximo unas 40 partes por importación.</p>
+          <select value={bulkKind} onChange={(e) => setBulkKind(e.target.value)} className={FIELD + " mt-3"} style={{ colorScheme: "dark" }}>
+            {KINDS.map((k) => (
+              <option key={k} value={k}>{k}</option>
+            ))}
+          </select>
+          <input value={bulkTitle} onChange={(e) => setBulkTitle(e.target.value)} placeholder="Título general (ej. Cálculo I, guía de estudio)" className={FIELD + " mt-3"} />
+          <input type="file" accept=".txt,.md,text/plain" onChange={(e) => readFile(e.target.files?.[0])} className="mt-3 block w-full text-xs text-white/70" />
+          <textarea value={bulkText} onChange={(e) => setBulkText(e.target.value)} rows={7} placeholder="O pega aquí el texto…" className={FIELD + " mt-3"} />
+          <button type="button" onClick={bulkImport} disabled={busy} className="k-glass-button mt-3 w-full rounded-full px-4 py-2 text-xs disabled:opacity-50">Importar</button>
+          {bulkMsg && <p className="mt-2 text-xs text-white/70">{bulkMsg}</p>}
         </div>
 
         <div className="mt-4 space-y-3">

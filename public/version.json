@@ -1,7 +1,7 @@
 {
-  "version": "1.0.17",
-  "build": 18,
-  "notes": "Sesion estable, modo programacion, matematicas en bloque, Health variado",
+  "version": "1.0.18",
+  "build": 19,
+  "notes": "Admin sin animaciones e importador de apuntes",
   "apk": "",
   "apkSizeMB": 0
 }
