@@ -1,7 +1,7 @@
 {
-  "version": "1.0.6",
-  "build": 7,
-  "notes": "Tools activo, Krypton Code y limites por usuario",
+  "version": "1.0.7",
+  "build": 8,
+  "notes": "Tools chat, planes, copiar codigo",
   "apk": "",
   "apkSizeMB": 0
 }

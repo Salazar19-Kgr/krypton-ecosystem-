@@ -1,6 +1,7 @@
 "use client";
 
 import HealthCard from "@/components/health/HealthCard";
+import ToolsCard from "@/components/tools/ToolsCard";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 
@@ -64,26 +65,7 @@ export default function DashboardPage() {
 
           <HealthCard />
 
-          <Link href="/tools" className="k-glass-card block rounded-3xl p-6">
-            <div className="flex items-center justify-between">
-              <p className="krypton-eyebrow">KRYPTON TOOLS</p><span className="rounded-full bg-cyan-200/25 px-3 py-1 text-[10px] tracking-wide">Activo</span>
-            </div>
-            <h3 className="mt-4 text-lg font-medium">Herramientas</h3>
-            <p className="mt-2 text-sm leading-6 text-white/75">
-              Resume, corrige, traduce, redacta y más, con el cerebro de Krypton.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {TOOLS.map((tool) => (
-                <span
-                  key={tool}
-                  className="rounded-full bg-white/10 px-3 py-1 text-[11px]"
-                >
-                  {tool}
-                </span>
-              ))}
-            </div>
-        <p className="mt-5 text-xs text-white/70">Abrir →</p>
-      </Link>
+          <ToolsCard />
 
       <div className="k-glass-card rounded-3xl p-6">
         <div className="flex items-center justify-between">

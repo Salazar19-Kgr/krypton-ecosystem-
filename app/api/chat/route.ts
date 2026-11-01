@@ -43,8 +43,13 @@ export async function POST(request: Request) {
     }
 
     {
-      const perMin = Number(process.env.CHAT_LIMIT_PER_MIN ?? 15);
-      const perDay = Number(process.env.CHAT_LIMIT_PER_DAY ?? 400);
+      let plan = "free";
+      try {
+        const r = await supabase.rpc("my_plan");
+        if (typeof r.data === "string") plan = r.data;
+      } catch {}
+      const LIM: Record<string, number[]> = { free: [10, 40], basic: [15, 300], pro: [20, 1000], max: [30, 3000] };
+      const [perMin, perDay] = LIM[plan] ?? LIM.free;
       const since = (ms: number) => new Date(Date.now() - ms).toISOString();
       try {
         const [m, d] = await Promise.all([

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as RMouseEvent } from "react";
 import MessageContent from "./MessageContent";
 
 export const liveStamp = { t: 0 };
@@ -41,8 +41,21 @@ export default function TypedContent({
     return () => clearInterval(id);
   }, [content, animate]);
 
+  function onCodeClick(e: RMouseEvent<HTMLDivElement>) {
+    const pre = (e.target as HTMLElement).closest("pre");
+    if (!pre) return;
+    const r = pre.getBoundingClientRect();
+    if (e.clientY - r.top > 46 || r.right - e.clientX > 130) return;
+    const text = (pre.querySelector("code") ?? pre).textContent ?? "";
+    const done = () => {
+      pre.setAttribute("data-copied", "1");
+      setTimeout(() => pre.removeAttribute("data-copied"), 1600);
+    };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => {});
+  }
+
   return (
-    <div ref={box}>
+    <div ref={box} className="k-codewrap" onClick={onCodeClick}>
       <MessageContent content={content.slice(0, shown)} markdown={bot} />
     </div>
   );
