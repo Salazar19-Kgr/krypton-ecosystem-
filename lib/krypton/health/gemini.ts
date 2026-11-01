@@ -42,7 +42,7 @@ async function healthOnce(args: {
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: args.system }] },
               contents,
-              generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
+              generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
               safetySettings: cats.map((category) => ({ category, threshold: "BLOCK_ONLY_HIGH" })),
             }),
           }
