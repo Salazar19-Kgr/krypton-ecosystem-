@@ -3,7 +3,7 @@ import type { ChatMsg } from "@/lib/krypton/llm";
 
 const DEFAULT_MODELS = "gemini-3.6-flash,gemini-3.5-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite";
 
-export async function healthGenerate(args: {
+async function healthOnce(args: {
   system: string;
   messages: ChatMsg[];
 }): Promise<{ text: string }> {
@@ -18,7 +18,7 @@ export async function healthGenerate(args: {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean)
-    .slice(0, 2);
+    .slice(0, 3);
   const contents = args.messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
@@ -38,11 +38,11 @@ export async function healthGenerate(args: {
           {
             method: "POST",
             headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-            signal: AbortSignal.timeout(25000),
+            signal: AbortSignal.timeout(55000),
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: args.system }] },
               contents,
-              generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
+              generationConfig: { temperature: 0.4, maxOutputTokens: 4096 },
               safetySettings: cats.map((category) => ({ category, threshold: "BLOCK_ONLY_HIGH" })),
             }),
           }
@@ -62,4 +62,16 @@ export async function healthGenerate(args: {
     }
   }
   throw new Error("Gemini Health fallo: " + last);
+}
+
+export async function healthGenerate(args: {
+  system: string;
+  messages: ChatMsg[];
+}): Promise<{ text: string }> {
+  try {
+    return await healthOnce(args);
+  } catch {
+    await new Promise((r) => setTimeout(r, 1500));
+    return await healthOnce(args);
+  }
 }

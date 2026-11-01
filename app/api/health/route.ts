@@ -199,9 +199,9 @@ export async function POST(request: Request) {
       triage: { level, reasons: ctx.reasons },
       verified,
     });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
-      { ok: false, error: "No pude analizar eso ahora. (" + String((e as Error)?.message ?? e).slice(0, 140) + ")" },
+      { ok: false, error: "Tu consulta tardó más de lo normal. Envíala de nuevo en unos segundos; si es muy larga, divídela en partes." },
       { status: 500 }
     );
   }

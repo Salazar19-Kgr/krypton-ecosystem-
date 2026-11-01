@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import ThinkingLabel from "@/components/chat/ThinkingLabel";
 import { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import HealthBackground from "@/components/health/HealthBackground";
 import Markdown from "@/components/health/Markdown";
@@ -312,10 +313,7 @@ export default function HealthPage() {
           {loading && (
             <div className="flex">
               <div className="flex items-center gap-1.5 rounded-3xl border border-white/20 bg-black/25 px-5 py-4 backdrop-blur-xl">
-                <span className="h-2 w-2 animate-bounce rounded-full bg-white/80" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-white/80 [animation-delay:150ms]" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-white/80 [animation-delay:300ms]" />
-              </div>
+                <ThinkingLabel /></div>
             </div>
           )}
           <div ref={endRef} />
