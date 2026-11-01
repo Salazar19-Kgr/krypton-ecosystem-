@@ -1,7 +1,7 @@
 {
-  "version": "1.0.12",
-  "build": 13,
-  "notes": "Imagen a PDF, indicador de texto y Tools mas capaz",
+  "version": "1.0.13",
+  "build": 14,
+  "notes": "Imagen a PDF fiel y modo escaner",
   "apk": "",
   "apkSizeMB": 0
 }

@@ -1,6 +1,8 @@
+import { cleanDoc } from "./docclean";
+
 export type ImgIn = { mimeType: string; data: string };
 
-async function toJpeg(img: ImgIn): Promise<{ bytes: Uint8Array; w: number; h: number }> {
+async function toJpeg(img: ImgIn, scan = false): Promise<{ bytes: Uint8Array; w: number; h: number }> {
   const src = "data:" + img.mimeType + ";base64," + img.data;
   const el = await new Promise<HTMLImageElement>((res, rej) => {
     const i = new Image();
@@ -19,15 +21,16 @@ async function toJpeg(img: ImgIn): Promise<{ bytes: Uint8Array; w: number; h: nu
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(el, 0, 0, w, h);
-  const bin = atob(c.toDataURL("image/jpeg", 0.92).split(",")[1]);
+  const oc = scan ? cleanDoc(c) : c;
+  const bin = atob(oc.toDataURL("image/jpeg", 0.92).split(",")[1]);
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return { bytes, w, h };
+  return { bytes, w: oc.width, h: oc.height };
 }
 
-export async function imagesToPdf(imgs: ImgIn[]): Promise<Blob> {
+export async function imagesToPdf(imgs: ImgIn[], scan = false): Promise<Blob> {
   const jp: { bytes: Uint8Array; w: number; h: number }[] = [];
-  for (const i of imgs) jp.push(await toJpeg(i));
+  for (const i of imgs) jp.push(await toJpeg(i, scan));
   const enc = new TextEncoder();
   const chunks: Uint8Array[] = [];
   let len = 0;

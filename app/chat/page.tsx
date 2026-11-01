@@ -224,13 +224,13 @@ export default function ChatPage() {
       if (
       sent.some((a) => a.mimeType.startsWith("image/")) &&
       /pdf/i.test(text) &&
-      /(transform|convert|pasa|pasar|haz|hacer|crea|crear|genera|generar|guarda|exporta|descarg)/i.test(text) &&
-      !/(texto|transcrib|extrae|editable|ocr|resum|tradu)/i.test(text)
+      !/(texto|transcrib|extra|editable|ocr|resum|tradu|analiz|explica|descri|informe|sobre|redact|escrib)/.test(text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
     ) {
       try {
         const pics = sent.filter((a) => a.mimeType.startsWith("image/"));
-        downloadBlob(await imagesToPdf(pics), "krypton-documento.pdf");
-        push("model", "Listo. Convertí " + pics.length + (pics.length === 1 ? " imagen" : " imágenes") + " a PDF y la descarga empezó. Si no se descargó, pídemelo de nuevo.");
+        const scan = /(escan|imprim|limpi|recort|enderez|document|calidad|nitid)/.test(text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+        downloadBlob(await imagesToPdf(pics, scan), "krypton-documento.pdf");
+        push("model", "Listo. Convertí " + pics.length + (pics.length === 1 ? " imagen" : " imágenes") + " a PDF" + (scan ? " en modo escáner (recortado, enderezado y con fondo limpio)." : " tal cual la foto.") + " La descarga empezó." + (scan ? "" : " Si la quieres limpia para imprimir, escribe: «pásala a PDF modo escáner»."));
       } catch {
         push("model", "No pude convertir la imagen a PDF. Prueba con otra foto.", { error: true });
       }
