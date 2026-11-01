@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { kbContext } from "@/lib/krypton/kb";
 import { createClient } from "@/lib/supabase/server";
 import { runKrypton } from "@/lib/krypton/brain";
 import { analyzeImages, type ImagePart } from "@/lib/krypton/vision";
@@ -122,7 +123,7 @@ export async function POST(request: Request) {
       ? await analyzeImages(message, history, images)
       : wantsImage(message)
         ? await createImageLimited(supabase, user.id, message)
-        : await runKrypton(message, history);
+        : await runKrypton((await kbContext(supabase, message)) + message, history);
 
     // Guardar en el historial (si falla, el usuario igual recibe su respuesta)
     let title: string | null = null;

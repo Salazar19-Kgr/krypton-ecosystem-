@@ -1,7 +1,7 @@
 {
-  "version": "1.0.14",
-  "build": 15,
-  "notes": "Health mas fuerte, Tools con razonamiento",
+  "version": "1.0.15",
+  "build": 16,
+  "notes": "Biblioteca de modelos y conocimiento",
   "apk": "",
   "apkSizeMB": 0
 }
