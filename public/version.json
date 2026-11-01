@@ -1,7 +1,7 @@
 {
-  "version": "1.0.20",
-  "build": 21,
-  "notes": "Busqueda inteligente y contexto limpio",
+  "version": "1.0.21",
+  "build": 22,
+  "notes": "Reglas editables, arte ASCII y bloques de codigo",
   "apk": "",
   "apkSizeMB": 0
 }

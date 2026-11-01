@@ -17,3 +17,13 @@ export async function kbContext(supabase: any, message: string): Promise<string>
     return "";
   }
 }
+
+export async function kbRules(supabase: any): Promise<string> {
+  try {
+    const { data, error } = await supabase.rpc("kb_rules");
+    if (error || typeof data !== "string" || !data.trim()) return "";
+    return "REGLAS ADICIONALES DEL EQUIPO DE KRYPTON (obligatorias):\n" + data.slice(0, 4000) + "\n\n";
+  } catch {
+    return "";
+  }
+}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import KryptonShell from "@/components/layout/KryptonShell";
 
 type Doc = { id: string; kind: string; title: string; tags: string; content: string; active: boolean };
-const KINDS = ["modelo", "conocimiento", "matematicas"];
+const KINDS = ["modelo", "conocimiento", "matematicas", "regla"];
 const FIELD = "w-full rounded-2xl border border-white/35 bg-transparent px-4 py-2 text-sm text-white outline-none placeholder:text-white/40";
 
 export default function KbPage() {
