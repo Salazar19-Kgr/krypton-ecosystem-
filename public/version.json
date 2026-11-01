@@ -1,7 +1,7 @@
 {
-  "version": "1.0.18",
-  "build": 19,
-  "notes": "Admin sin animaciones e importador de apuntes",
+  "version": "1.0.19",
+  "build": 20,
+  "notes": "Importador por secciones",
   "apk": "",
   "apkSizeMB": 0
 }

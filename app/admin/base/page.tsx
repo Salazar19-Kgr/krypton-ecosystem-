@@ -88,13 +88,40 @@ export default function KbPage() {
     return out;
   }
 
+  function sections(text: string, base: string): { title: string; content: string }[] {
+    const t = text.replace(/\r/g, "");
+    if (!/^#{1,3} /m.test(t)) {
+      const ps = chunk(t);
+      return ps.map((c, i) => ({
+        title: base + (ps.length > 1 ? " (parte " + (i + 1) + " de " + ps.length + ")" : ""),
+        content: c,
+      }));
+    }
+    const out: { title: string; content: string }[] = [];
+    for (const b of t.split(/^(?=#{1,3} )/m)) {
+      const lines = b.trim().split("\n");
+      if (!lines[0]) continue;
+      const head = /^#{1,3} /.test(lines[0]) ? lines[0].replace(/^#{1,3} /, "").trim() : "";
+      const body = (head ? lines.slice(1) : lines).join("\n").trim();
+      if (body.length < 30) continue;
+      const ps = chunk(body);
+      ps.forEach((c, i) =>
+        out.push({
+          title: base + (head ? " · " + head : "") + (ps.length > 1 ? " (" + (i + 1) + "/" + ps.length + ")" : ""),
+          content: head ? head + "\n" + c : c,
+        })
+      );
+    }
+    return out;
+  }
+
   async function bulkImport() {
     const t = bulkText.trim();
     if (!bulkTitle.trim() || t.length < 40) {
       setBulkMsg("Escribe un título y pega el texto (mínimo 40 caracteres).");
       return;
     }
-    const parts = chunk(t).slice(0, 40);
+    const parts = sections(t, bulkTitle.trim()).slice(0, 60);
     setBusy(true);
     setBulkMsg("Importando…");
     let ok = 0;
@@ -107,9 +134,9 @@ export default function KbPage() {
             action: "save",
             id: null,
             kind: bulkKind,
-            title: bulkTitle + (parts.length > 1 ? " (parte " + (i + 1) + " de " + parts.length + ")" : ""),
+            title: parts[i].title,
             tags: bulkTitle,
-            content: parts[i],
+            content: parts[i].content,
           }),
         });
         const d = await r.json();
@@ -160,7 +187,7 @@ export default function KbPage() {
 
         <div className="k-glass-card mt-4 rounded-3xl p-4">
           <p className="text-sm font-medium">Importar texto largo (apuntes, guías, temarios)</p>
-          <p className="mt-1 text-xs text-white/60">Se divide solo en partes para que Krypton encuentre lo relevante. Máximo unas 40 partes por importación.</p>
+          <p className="mt-1 text-xs text-white/60">Si tu texto tiene títulos con # y ##, se guarda una sección por documento; si no, se divide solo en partes. Máximo 60 secciones por importación.</p>
           <select value={bulkKind} onChange={(e) => setBulkKind(e.target.value)} className={FIELD + " mt-3"} style={{ colorScheme: "dark" }}>
             {KINDS.map((k) => (
               <option key={k} value={k}>{k}</option>
