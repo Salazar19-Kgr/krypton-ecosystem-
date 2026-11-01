@@ -126,7 +126,7 @@ export async function POST(request: Request) {
       ? await analyzeImages(TOOLS_PREFIX + message, history, images)
       : wantsImage(message)
         ? await createImageLimited(supabase, user.id, message)
-        : await runKrypton((await kbContext(supabase, message)) + TOOLS_PREFIX + message, history);
+        : await runKrypton(message, history, ((await kbContext(supabase, message)) + TOOLS_PREFIX).split("PETICIÓN DEL USUARIO:").join(""));
 
     // Guardar en el historial (si falla, el usuario igual recibe su respuesta)
     let title: string | null = null;

@@ -30,6 +30,19 @@ const NEEDS_WEB =
 const WIKI =
   /^\s*[¿]?\s*(qu[eé] (es|son|fue|significa)|qui[eé]n(es)? (es|son|fue|fueron|era)|define|definici[oó]n de|significado de|historia de|cu[aá]l es la capital)/i;
 
+const SEARCH_VERBS =
+  /(?<![a-záéíóúñ])(busca|buscar|b[uú]scame|investiga|investigar|averigua|googlea|en internet|en la red|fuentes?|referencias?|enlaces?|links?|noticias?)(?![a-záéíóúñ])/i;
+const FACT_Q =
+  /(?<![a-záéíóúñ])(qui[eé]n(es)?|cu[aá]ndo|d[oó]nde|cu[aá]ntos?|cu[aá]ntas?|cu[aá]l(es)? (es|son|fue|fueron)|c[oó]mo se llama|qu[eé] pas[oó]|presidente|gobernador|alcalde|capital de|poblaci[oó]n de|decreto|gaceta|requisitos|tr[aá]mite|horario|resultados?|campe[oó]n|estreno|lanzamiento|d[oó]lar|bcv|tasa de cambio|leyes?)(?![a-záéíóúñ])/i;
+const NOT_SEARCH =
+  /(?<![a-záéíóúñ])(c[oó]digo|script|programa|funci[oó]n en|redacta|escribe|traduce|corrige|resume|poema|cuento|qui[eé]n eres|qu[eé] eres|c[oó]mo te llamas|qu[eé] puedes|krypton)(?![a-záéíóúñ])/i;
+const cleanQuery = (m: string) =>
+  m
+    .replace(/^\s*(por favor[, ]*)?(busca|b[uú]scame|buscar|investiga|investigar|averigua|dime|cu[eé]ntame)\s+(en internet\s+)?((sobre|acerca de)\s+)?/i, "")
+    .replace(/[¿?¡!]/g, "")
+    .trim()
+    .slice(0, 200) || m.slice(0, 200);
+
 function extractCalculations(message: string): string[] {
   const candidates = message.match(/[\d(][\d\s+\-*/^().,×÷]*[\d)]/g) ?? [];
   return candidates
@@ -63,8 +76,8 @@ export function recognize(message: string): Plan {
 
   return {
     intent,
-    needsSearch: NEEDS_WEB.test(message),
-    searchQuery: message.slice(0, 200),
+    needsSearch: NEEDS_WEB.test(message) || SEARCH_VERBS.test(message) || (FACT_Q.test(message) && !NOT_SEARCH.test(message)),
+    searchQuery: cleanQuery(message),
     needsWikipedia: isWiki && wikiQuery.length > 1,
     wikiQuery,
     calculations: MATH.test(message) ? extractCalculations(message) : [],
@@ -91,7 +104,8 @@ const safe = <T>(promise: Promise<T[]>) => promise.catch(() => [] as T[]);
 
 export async function runKrypton(
   message: string,
-  history: ChatMsg[]
+  history: ChatMsg[],
+  context = ""
 ): Promise<BrainResult> {
   const trace: string[] = [];
   const plan = recognize(message);
@@ -112,17 +126,19 @@ export async function runKrypton(
 
   let system = `${BASE_SYSTEM}\n\n${DOC_RULES}\n\nFecha actual: ${new Date().toISOString().slice(0, 10)}.`;
   if (DOMAIN_NOTES[plan.intent]) system += `\n\n${DOMAIN_NOTES[plan.intent]}`;
+  if (context) system += "\n\n" + context;
   if (calcs.length) {
     system += `\n\nRESULTADOS CALCULADOS Y VERIFICADOS (úsalos tal cual si corresponden a la pregunta, no los recalcules):\n${calcs
       .map((c) => `${c.expression} = ${c.result}`)
       .join("\n")}`;
   }
   if (sources.length) {
-    system += `\n\nINFORMACIÓN EXTERNA (úsala solo si es relevante; si algo no está confirmado, dilo):\n${sources
+    system += `\n\nINFORMACIÓN EXTERNA (úsala si es relevante. Contrasta las fuentes entre sí y, si discrepan, dilo. Cita entre corchetes [1], [2] los datos que tomes de ellas. Si ninguna fuente respalda un dato, no lo afirmes; si no hay información suficiente, dilo claramente en vez de inventar):\n${sources
       .map((s, i) => `[${i + 1}] ${s.title} (${s.url})\n${s.snippet}`)
       .join("\n\n")}`;
   }
 
+  if (plan.needsSearch && web.length === 0) system += "\n\nNOTA: se intentó buscar información actual pero no hubo resultados. Responde con lo que sabes, aclara que no pudiste verificarlo en fuentes recientes y no inventes datos recientes.";
   const answer = await generateSmart(plan.intent, {
     system,
     messages: [...history, { role: "user", content: message }],

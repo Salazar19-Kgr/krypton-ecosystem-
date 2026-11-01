@@ -1,7 +1,7 @@
 {
-  "version": "1.0.19",
-  "build": 20,
-  "notes": "Importador por secciones",
+  "version": "1.0.20",
+  "build": 21,
+  "notes": "Busqueda inteligente y contexto limpio",
   "apk": "",
   "apkSizeMB": 0
 }
