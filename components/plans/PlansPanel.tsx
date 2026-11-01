@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PayForm from "./PayForm";
 
 const WA = "584245095002";
 
@@ -72,9 +73,7 @@ export default function PlansPanel() {
           Hablar con el equipo →
         </a>
       </div>
-      <p className="px-1 text-xs leading-5 text-white/50">
-        Los métodos de pago disponibles te los indicamos por WhatsApp al solicitar el plan.
-      </p>
+      <PayForm />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 {
-  "version": "1.0.9",
-  "build": 10,
-  "notes": "Cristal ligero y tarjeta Mejorar plan",
+  "version": "1.0.10",
+  "build": 11,
+  "notes": "Panel de pagos, metodos y suscripciones",
   "apk": "",
   "apkSizeMB": 0
 }

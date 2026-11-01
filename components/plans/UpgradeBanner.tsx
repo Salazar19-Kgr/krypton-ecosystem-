@@ -7,26 +7,39 @@ const NAMES: Record<string, string> = { free: "Free", basic: "Básico", pro: "Pr
 
 export default function UpgradeBanner() {
   const [plan, setPlan] = useState("free");
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetch("/api/plan")
       .then((r) => r.json())
-      .then((d) => d?.plan && setPlan(d.plan))
+      .then((d) => {
+        if (d?.plan) setPlan(d.plan);
+        if (d?.admin) setAdmin(true);
+      })
       .catch(() => {});
   }, []);
 
   const top = plan === "max";
   return (
-    <Link href="/plans" className="k-glass-card flex items-center justify-between gap-4 rounded-3xl p-5">
-      <div>
-        <p className="krypton-eyebrow">TU PLAN · {(NAMES[plan] ?? "Free").toUpperCase()}</p>
-        <p className="mt-2 text-sm text-white/75">
-          {top ? "Tienes disponibilidad total." : "Consigue más mensajes y funciones."}
-        </p>
-      </div>
-      <span className="shrink-0 rounded-full border border-white/50 px-4 py-2 text-xs font-medium">
-        {top ? "Ver planes" : "Mejorar plan →"}
-      </span>
-    </Link>
+    <div className="space-y-3">
+      <Link href="/plans" className="k-glass-card flex items-center justify-between gap-4 rounded-3xl p-5">
+        <div>
+          <p className="krypton-eyebrow">TU PLAN · {(NAMES[plan] ?? "Free").toUpperCase()}</p>
+          <p className="mt-2 text-sm text-white/75">{top ? "Tienes disponibilidad total." : "Consigue más mensajes y funciones."}</p>
+        </div>
+        <span className="shrink-0 rounded-full border border-white/50 px-4 py-2 text-xs font-medium">
+          {top ? "Ver planes" : "Mejorar plan →"}
+        </span>
+      </Link>
+      {admin && (
+        <Link href="/admin" className="k-glass-card flex items-center justify-between gap-4 rounded-3xl p-5">
+          <div>
+            <p className="krypton-eyebrow">ADMINISTRACIÓN</p>
+            <p className="mt-2 text-sm text-white/75">Pagos, métodos de pago y suscripciones.</p>
+          </div>
+          <span className="shrink-0 rounded-full border border-white/50 px-4 py-2 text-xs font-medium">Abrir →</span>
+        </Link>
+      )}
+    </div>
   );
 }
