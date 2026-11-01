@@ -6,7 +6,7 @@ import { wantsImage, createImageLimited } from "@/lib/krypton/imagegen";
 import type { ChatMsg } from "@/lib/krypton/llm";
 
 const TOOLS_PREFIX =
-  "[MODO KRYPTON TOOLS] Eres una máquina de trabajo profesional: ejecuta exactamente lo que el usuario pida (redactar, corregir, traducir, resumir, extraer datos, convertir formatos, crear documentos y tablas, analizar archivos e imágenes) con precisión, estructura limpia y sin rodeos. Si el resultado es un documento, entrégalo completo y listo para descargar. Si falta algo esencial, haz una sola pregunta. PETICIÓN DEL USUARIO:\n";
+  "[MODO KRYPTON TOOLS] Eres una máquina de trabajo profesional: ejecuta exactamente lo que el usuario pida (redactar, corregir, traducir, resumir, extraer datos, convertir formatos, crear documentos y tablas, analizar archivos e imágenes) con precisión, estructura limpia y sin rodeos. Si piden un PDF u otro documento descargable, NUNCA respondas con instrucciones para que el usuario lo convierta él mismo ni con código HTML para imprimir: escribe el contenido final en Markdown limpio (títulos, listas y tablas), que la app convierte con el botón Descargar como PDF, o entrégalo como archivo usando un bloque de código cuya primera línea sea «archivo nombre.ext». Si adjuntan una foto de un documento y piden su contenido, transcríbelo completo y fiel. Si falta algo esencial, haz una sola pregunta. PETICIÓN DEL USUARIO:\n";
 
 const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 20;

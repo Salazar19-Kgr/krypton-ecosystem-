@@ -1,6 +1,8 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
+import { imagesToPdf, downloadBlob } from "@/lib/docs/imgpdf";
+import ThinkingLabel from "@/components/chat/ThinkingLabel";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import ChatComposer, { type Attachment } from "@/components/chat/ChatComposer";
@@ -229,7 +231,22 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      liveStamp.t = Date.now();
+      if (
+      sent.some((a) => a.mimeType.startsWith("image/")) &&
+      /pdf/i.test(text) &&
+      /(transform|convert|pasa|pasar|haz|hacer|crea|crear|genera|generar|guarda|exporta|descarg)/i.test(text) &&
+      !/(texto|transcrib|extrae|editable|ocr|resum|tradu)/i.test(text)
+    ) {
+      try {
+        const pics = sent.filter((a) => a.mimeType.startsWith("image/"));
+        downloadBlob(await imagesToPdf(pics), "krypton-documento.pdf");
+        push("model", "Listo. Convertí " + pics.length + (pics.length === 1 ? " imagen" : " imágenes") + " a PDF y la descarga empezó. Si no se descargó, pídemelo de nuevo.");
+      } catch {
+        push("model", "No pude convertir la imagen a PDF. Prueba con otra foto.", { error: true });
+      }
+      return;
+    }
+    liveStamp.t = Date.now();
     const response = await fetchWithRetry("/api/tools", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -336,11 +353,7 @@ export default function ChatPage() {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="krypton-msg krypton-msg-bot krypton-typing">
-                <span />
-                <span />
-                <span />
-              </div>
+              <ThinkingLabel />
             </div>
           )}
 
