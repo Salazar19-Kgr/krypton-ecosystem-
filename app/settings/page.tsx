@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PlansPanel from "@/components/plans/PlansPanel";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 import LookCard from "@/components/settings/LookCard";
@@ -151,6 +152,12 @@ export default function SettingsPage() {
           </div>
 
           <p className="pb-4 text-center text-xs text-white/70">Krypton Ecosystem · versión beta</p>
+        </div>
+      
+        <div id="planes" className="mt-12">
+          <p className="krypton-eyebrow">PLANES</p>
+          <h2 className="mb-4 mt-2 text-2xl font-semibold">Tu plan</h2>
+          <PlansPanel />
         </div>
       </section>
     </KryptonShell>
