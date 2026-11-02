@@ -20,8 +20,7 @@ type Props = {
   onRemove: (id: string) => void;
 };
 
-const FILE_TYPES =
-  "application/pdf,.pdf,text/*,.txt,.md,.csv,.json,.xml,.html,.htm,.css,.js,.ts,.tsx,.jsx,.py,.java,.c,.cpp,.h,.sql,.log,.yaml,.yml,.ini,.sh";
+const FILE_TYPES = "application/pdf,text/plain,.pdf,.txt";
 
 const icon = {
   viewBox: "0 0 24 24",

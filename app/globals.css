@@ -1364,3 +1364,7 @@ html:root.k-noanim-page body *, html:root.k-noanim-page body *::before, html:roo
   transition: none !important;
   scroll-behavior: auto !important;
 }
+
+/* krypton-hide-actions */
+.krypton-actions-label { display: none !important; }
+.krypton-actions:has(.krypton-actions-label) { display: none !important; }

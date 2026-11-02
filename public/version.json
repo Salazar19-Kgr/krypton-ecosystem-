@@ -1,7 +1,7 @@
 {
-  "version": "1.0.22",
-  "build": 23,
-  "notes": "PDF con diseno, tarjeta Tu PDF esta listo, lectura de fotos en dos pasos",
+  "version": "1.0.23",
+  "build": 24,
+  "notes": "Menu lateral, Platform proximamente, archivos y botones",
   "apk": "",
   "apkSizeMB": 0
 }

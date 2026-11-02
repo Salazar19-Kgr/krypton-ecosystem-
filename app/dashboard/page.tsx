@@ -77,6 +77,17 @@ export default function DashboardPage() {
           Escribe, revisa y depura código con IA.
         </p>
       </div>
+
+      <div className="k-glass-card rounded-3xl p-6">
+        <div className="flex items-center justify-between">
+          <p className="krypton-eyebrow">KRYPTON PLATFORM</p>
+          <Soon />
+        </div>
+        <h3 className="mt-4 text-lg font-medium">Agentes y creaciones</h3>
+        <p className="mt-2 text-sm leading-6 text-white/75">
+          Un lugar para obtener agentes y descubrir nuevos proyectos de Krypton.
+        </p>
+      </div>
         </div>
 
         <div className="mt-12 flex items-end justify-between">
