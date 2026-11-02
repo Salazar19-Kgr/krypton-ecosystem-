@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { visionPlus } from "@/lib/krypton/visionplus";
 import { coreContext, isTextArt } from "@/lib/krypton/codemode";
 import { kbContext, kbRules } from "@/lib/krypton/kb";
 import { createClient } from "@/lib/supabase/server";
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
     }
 
     const result = images.length
-      ? await analyzeImages(message, history, images)
+      ? await visionPlus(message, history, images)
       : (wantsImage(message) && !isTextArt(message))
         ? await createImageLimited(supabase, user.id, message)
         : await runKrypton(message, history, coreContext(message, history) + (await kbRules(supabase)) + (await kbContext(supabase, message)));

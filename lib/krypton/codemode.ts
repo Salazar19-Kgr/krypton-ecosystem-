@@ -6,7 +6,16 @@ const CODE_HINT =
 const TEXT_ART =
   /(ascii|arte de texto|(dibuj|plano|diagrama|cronograma|esquema|mapa|gr[aá]fico)[^.\n]{0,60}(signos|s[ií]mbolos|caracteres|letras|texto)|(signos|s[ií]mbolos|caracteres)[^.\n]{0,40}(dibuj|plano|diagrama|as[ií])|dibujad[oa] as[ií])/i;
 
-export const isTextArt = (t: string) => TEXT_ART.test(t);
+const NO_IMAGE =
+  /(\bno\b[^.\n]{0,25}\b(im[aá]genes?|fotos?|ilustraci[oó]n(es)?)\b|\bsin\b\s+(im[aá]genes?|fotos?)|\bno es una im[aá]gen)/i;
+const SCHEMATIC = /(plano|diagrama|esquema|croquis|cronograma|organigrama|flujograma|mapa conceptual)/i;
+const DRAW = /dibuj/i;
+const WANTS_PIC = /(im[aá]gen|foto|ilustraci[oó]n|render|realista|\bpng\b|\bjpg\b)/i;
+
+export const isTextArt = (t: string) =>
+  TEXT_ART.test(t) ||
+  (NO_IMAGE.test(t) && (SCHEMATIC.test(t) || DRAW.test(t))) ||
+  (SCHEMATIC.test(t) && DRAW.test(t) && !WANTS_PIC.test(t));
 
 const CORE_RULES =
   "REGLAS DE RAZONAMIENTO DE KRYPTON (siempre):\n" +
@@ -36,7 +45,20 @@ export function codeModePrefix(message: string, history: ChatMsg[]): string {
   return sticky ? CODE_PREFIX : "";
 }
 
+export const wantsDoc = (t: string) => /(\bpdf\b|descargable)/i.test(t);
+const DOC_VERB =
+  /(haz|hazme|genera|gen[eé]rame|crea|cr[eé]ame|arma|arm[aá]me|prepara|prep[aá]rame|necesito|dame|quiero|redacta|escribe)/i;
+const DOC_KIND = /(informe|monograf[ií]a|ensayo|gu[ií]a de estudio|apuntes|resumen completo|documento)/i;
+export const wantsLongDoc = (t: string) => wantsDoc(t) || (DOC_VERB.test(t) && DOC_KIND.test(t));
+
+const DOC_PREFIX =
+  "[MODO DOCUMENTO] El usuario quiere un documento descargable. Entrega SOLO el contenido final del documento en Markdown limpio, sin ninguna frase de introducción ni de cierre dirigida al usuario (nada de «Aquí tienes…», «Espero que sirva» ni «¿Quieres que…?»). Estructura obligatoria: 1) un título con #; 2) un párrafo breve de introducción que explique de qué trata y para qué sirve; 3) secciones con ## numeradas (1., 2., 3.…) y, si hace falta, subsecciones con ###; 4) desarrollo completo y profundo en cada sección, con definiciones, explicaciones, ejemplos concretos, listas y tablas cuando aporten (tablas con encabezado y filas completas); 5) una sección final de conclusiones o resumen clave; 6) si usaste datos o normas, una sección de referencias o fuentes, sin inventar ninguna. Extensión: documento completo y detallado (normalmente entre 700 y 1500 palabras), salvo que el usuario pida algo breve. Si pide un documento de esta conversación o de lo anterior, reúne todo lo relevante del historial organizado por temas, sin omitir resultados ni pasos importantes. Español claro, sin emojis, con símbolos Unicode y sin LaTeX.\n\n";
+
+export function docModePrefix(message: string): string {
+  return wantsLongDoc(message) ? DOC_PREFIX : "";
+}
+
 export function coreContext(message: string, history: ChatMsg[]): string {
   const art = isTextArt(message) || history.slice(-4).some((m) => m.role === "user" && isTextArt(m.content));
-  return CORE_RULES + (art ? ASCII_PREFIX : "") + codeModePrefix(message, history);
+  return CORE_RULES + (art ? ASCII_PREFIX : "") + codeModePrefix(message, history) + docModePrefix(message);
 }

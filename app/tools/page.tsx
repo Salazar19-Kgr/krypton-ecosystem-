@@ -1,6 +1,9 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
+import DocCard from "@/components/chat/DocCard";
+import { DOC_MARK, chatToMarkdown } from "@/lib/docs/mdpdf";
+import { wantsDoc } from "@/lib/krypton/codemode";
 import { imagesToPdf, downloadBlob } from "@/lib/docs/imgpdf";
 import ThinkingLabel from "@/components/chat/ThinkingLabel";
 import Link from "next/link";
@@ -118,7 +121,7 @@ const Bubble = memo(function Bubble({ item }: { item: Message }) {
           <span className="krypton-msg-tag">Imagen adjunta</span>
         )}
         {item.content && item.content !== "[Imagen adjunta]" && (
-          <TypedContent content={item.content} bot={!isUser && !item.error} />
+          item.content.startsWith(DOC_MARK) && !isUser && !item.error ? <DocCard md={item.content.slice(DOC_MARK.length)} /> : <TypedContent content={item.content} bot={!isUser && !item.error} />
         )}
       </div>
     </div>
@@ -246,6 +249,16 @@ export default function ChatPage() {
       }
       return;
     }
+    if (
+      /(pdf|documento|apuntes|resumen|descarg)/i.test(text) &&
+      /((toda|todo|completa|entera)\s+(la\s+|el\s+)?(conversaci[oó]n|charla|chat)|esta\s+conversaci[oó]n|todo\s+(lo\s+)?(anterior|que\s+(hablamos|hemos\s+hablado|vimos)))/i.test(text)
+    ) {
+      const md = chatToMarkdown(messages);
+      if (md) {
+        push("model", DOC_MARK + md);
+        return;
+      }
+    }
     liveStamp.t = Date.now();
     const response = await fetchWithRetry("/api/tools", {
         method: "POST",
@@ -269,7 +282,7 @@ export default function ChatPage() {
       const data = await response.json();
 
       if (data.ok) {
-        push("model", data.text || "No recibí respuesta.");
+        push("model", (wantsDoc(text) ? DOC_MARK : "") + (data.text || "No recibí respuesta."));
         if (data.saved === false) setNotice("No se pudo guardar esta conversación: " + (data.saveError ?? ""));
         if (data.conversationId && data.conversationId !== conversationId) {
           setConversationId(data.conversationId);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { visionPlus } from "@/lib/krypton/visionplus";
 import { kbContext, kbRules } from "@/lib/krypton/kb";
-import { isTextArt } from "@/lib/krypton/codemode";
+import { isTextArt, docModePrefix } from "@/lib/krypton/codemode";
 import { createClient } from "@/lib/supabase/server";
 import { runKrypton } from "@/lib/krypton/brain";
 import { analyzeImages, type ImagePart } from "@/lib/krypton/vision";
@@ -124,10 +125,10 @@ export async function POST(request: Request) {
     }
 
     const result = images.length
-      ? await analyzeImages(TOOLS_PREFIX + message, history, images)
+      ? await visionPlus(TOOLS_PREFIX + message, history, images)
       : (wantsImage(message) && !isTextArt(message))
         ? await createImageLimited(supabase, user.id, message)
-        : await runKrypton(message, history, ((await kbRules(supabase)) + (await kbContext(supabase, message)) + TOOLS_PREFIX).split("PETICIÓN DEL USUARIO:").join(""));
+        : await runKrypton(message, history, ((await kbRules(supabase)) + (await kbContext(supabase, message)) + TOOLS_PREFIX + docModePrefix(message)).split("PETICIÓN DEL USUARIO:").join(""));
 
     // Guardar en el historial (si falla, el usuario igual recibe su respuesta)
     let title: string | null = null;
