@@ -1,7 +1,7 @@
 {
-  "version": "1.0.23",
-  "build": 24,
-  "notes": "Menu lateral, Platform proximamente, archivos y botones",
+  "version": "1.0.24",
+  "build": 25,
+  "notes": "Menu lateral conectado y banco de pruebas",
   "apk": "",
   "apkSizeMB": 0
 }

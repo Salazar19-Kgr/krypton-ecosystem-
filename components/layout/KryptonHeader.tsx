@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import SideDrawer from "./SideDrawer";
 
 export default function KryptonHeader() {
   const [open, setOpen] = useState(false);
@@ -19,14 +20,6 @@ export default function KryptonHeader() {
     }
   }, []);
 
-  async function signOut() {
-    try {
-      await createClient().auth.signOut();
-    } finally {
-      window.location.replace("/login");
-    }
-  }
-
   return (
     <header className="relative z-50 flex items-center justify-between">
       <Link href="/dashboard" className="krypton-brand-capsule k-glass">
@@ -36,7 +29,7 @@ export default function KryptonHeader() {
 
       <button
         type="button"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => setOpen(true)}
         className="k-glass-button krypton-menu-button"
         aria-label="Abrir menú"
         aria-expanded={open}
@@ -46,31 +39,7 @@ export default function KryptonHeader() {
         <span />
       </button>
 
-      {open && (
-        <div className="krypton-navigation-menu k-glass-panel">
-          <Link href="/dashboard" onClick={() => setOpen(false)}>
-            Inicio
-          </Link>
-          <Link href="/chat" onClick={() => setOpen(false)}>
-            Chat
-          </Link>
-          <Link href="/memory" onClick={() => setOpen(false)}>
-            Conversaciones
-          </Link>
-          <Link href="/settings" onClick={() => setOpen(false)}>
-            Configuración
-          </Link>
-          <a
-            href="#"
-            onClick={(event) => {
-              event.preventDefault();
-              signOut();
-            }}
-          >
-            Cerrar sesión
-          </a>
-        </div>
-      )}
+      <SideDrawer open={open} onClose={() => setOpen(false)} />
     </header>
   );
 }
