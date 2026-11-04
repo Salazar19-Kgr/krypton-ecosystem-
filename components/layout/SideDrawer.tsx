@@ -114,6 +114,13 @@ export default function SideDrawer({ open, onClose }: { open: boolean; onClose: 
               <span className="rounded-full border border-white/30 px-2 py-0.5 text-[10px]">Próximamente</span>
             </div>
           ))}
+          {(me.plan === "max" || me.admin) && (
+            <Link href="/sentinel" onClick={close} className={ROW + (on("/sentinel") ? " bg-white/10 text-white" : "")}>
+              <Icon d={ICON.shield} />
+              <span className="flex-1">Krypton Sentinel</span>
+              <span className="rounded-full border border-white/30 px-2 py-0.5 text-[10px]">Max</span>
+            </Link>
+          )}
           <Link href="/memory" onClick={close} className={ROW + (on("/memory") ? " bg-white/10 text-white" : "")}>
             <Icon d={ICON.clock} />
             <span className="flex-1">Conversaciones</span>

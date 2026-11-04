@@ -1368,3 +1368,7 @@ html:root.k-noanim-page body *, html:root.k-noanim-page body *::before, html:roo
 /* krypton-hide-actions */
 .krypton-actions-label { display: none !important; }
 .krypton-actions:has(.krypton-actions-label) { display: none !important; }
+
+/* krypton-tables-scroll */
+html .krypton-md table { display: block !important; width: max-content !important; max-width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: thin; border-collapse: collapse; }
+html .krypton-md table th, html .krypton-md table td { min-width: 6.5rem; max-width: 20rem; padding: .55rem .8rem; vertical-align: top; overflow-wrap: normal !important; word-break: normal !important; hyphens: none !important; }

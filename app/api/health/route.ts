@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { HEALTH_DAILY } from "@/lib/plans";
 import { createClient } from "@/lib/supabase/server";
 import { type ChatMsg } from "@/lib/krypton/llm";
 import { healthGenerate } from "@/lib/krypton/health/gemini";
@@ -74,6 +75,31 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({ ok: false, error: "Debes iniciar sesión." }, { status: 401 });
     }
+    {
+      let plan = "free";
+      try {
+        const pr = await supabase.rpc("my_plan");
+        if (typeof pr.data === "string") plan = pr.data;
+      } catch {}
+      const perDay = HEALTH_DAILY[plan] ?? HEALTH_DAILY.free;
+      try {
+        const since = new Date(Date.now() - 86400000).toISOString();
+        const c = await supabase
+          .from("usage_events")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("kind", "health")
+          .gte("created_at", since);
+        if ((c.count ?? 0) >= perDay) {
+          return NextResponse.json(
+            { ok: false, error: "Llegaste al límite diario de consultas médicas de tu plan (" + perDay + "). Se reinicia en 24 horas, o mejora tu plan en el menú → Planes." },
+            { status: 429 }
+          );
+        }
+        await supabase.from("usage_events").insert({ user_id: user.id, kind: "health" });
+      } catch {}
+    }
+
 
     const body = (await request.json()) as Body;
     const message = (body.message ?? "").trim();

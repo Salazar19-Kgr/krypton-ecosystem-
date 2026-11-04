@@ -8,10 +8,10 @@ const WA = "584245095002";
 type Plan = { id: string; name: string; price: string; tag: string; feats: string[]; soon?: string[] };
 
 const PLANS: Plan[] = [
-  { id: "free", name: "Free", price: "$0", tag: "Para conocer Krypton", feats: ["40 mensajes por día", "Core, Health y Tools", "Lectura de fotos, PDF y archivos", "5 imágenes por día"] },
-  { id: "basic", name: "Básico", price: "$4.99", tag: "Completo para el día a día", feats: ["300 mensajes por día", "Core, Health y Tools completos", "Lectura de fotos, PDF y archivos", "Descargas en PDF, TXT, Markdown y CSV", "5 imágenes por día"] },
-  { id: "pro", name: "Pro", price: "$9.99", tag: "Con todo disponible", feats: ["1000 mensajes por día", "Razonamiento profundo y verificación", "Todo lo del plan Básico"], soon: ["Más imágenes por día", "Prioridad en horas de alta demanda"] },
-  { id: "max", name: "Max", price: "$14.99", tag: "Disponibilidad total", feats: ["3000 mensajes por día", "Acceso anticipado a Krypton Code", "Todo lo del plan Pro"], soon: ["Imágenes con límite ampliado", "Ver y escuchar audios y videos"] },
+  { id: "free", name: "Free", price: "$0", tag: "Para conocer Krypton", feats: ["40 mensajes por día", "Core, Health (10 consultas al día) y Tools", "Lectura de fotos, PDF y archivos", "2 imágenes por día"] },
+  { id: "basic", name: "Básico", price: "$4.99", tag: "Completo para el día a día", feats: ["300 mensajes por día", "Core, Health (60 consultas al día) y Tools", "Lectura de fotos, PDF y archivos", "PDF y documentos descargables", "5 imágenes por día"] },
+  { id: "pro", name: "Pro", price: "$9.99", tag: "Con todo disponible", feats: ["1000 mensajes por día", "Health: 150 consultas al día", "12 imágenes por día", "Todo lo del plan Básico"], soon: ["Prioridad en horas de alta demanda"] },
+  { id: "max", name: "Max", price: "$14.99", tag: "Disponibilidad total", feats: ["3000 mensajes por día", "Health: 400 consultas al día", "25 imágenes por día", "Acceso anticipado a Krypton Code", "Acceso a Krypton Sentinel", "Todo lo del plan Pro"], soon: ["Ver y escuchar audios y videos"] },
 ];
 
 const wa = (t: string) => "https://wa.me/" + WA + "?text=" + encodeURIComponent(t);
