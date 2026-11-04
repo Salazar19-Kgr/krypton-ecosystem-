@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { PLAN_LIMITS } from "@/lib/plans";
 import { visionPlus } from "@/lib/krypton/visionplus";
 import { coreContext, isTextArt } from "@/lib/krypton/codemode";
 import { kbContext, kbRules } from "@/lib/krypton/kb";
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
         const r = await supabase.rpc("my_plan");
         if (typeof r.data === "string") plan = r.data;
       } catch {}
-      const LIM: Record<string, number[]> = { free: [10, 40], basic: [15, 300], pro: [20, 1000], max: [30, 3000] };
+      const LIM = PLAN_LIMITS;
       const [perMin, perDay] = LIM[plan] ?? LIM.free;
       const since = (ms: number) => new Date(Date.now() - ms).toISOString();
       try {
@@ -60,10 +61,10 @@ export async function POST(request: Request) {
           supabase.from("messages").select("role", { count: "exact", head: true }).eq("user_id", user.id).eq("role", "user").gte("created_at", since(86400000)),
         ]);
         if ((m.count ?? 0) >= perMin) {
-          return NextResponse.json({ ok: false, error: "Vas muy rápido. Espera un minuto y vuelve a escribir." }, { status: 429 });
+          return NextResponse.json({ ok: false, error: "Vas muy rápido: tu plan permite " + perMin + " mensajes por minuto. Espera un momento y vuelve a escribir." }, { status: 429 });
         }
         if ((d.count ?? 0) >= perDay) {
-          return NextResponse.json({ ok: false, error: "Llegaste al límite diario de mensajes. Mañana se reinicia." }, { status: 429 });
+          return NextResponse.json({ ok: false, error: "Llegaste al límite diario de tu plan (" + perDay + " mensajes). Se reinicia en 24 horas, o mejora tu plan en el menú → Planes." }, { status: 429 });
         }
       } catch {}
     }

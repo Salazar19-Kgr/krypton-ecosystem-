@@ -31,7 +31,10 @@ export async function POST(request: Request) {
   const t0 = Date.now();
   try {
     const ctx = coreContext(t.prompt, []) + (await kbRules(g.supabase)) + (await kbContext(g.supabase, t.prompt));
-    const r = await runKrypton(t.prompt, [], ctx);
+    const r = await Promise.race([
+      runKrypton(t.prompt, [], ctx),
+      new Promise<never>((_, rej) => setTimeout(() => rej(new Error("tiempo agotado (60 s)")), 60000)),
+    ]);
     const text = String(r.text ?? "");
     const clean = text.replace(/[*_]/g, "");
     const failed: string[] = [];

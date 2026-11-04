@@ -1,7 +1,7 @@
 {
-  "version": "1.0.25",
-  "build": 26,
-  "notes": "Menu lateral conectado y banco de pruebas",
+  "version": "1.0.26",
+  "build": 27,
+  "notes": "Banco rapido, planes en funcion y Krypton Coach",
   "apk": "",
   "apkSizeMB": 0
 }
