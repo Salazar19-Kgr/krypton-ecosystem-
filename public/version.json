@@ -1,7 +1,7 @@
 {
-  "version": "1.0.29",
-  "build": 30,
-  "notes": "Formulas LaTeX con KaTeX",
+  "version": "1.0.30",
+  "build": 31,
+  "notes": "Ecuaciones centradas y profesor conversacional",
   "apk": "",
   "apkSizeMB": 0
 }

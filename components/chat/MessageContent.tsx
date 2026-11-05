@@ -115,7 +115,7 @@ export default function MessageContent({ content, markdown }: Props) {
       {segments.map((segment, index) =>
         segment.type === "md" ? (
           <div key={index} className="krypton-md">
-            <ReactMarkdown remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]} rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: false }]]}>{segment.text}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]} rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: false }]]}>{fixMath(segment.text)}</ReactMarkdown>
           </div>
         ) : (
           <div key={index} className="krypton-file-card">
@@ -197,4 +197,9 @@ export default function MessageContent({ content, markdown }: Props) {
       )}
     </div>
   );
+}
+
+
+function fixMath(t: string): string {
+  return t.replace(/^[ \t]*\$\$([^\n$]+?)\$\$[ \t]*$/gm, (_m: string, f: string) => "\n$$\n" + f.trim() + "\n$$\n");
 }

@@ -1376,3 +1376,7 @@ html .krypton-md table th, html .krypton-md table td { min-width: 6.5rem; max-wi
 /* krypton-katex */
 html .katex-display { overflow-x: auto; overflow-y: hidden; padding: .4rem 0; margin: .9rem 0; }
 html .katex { font-size: 1.12em; }
+
+/* krypton-katex-space */
+html .katex-display { margin: 1.6rem 0 !important; }
+html .krypton-md p + .katex-display { margin-top: 1.2rem !important; }
