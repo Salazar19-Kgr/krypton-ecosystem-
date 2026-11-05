@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PERSONAS } from "@/lib/lab/personas";
 
@@ -13,6 +14,15 @@ export default function LabPage() {
   const [running, setRunning] = useState(false);
   const [report, setReport] = useState("");
   const [msg, setMsg] = useState("");
+  const [ok, setOk] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/lab/access", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => (d?.admin === true ? setOk(true) : router.replace("/platform")))
+      .catch(() => router.replace("/platform"));
+  }, [router]);
 
   async function runIds(ids: string[]) {
     if (running) return;
@@ -58,6 +68,8 @@ export default function LabPage() {
 
   const done = Object.keys(res).length;
   const BTN = "rounded-lg border border-cyan-400/50 px-3 py-2 text-xs text-cyan-100 disabled:opacity-40";
+
+  if (!ok) return null;
 
   return (
     <main className="min-h-screen bg-[#05070d] px-4 py-6 text-slate-100">

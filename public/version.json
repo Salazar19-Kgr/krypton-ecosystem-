@@ -1,7 +1,7 @@
 {
-  "version": "1.0.33",
-  "build": 34,
-  "notes": "Platform en el menu activo",
+  "version": "1.0.34",
+  "build": 35,
+  "notes": "Laboratorio visible para todos, solo abre al admin",
   "apk": "",
   "apkSizeMB": 0
 }
