@@ -81,7 +81,7 @@ export default function SideDrawer({ open, onClose }: { open: boolean; onClose: 
   ];
   const soon = [
     { label: "Krypton Code", icon: ICON.code },
-    { label: "Krypton Platform", icon: ICON.layers },
+    { label: "Krypton Platform", href: "/platform", icon: ICON.layers },
   ];
   const initial = (me.name || me.email || "K").trim().charAt(0).toUpperCase();
   const close = () => closeRef.current();
