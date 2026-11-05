@@ -1,7 +1,7 @@
 {
-  "version": "1.0.28",
-  "build": 29,
-  "notes": "Sentinel: interfaz completa",
+  "version": "1.0.29",
+  "build": 30,
+  "notes": "Formulas LaTeX con KaTeX",
   "apk": "",
   "apkSizeMB": 0
 }

@@ -4,6 +4,9 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import {
   downloadFile,
   extractSources,
@@ -112,7 +115,7 @@ export default function MessageContent({ content, markdown }: Props) {
       {segments.map((segment, index) =>
         segment.type === "md" ? (
           <div key={index} className="krypton-md">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{segment.text}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]} rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: false }]]}>{segment.text}</ReactMarkdown>
           </div>
         ) : (
           <div key={index} className="krypton-file-card">
