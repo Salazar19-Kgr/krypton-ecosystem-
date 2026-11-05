@@ -1,7 +1,7 @@
 {
-  "version": "1.0.32",
-  "build": 33,
-  "notes": "Platform activo con laboratorio",
+  "version": "1.0.33",
+  "build": 34,
+  "notes": "Platform en el menu activo",
   "apk": "",
   "apkSizeMB": 0
 }
