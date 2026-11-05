@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
-import SentinelChat from "@/components/sentinel/SentinelChat";
+import SentinelDashboard from "@/components/sentinel/SentinelDashboard";
 import { TERMS_SECTIONS, TERMS_TITLE } from "@/lib/sentinel/terms";
 
 type St = { state: string; question?: string | null; until?: string | null };
@@ -81,7 +81,7 @@ export default function SentinelPage() {
 
   return (
     <KryptonShell>
-      <section className="mx-auto max-w-5xl px-1 pb-10 pt-4">
+      <section className={"mx-auto px-1 pb-10 pt-4 " + (s === "ready" ? "max-w-7xl" : "max-w-5xl")}>
         <div className="mb-4 flex items-center gap-3">
           <span className="text-xs tracking-[.3em] text-white/60">KRYTON</span>
           <h1 className="text-2xl font-light">SENTINEL</h1>
@@ -193,7 +193,7 @@ export default function SentinelPage() {
           </div>
         )}
 
-        {s === "ready" && <SentinelChat onState={load} />}
+        {s === "ready" && <SentinelDashboard onState={load} />}
       </section>
     </KryptonShell>
   );

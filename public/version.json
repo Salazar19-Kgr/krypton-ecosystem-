@@ -1,7 +1,7 @@
 {
-  "version": "1.0.27",
-  "build": 28,
-  "notes": "Krypton Sentinel base, planes por imagen y Health, tablas",
+  "version": "1.0.28",
+  "build": 29,
+  "notes": "Sentinel: interfaz completa",
   "apk": "",
   "apkSizeMB": 0
 }

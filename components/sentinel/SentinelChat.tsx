@@ -141,7 +141,7 @@ export default function SentinelChat({ onState }: { onState: () => void }) {
   }
 
   return (
-    <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-4">
+    <div>
       <div className="k-glass-card rounded-3xl p-4">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-400" />
@@ -205,20 +205,6 @@ export default function SentinelChat({ onState }: { onState: () => void }) {
         </div>
         <p className="mt-2 text-[11px] text-white/45">Los archivos no se guardan en Krypton. Se analizan con proveedores de IA. Sin historial permanente.</p>
       </div>
-
-      <aside className="mt-4 lg:mt-0">
-        <details className="k-glass-card rounded-3xl p-4" open>
-          <summary className="cursor-pointer text-sm font-medium">Herramientas y estado</summary>
-          <ul className="mt-3 space-y-2 text-xs">
-            {TOOLS.map(([name, on]) => (
-              <li key={name} className="flex items-center justify-between gap-2">
-                <span className={on ? "text-white/85" : "text-white/50"}>{name}</span>
-                <span className={"shrink-0 rounded-full border px-2 py-0.5 text-[10px] " + (on ? "border-emerald-300/60 text-emerald-200" : "border-white/25 text-white/50")}>{on ? "Activo" : "Próximamente"}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      </aside>
     </div>
   );
 }
