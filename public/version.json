@@ -1,7 +1,7 @@
 {
-  "version": "1.0.38",
-  "build": 39,
-  "notes": "Cerebro con malla y gestos",
+  "version": "1.0.39",
+  "build": 40,
+  "notes": "Cerebro en 3D con forma anatomica",
   "apk": "",
   "apkSizeMB": 0
 }
