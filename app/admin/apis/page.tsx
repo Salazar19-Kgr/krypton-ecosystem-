@@ -5,7 +5,27 @@ import Link from "next/link";
 import KryptonShell from "@/components/layout/KryptonShell";
 
 const NAMES = ["gemini", "deepseek", "groq", "openrouter", "openai"];
-const COLORS: Record<string, string> = { gemini: "#4285F4", deepseek: "#4D6BFE", groq: "#F55036", openrouter: "#6467F2", openai: "#10A37F" };
+const COLORS: Record<string, string> = { gemini: "#4285F4", deepseek: "#4D6BFE", groq: "#F55036", openrouter: "#6467F2", openai: "#10A37F", perplexity: "#20808D", tavily: "#0EA5E9" };
+const SLUGS: Record<string, string> = { gemini: "googlegemini", deepseek: "deepseek", groq: "groq", openrouter: "openrouter", openai: "openai", perplexity: "perplexity" };
+
+function ProviderIcon({ name }: { name: string }) {
+  const [broken, setBroken] = useState(false);
+  const slug = SLUGS[name];
+  if (!slug || broken) {
+    return (
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white" style={{ background: COLORS[name] ?? "#666" }}>
+        {name.charAt(0).toUpperCase()}
+      </span>
+    );
+  }
+  return (
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/95 p-1.5">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={"https://cdn.simpleicons.org/" + slug} alt={name} className="h-full w-full object-contain" onError={() => setBroken(true)} />
+    </span>
+  );
+}
+
 const LABELS: Record<string, string> = { gemini: "Gemini", deepseek: "DeepSeek", groq: "Groq", openrouter: "OpenRouter", openai: "OpenAI" };
 type Res = { ok?: boolean; ms?: number; error?: string } | string;
 
@@ -89,9 +109,7 @@ export default function ApisPage() {
             return (
               <div key={n} className="k-glass-card rounded-3xl p-4">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white" style={{ background: COLORS[n] ?? "#666" }}>
-                    {n.charAt(0).toUpperCase()}
-                  </span>
+                  <ProviderIcon name={n} />
                   <p className="flex-1 text-base">{LABELS[n] ?? n}</p>
                   <button type="button" onClick={() => toggle(n, !off[n])} className={"rounded-full border px-3 py-1 text-xs " + (off[n] ? "border-white/30 text-white/55" : "border-emerald-300/60 text-emerald-200")}>
                     {off[n] ? "Apagada" : "Activa"}
