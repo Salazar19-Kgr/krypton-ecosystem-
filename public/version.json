@@ -1,7 +1,7 @@
 {
-  "version": "1.0.34",
-  "build": 35,
-  "notes": "Laboratorio visible para todos, solo abre al admin",
+  "version": "1.0.35",
+  "build": 36,
+  "notes": "Cadena rapida de proveedores y panel de APIs",
   "apk": "",
   "apkSizeMB": 0
 }

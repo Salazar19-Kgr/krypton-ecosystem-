@@ -232,15 +232,60 @@ const providers: Provider[] = [
 ];
 
 /** Gemini (varios modelos) → Groq → OpenRouter gratuito. */
+
+const PRIORITY = ["gemini", "openrouter", "deepseek", "groq", "openai"];
+const rank = (n: string) => {
+  const i = PRIORITY.indexOf(n.toLowerCase());
+  return i < 0 ? 99 : i;
+};
+const PROVIDER_MS = 35000;
+const COOLDOWN = new Map<string, number>();
+
+function coolMs(msg: string): number {
+  if (/\b(401|402|404)\b|insufficient|no credits|invalid|does not exist|revoked/i.test(msg)) return 600000;
+  if (/\b429\b|rate limit/i.test(msg)) return 60000;
+  if (/\b503\b|timeout|tiempo agotado|aborted|overloaded|high demand/i.test(msg)) return 45000;
+  return 20000;
+}
+
+let flagsAt = 0;
+let flagsOff = new Set<string>();
+async function disabledProviders(): Promise<Set<string>> {
+  if (Date.now() - flagsAt < 30000) return flagsOff;
+  flagsAt = Date.now();
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (url && key) {
+      const r = await fetch(url + "/rest/v1/provider_flags?select=name&enabled=eq.false", {
+        headers: { apikey: key, Authorization: "Bearer " + key },
+        signal: AbortSignal.timeout(1500),
+      });
+      if (r.ok) flagsOff = new Set(((await r.json()) as { name: string }[]).map((x) => String(x.name).toLowerCase()));
+    }
+  } catch {}
+  return flagsOff;
+}
+
 export async function generate(opts: LLMOptions): Promise<LLMResult> {
   const errors: string[] = [];
 
-  for (const provider of providers) {
-    if (!provider.configured()) continue;
+  const off = await disabledProviders();
+  const available = [...providers]
+    .filter((p) => p.configured() && !off.has(p.name.toLowerCase()))
+    .sort((a, b) => rank(a.name) - rank(b.name));
+  const ready = available.filter((p) => (COOLDOWN.get(p.name) ?? 0) <= Date.now());
+  for (const provider of ready.length ? ready : available) {
     try {
-      return { text: await provider.call(opts), provider: provider.name };
+      const text = await Promise.race([
+        provider.call(opts),
+        new Promise<never>((_, rej) => setTimeout(() => rej(new Error("tiempo agotado (" + PROVIDER_MS / 1000 + " s)")), PROVIDER_MS)),
+      ]);
+      return { text, provider: provider.name };
     } catch (e) {
-      errors.push(`${provider.name}: ${e instanceof Error ? e.message : String(e)}`);
+      const msg = e instanceof Error ? e.message : String(e);
+      errors.push(provider.name + ": " + msg);
+      COOLDOWN.set(provider.name, Date.now() + coolMs(msg));
     }
   }
 
