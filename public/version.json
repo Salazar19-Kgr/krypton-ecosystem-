@@ -1,7 +1,7 @@
 {
-  "version": "1.0.41",
-  "build": 42,
-  "notes": "Cerebro en three.js, modelo 3D real",
+  "version": "1.0.42",
+  "build": 43,
+  "notes": "Reparto entre 7 claves de Gemini",
   "apk": "",
   "apkSizeMB": 0
 }

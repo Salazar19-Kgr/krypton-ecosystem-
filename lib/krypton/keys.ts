@@ -16,7 +16,8 @@ export function keyPool(...names: string[]): string[] {
 }
 
 // Acepta los nombres tal como se guardaron en Cloudflare (incluidas las variantes con errores de escritura)
-export const geminiKeys = () => keyPool("GEMINI_API_KEY", "gemini_api", "GEMINI_API_KEY_2");
+export const geminiKeys = () =>
+  keyPool("GEMINI_API_KEY", "gemini_api", "GEMINI_API_KEY_2", "GEMINI_API_KEY_3", "GEMINI_API_KEY_4", "GEMINI_API_KEY_5", "GEMINI_API_KEY_6");
 export const geminiKey = () => geminiKeys()[0] ?? "";
 export const deepseekKeys = () =>
   keyPool("DEEPSEEK_API_KEY", "DEESEEK_API_KEY", "DEESEEK_IMAGENES_API_KEY", "DEEPSEEK_IMAGENES_API_KEY");
