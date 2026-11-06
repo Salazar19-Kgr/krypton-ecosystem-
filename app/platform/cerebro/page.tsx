@@ -1,48 +1,53 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import * as THREE from "three";
 import KryptonShell from "@/components/layout/KryptonShell";
 
-function prng(seed: number) {
-  let s = seed;
-  return () => {
-    s = (s * 1664525 + 1013904223) >>> 0;
-    return s / 4294967296;
-  };
+function noise(x: number, y: number, z: number) {
+  return (
+    Math.sin(x * 1.7 + y * 2.3) * Math.cos(y * 1.3 - z * 1.9) * 0.6 +
+    Math.sin(z * 3.1 + x * 2.1) * Math.cos(x * 1.9 + z * 0.8) * 0.3 +
+    Math.sin(x * 4.4 - y * 3.2 + z * 2.6) * 0.2
+  );
 }
 
-type Node = { x: number; y: number };
-
-function buildMesh(n: number, cx: number, cy: number, rx: number, ry: number, seed: number) {
-  const rnd = prng(seed);
-  const nodes: Node[] = Array.from({ length: n }, () => {
-    const a = rnd() * Math.PI * 2;
-    const r = Math.sqrt(rnd());
-    return { x: cx + Math.cos(a) * rx * r, y: cy + Math.sin(a) * ry * r };
-  });
-  const edges: [number, number][] = [];
-  nodes.forEach((p, i) => {
-    const dists = nodes
-      .map((q, j) => ({ j, d: (q.x - p.x) ** 2 + (q.y - p.y) ** 2 }))
-      .filter((o) => o.j !== i)
-      .sort((a, b) => a.d - b.d)
-      .slice(0, 2);
-    dists.forEach((o) => edges.push([i, o.j]));
-  });
-  return { nodes, edges };
+function lobeRadius(dir: THREE.Vector3, base: number, detail: number, groove: number) {
+  const n = noise(dir.x * detail, dir.y * detail, dir.z * detail);
+  const g = groove ? Math.exp(-((dir.x * 7) ** 2)) * groove : 0;
+  return base * (1 + 0.16 * n - g);
 }
 
-const BRAIN =
-  "M70,228 C55,188 65,148 100,128 C120,116 150,108 175,113 C190,98 225,93 250,106 C275,88 310,103 320,133 C345,143 355,173 335,193 C355,208 350,238 325,243 C340,263 325,288 295,283 C300,303 270,313 250,296 C245,313 215,316 200,298 C180,313 155,306 150,286 C125,293 100,278 100,256 C80,260 65,248 70,228 Z";
-const CEREBELLUM = "M300,228 C320,223 345,233 345,253 C345,273 320,283 300,273 C290,263 288,243 300,228 Z";
-const STEM = "M298,270 C305,280 300,295 295,303 C290,295 292,280 298,270 Z";
+function buildLobe(base: number, detail: number, groove: number, scale: THREE.Vector3) {
+  const geo = new THREE.IcosahedronGeometry(1, 5);
+  const pos = geo.attributes.position;
+  const dir = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    dir.set(pos.getX(i), pos.getY(i), pos.getZ(i)).normalize();
+    const r = lobeRadius(dir, base, detail, groove);
+    pos.setXYZ(i, dir.x * r * scale.x, dir.y * r * scale.y, dir.z * r * scale.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function surfacePoints(n: number, base: number, detail: number, groove: number, scale: THREE.Vector3) {
+  const ico = new THREE.IcosahedronGeometry(1, 1);
+  const p = ico.attributes.position;
+  const dir = new THREE.Vector3();
+  const pts: THREE.Vector3[] = [];
+  for (let i = 0; i < p.count && pts.length < n; i++) {
+    dir.set(p.getX(i), p.getY(i), p.getZ(i)).normalize();
+    const r = lobeRadius(dir, base, detail, groove) * 1.015;
+    pts.push(new THREE.Vector3(dir.x * r * scale.x, dir.y * r * scale.y, dir.z * r * scale.z));
+  }
+  return pts;
+}
 
 export default function CerebroPage() {
-  const { nodes, edges } = useMemo(() => buildMesh(70, 205, 195, 140, 95, 7), []);
-  const [deg, setDeg] = useState(14);
+  const mount = useRef<HTMLDivElement>(null);
   const [now, setNow] = useState("");
-  const drag = useRef<{ x: number; start: number } | null>(null);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date().toLocaleTimeString("es-VE")), 1000);
@@ -50,23 +55,116 @@ export default function CerebroPage() {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      if (!drag.current) setDeg((d) => d + 0.06);
-    }, 60);
-    return () => clearInterval(t);
-  }, []);
+    const el = mount.current;
+    if (!el) return;
+    const w = el.clientWidth, h = el.clientWidth;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 50);
+    camera.position.set(0, 0.3, 5.4);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    el.appendChild(renderer.domElement);
 
-  function onDown(e: React.PointerEvent) {
-    (e.target as Element).setPointerCapture(e.pointerId);
-    drag.current = { x: e.clientX, start: deg };
-  }
-  function onMove(e: React.PointerEvent) {
-    if (!drag.current) return;
-    setDeg(drag.current.start + (e.clientX - drag.current.x) * 0.6);
-  }
-  function onUp() {
-    drag.current = null;
-  }
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const scaleL = new THREE.Vector3(1.0, 0.98, 1.05);
+    const brainMat = new THREE.MeshStandardMaterial({ color: 0xff2f7f, emissive: 0x7a0038, emissiveIntensity: 0.55, roughness: 0.55, metalness: 0.12 });
+    const left = new THREE.Mesh(buildLobe(1.0, 3.2, 0.28, scaleL), brainMat);
+    left.position.x = -0.58;
+    left.scale.set(1.15, 1, 1);
+    const right = new THREE.Mesh(buildLobe(1.0, 3.2, 0.28, scaleL), brainMat);
+    right.position.x = 0.58;
+    right.scale.set(1.15, 1, 1);
+    const cerebMat = new THREE.MeshStandardMaterial({ color: 0xb4004f, emissive: 0x4a0020, emissiveIntensity: 0.4, roughness: 0.6 });
+    const cereb = new THREE.Mesh(buildLobe(0.5, 6, 0, new THREE.Vector3(1, 0.8, 0.9)), cerebMat);
+    cereb.position.set(0.5, -0.75, -0.75);
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.16, 0.6, 10), cerebMat);
+    stem.position.set(0.15, -1.25, -0.4);
+    stem.rotation.z = 0.3;
+    group.add(left, right, cereb, stem);
+
+    const pts = [...surfacePoints(70, 1.0, 3.2, 0.28, scaleL), ...surfacePoints(16, 0.5, 6, 0, new THREE.Vector3(1, 0.8, 0.9)).map((p) => p.add(new THREE.Vector3(0.5, -0.75, -0.75)))];
+    const nodeGeo = new THREE.BufferGeometry().setFromPoints(pts);
+    const nodeMat = new THREE.PointsMaterial({ color: 0xffe3f1, size: 0.045, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+    group.add(new THREE.Points(nodeGeo, nodeMat));
+
+    const linePts: THREE.Vector3[] = [];
+    pts.forEach((p, i) => {
+      const nearest = pts
+        .map((q, j) => ({ j, d: p.distanceToSquared(q) }))
+        .filter((o) => o.j !== i)
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 2);
+      nearest.forEach((o) => { linePts.push(p, pts[o.j]); });
+    });
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xffb3d9, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending });
+    group.add(new THREE.LineSegments(lineGeo, lineMat));
+
+    scene.add(new THREE.AmbientLight(0x331020, 1.1));
+    const key = new THREE.PointLight(0xff5fa8, 7, 10);
+    key.position.set(2.4, 1.6, 3);
+    scene.add(key);
+    const rim = new THREE.PointLight(0x8a2cff, 3, 10);
+    rim.position.set(-2.4, -1, -2);
+    scene.add(rim);
+
+    group.rotation.y = 0.35;
+    group.rotation.x = 0.08;
+
+    const drag = { on: false, x: 0, y: 0 };
+    function down(e: PointerEvent) {
+      drag.on = true; drag.x = e.clientX; drag.y = e.clientY;
+      el!.setPointerCapture(e.pointerId);
+    }
+    function move(e: PointerEvent) {
+      if (!drag.on) return;
+      group.rotation.y += (e.clientX - drag.x) * 0.008;
+      group.rotation.x += (e.clientY - drag.y) * 0.005;
+      group.rotation.x = Math.max(-0.9, Math.min(0.9, group.rotation.x));
+      drag.x = e.clientX; drag.y = e.clientY;
+    }
+    function up() { drag.on = false; }
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointerleave", up);
+
+    let raf = 0;
+    const clock = new THREE.Clock();
+    function loop() {
+      const t = clock.getElapsedTime();
+      if (!drag.on) group.rotation.y += 0.0022;
+      key.intensity = 6 + Math.sin(t * 1.3) * 1.6;
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(loop);
+    }
+    loop();
+
+    const ro = new ResizeObserver(() => {
+      if (!el) return;
+      const s = el.clientWidth;
+      renderer.setSize(s, s);
+      camera.aspect = 1;
+      camera.updateProjectionMatrix();
+    });
+    ro.observe(el);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointerleave", up);
+      renderer.dispose();
+      el.removeChild(renderer.domElement);
+      [left.geometry, right.geometry, cereb.geometry, stem.geometry, nodeGeo, lineGeo].forEach((g) => g.dispose());
+      [brainMat, cerebMat, nodeMat, lineMat].forEach((m) => m.dispose());
+    };
+  }, []);
 
   return (
     <KryptonShell>
@@ -75,75 +173,11 @@ export default function CerebroPage() {
         <h1 className="mt-2 text-2xl font-light">Cerebro de Krypton</h1>
         <p className="mt-2 text-sm text-white/60">Arrástralo para girarlo en 3D. Vista de exhibición.</p>
 
-        <div className="krypton-brain-wrap relative mt-6 overflow-hidden rounded-3xl border border-white/15 bg-black p-2">
+        <div className="relative mt-6 overflow-hidden rounded-3xl border border-white/15 bg-black p-2">
           <span className="absolute left-4 top-3 z-10 flex items-center gap-2 text-[10px] tracking-widest text-pink-200/80">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-pink-400" /> CORTEX · EN VIVO
           </span>
-
-          <div
-            className="relative mx-auto touch-none select-none"
-            style={{ perspective: 900 }}
-            onPointerDown={onDown}
-            onPointerMove={onMove}
-            onPointerUp={onUp}
-            onPointerLeave={onUp}
-          >
-            <svg viewBox="0 0 400 400" className="mx-auto block w-full max-w-md">
-              <circle cx="200" cy="200" r="192" fill="none" stroke="#ff2d8a30" strokeWidth="1" />
-              {Array.from({ length: 80 }).map((_, i) => {
-                const a = (i * 4.5 * Math.PI) / 180;
-                const x1 = 200 + Math.cos(a) * 180, y1 = 200 + Math.sin(a) * 180;
-                const x2 = 200 + Math.cos(a) * 192, y2 = 200 + Math.sin(a) * 192;
-                return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#ff2d8a50" strokeWidth={i % 10 === 0 ? 1.6 : 0.8} />;
-              })}
-            </svg>
-
-            <div
-              className="absolute inset-0"
-              style={{ transformStyle: "preserve-3d", transform: "rotateY(" + deg + "deg)" }}
-            >
-              <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full" style={{ transform: "translateZ(-26px) scale(.92)", opacity: 0.55 }}>
-                <path d={BRAIN} fill="#8a0030" />
-                <path d={CEREBELLUM} fill="#8a0030" />
-              </svg>
-
-              <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full" style={{ transform: "translateZ(24px)" }}>
-                <defs>
-                  <clipPath id="brainClip">
-                    <path d={BRAIN} />
-                    <path d={CEREBELLUM} />
-                    <path d={STEM} />
-                  </clipPath>
-                  <radialGradient id="glowC" cx="38%" cy="38%" r="60%">
-                    <stop offset="0%" stopColor="#ff8fc7" stopOpacity=".9" />
-                    <stop offset="100%" stopColor="#ff2d8a" stopOpacity="0" />
-                  </radialGradient>
-                  <filter id="tex" x="-40%" y="-40%" width="180%" height="180%">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.05 0.08" numOctaves="3" seed="6" result="n" />
-                    <feDiffuseLighting in="n" lightingColor="#ff6fb4" surfaceScale="2.4" result="lit">
-                      <feDistantLight azimuth="235" elevation="55" />
-                    </feDiffuseLighting>
-                    <feComposite in="lit" in2="SourceGraphic" operator="in" />
-                  </filter>
-                </defs>
-
-                <g clipPath="url(#brainClip)">
-                  <rect x="0" y="0" width="400" height="400" fill="#2a0014" />
-                  <rect x="0" y="0" width="400" height="400" filter="url(#tex)" />
-                  <rect x="0" y="0" width="400" height="400" fill="url(#glowC)" />
-                  {edges.map(([a, b], i) => (
-                    <line key={i} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} stroke="#ffd3ea" strokeOpacity=".32" strokeWidth="0.6" />
-                  ))}
-                  {nodes.map((p, i) => (
-                    <circle key={i} cx={p.x} cy={p.y} r={i % 7 === 0 ? 2.2 : 1.2} fill="#ffe3f1" opacity={i % 7 === 0 ? 1 : 0.7} />
-                  ))}
-                </g>
-                <path d={BRAIN} fill="none" stroke="#ff8fc7" strokeOpacity=".7" strokeWidth="1.3" />
-                <path d={CEREBELLUM} fill="none" stroke="#ff8fc7" strokeOpacity=".7" strokeWidth="1" />
-                <path d="M150,120 C165,150 170,180 155,210" fill="none" stroke="#ffd3ea" strokeOpacity=".4" strokeWidth="1" />
-              </svg>
-            </div>
-          </div>
+          <div ref={mount} className="mx-auto aspect-square w-full max-w-md touch-none" />
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">

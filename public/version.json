@@ -1,7 +1,7 @@
 {
-  "version": "1.0.39",
-  "build": 40,
-  "notes": "Cerebro en 3D con forma anatomica",
+  "version": "1.0.40",
+  "build": 41,
+  "notes": "Cerebro en three.js, modelo 3D real",
   "apk": "",
   "apkSizeMB": 0
 }
