@@ -1387,3 +1387,7 @@ html .krypton-md p + .katex-display { margin-top: 1.2rem !important; }
 .krypton-brain-pulse { animation: krypton-pulse 2.4s ease-in-out infinite; transform-origin: 200px 200px; }
 @keyframes krypton-pulse { 0%, 100% { opacity: .35; r: 30; } 50% { opacity: .9; r: 42; } }
 .krypton-brain-wrap { overflow: hidden; }
+
+/* krypton-brain-trace */
+.krypton-brain-trace { stroke-dasharray: 220; stroke-dashoffset: 220; animation: krypton-trace 2.2s linear infinite; }
+@keyframes krypton-trace { to { stroke-dashoffset: -220; } }
