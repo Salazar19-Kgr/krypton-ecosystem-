@@ -233,7 +233,7 @@ const providers: Provider[] = [
 
 /** Gemini (varios modelos) → Groq → OpenRouter gratuito. */
 
-const PRIORITY = ["gemini", "openrouter", "deepseek", "groq", "openai"];
+const PRIORITY = ["gemini", "deepseek", "groq", "openrouter", "openai"];
 const rank = (n: string) => {
   const i = PRIORITY.indexOf(n.toLowerCase());
   return i < 0 ? 99 : i;

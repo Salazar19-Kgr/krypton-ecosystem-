@@ -1,7 +1,7 @@
 {
-  "version": "1.0.35",
-  "build": 36,
-  "notes": "Cadena rapida de proveedores y panel de APIs",
+  "version": "1.0.36",
+  "build": 37,
+  "notes": "Orden de proveedores",
   "apk": "",
   "apkSizeMB": 0
 }
