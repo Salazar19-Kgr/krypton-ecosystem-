@@ -93,6 +93,7 @@ export default function AdminPage() {
         <h1 className="mt-1 text-2xl font-light">Pagos y suscripciones</h1>
         <a href="/admin/base" className="mt-2 inline-block text-xs text-white/60 underline">Biblioteca de modelos y conocimiento →</a>
         <a href="/admin/pruebas" className="ml-4 mt-2 inline-block text-xs text-white/60 underline">Banco de pruebas →</a>
+        <a href="/admin/apis" className="ml-4 mt-2 inline-block text-xs text-white/60 underline">Conexiones de Krypton →</a>
         <div className="mt-4 flex gap-2">
           {tabBtn("pagos", "Pagos" + (pending ? " (" + pending + ")" : ""))}
           {tabBtn("cuentas", "Cuentas (" + users.length + ")")}

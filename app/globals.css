@@ -1380,3 +1380,10 @@ html .katex { font-size: 1.12em; }
 /* krypton-katex-space */
 html .katex-display { margin: 1.6rem 0 !important; }
 html .krypton-md p + .katex-display { margin-top: 1.2rem !important; }
+
+/* krypton-brain-spin */
+.krypton-brain-spin { animation: krypton-spin 40s linear infinite; }
+@keyframes krypton-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.krypton-brain-pulse { animation: krypton-pulse 2.4s ease-in-out infinite; transform-origin: 200px 200px; }
+@keyframes krypton-pulse { 0%, 100% { opacity: .35; r: 30; } 50% { opacity: .9; r: 42; } }
+.krypton-brain-wrap { overflow: hidden; }

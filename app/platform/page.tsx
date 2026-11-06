@@ -22,9 +22,14 @@ export default function PlatformPage() {
         <p className="mt-2 text-sm text-white/65">Herramientas para probar, medir y hacer crecer Krypton.</p>
 
         {admin ? (
+          <>
           <Link href="/lab" className="k-glass-card mt-6 block rounded-3xl p-5">
             <p className="text-lg">Laboratorio</p>
           </Link>
+        <Link href="/platform/cerebro" className="k-glass-card mt-4 block rounded-3xl p-5">
+          <p className="text-lg">Cerebro de Krypton</p>
+        </Link>
+        </>
         ) : (
           <div className="k-glass-card mt-6 rounded-3xl p-5">
             <p className="text-lg">Laboratorio</p>

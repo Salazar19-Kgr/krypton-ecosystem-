@@ -1,7 +1,7 @@
 {
-  "version": "1.0.36",
-  "build": 37,
-  "notes": "Orden de proveedores",
+  "version": "1.0.37",
+  "build": 38,
+  "notes": "Cerebro, conexiones con logos y enlace admin",
   "apk": "",
   "apkSizeMB": 0
 }
