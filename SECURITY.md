@@ -1,13 +1,22 @@
-# Seguridad
+# Política de seguridad
 
-La protección de credenciales, sesiones y datos es una prioridad para KRYTON ECOSYSTEM.
+La seguridad de KRYTON ECOSYSTEM es una prioridad.
 
-## Reglas básicas
-- No subir archivos `.env` reales.
-- No publicar claves API ni tokens.
-- No exponer credenciales privadas en componentes cliente.
-- Validar los datos recibidos por APIs y servicios.
-- Revisar permisos de acceso y dependencias.
+## Protección de credenciales
 
-## Reporte responsable
-Comunica vulnerabilidades al propietario mediante un canal privado. No publiques credenciales ni detalles sensibles en incidencias públicas.
+- No almacenar claves privadas en el repositorio.
+- No publicar archivos `.env` reales.
+- Utilizar secretos protegidos en GitHub.
+- Proteger tokens y credenciales de proveedores externos.
+
+## Reporte de vulnerabilidades
+
+Las vulnerabilidades deben comunicarse de manera responsable al mantenedor del proyecto, evitando su publicación con detalles explotables antes de su corrección.
+
+## Principios
+
+- Protección de información.
+- Gestión segura de sesiones.
+- Control de acceso.
+- Validación de entradas.
+- Protección de secretos.

@@ -1,19 +1,30 @@
 # Contribuir a KRYTON ECOSYSTEM
 
-Gracias por tu interés en el proyecto.
+Gracias por tu interés en contribuir.
 
-## Criterios de colaboración
-1. Mantener el código legible y organizado.
-2. Explicar el propósito de cada cambio.
-3. Evitar dependencias innecesarias.
-4. No incluir credenciales, tokens ni datos privados.
-5. Actualizar la documentación cuando corresponda.
+## Normas generales
 
-## Convención de commits
-- `feat:` nueva funcionalidad.
-- `fix:` corrección.
-- `docs:` documentación.
-- `refactor:` reorganización interna.
-- `security:` mejora de seguridad.
+1. Mantener la arquitectura existente.
+2. Evitar modificaciones innecesarias.
+3. Utilizar TypeScript cuando corresponda.
+4. Mantener una estructura modular.
+5. Documentar los cambios importantes.
+6. No introducir credenciales en el código.
+7. Evitar dependencias innecesarias.
 
-Los cambios deben ser pequeños, revisables y compatibles con la arquitectura existente.
+## Cambios
+
+Los cambios deben ser descriptivos, organizados y compatibles con la estructura existente.
+
+## Seguridad
+
+Nunca publicar claves privadas, tokens, contraseñas ni archivos de configuración sensibles.
+
+## Pull Requests
+
+Cada solicitud debe describir:
+
+- Objetivo del cambio.
+- Archivos modificados.
+- Funcionalidad afectada.
+- Consideraciones de compatibilidad.
